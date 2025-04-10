@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Account | Pestector</title>
+    <!-- Using Tailwind CSS v3 -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@3.3.3/dist/tailwind.min.css" rel="stylesheet">
+    <!-- Adding Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Adding animate.css for animations -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        /* Custom animation for message fade-in and fade-out */
+        @keyframes slideInDown {
+            from {
+                transform: translateY(-20px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes fadeOutUp {
+            from {
+                transform: translateY(0);
+                opacity: 1;
+            }
+
+            to {
+                transform: translateY(-20px);
+                opacity: 0;
+            }
+        }
+
+        .slide-in-down {
+            animation: slideInDown 0.5s ease forwards;
+        }
+
+        .fade-out-up {
+            animation: fadeOutUp 0.5s ease forwards;
+        }
+
+        /* Progress bar animation */
+        .progress-animation {
+            transition: width 0.6s ease-in-out;
+        }
+
+        /* Button animation */
+        .button-pulse:hover {
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.05);
+            }
+
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        /* Success checkmark animation */
+        @keyframes checkmark {
+            0% {
+                transform: scale(0);
+            }
+
+            50% {
+                transform: scale(1.2);
+            }
+
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        .animate-checkmark {
+            animation: checkmark 0.5s ease-in-out forwards;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-50 min-h-screen flex justify-center items-center">
+
+    <!-- Main Content -->
+    <main class="flex-grow">
+        <div class="max-w-md mx-auto my-12 px-4 sm:px-6 lg:px-8">
+            <div class="bg-white py-8 px-6 shadow rounded-lg sm:px-10">
+                <div class="mb-6 text-center">
+                    <h2 class="text-2xl font-bold text-gray-900">Create your account</h2>
+                    <p class="text-sm text-gray-600 mt-2">Join thousands of users today</p>
+                </div>
+
+                <!-- Status Message Container - Added this new element for better message handling -->
+                <div id="statusMessageContainer" class="mb-4 hidden">
+                    <div id="statusMessage" class="py-2 px-4 rounded-md text-sm font-medium"></div>
+                </div>
+
+                <!-- Progress Steps -->
+                <div class="mb-8">
+                    <div class="flex items-center justify-between">
+                        <div class="flex flex-col items-center">
+                            <div id="step1Circle"
+                                class="w-8 h-8 bg-indigo-600 rounded-full flex items-center justify-center text-white font-medium text-sm">
+                                1
+                            </div>
+                            <div class="text-xs mt-1 font-medium text-indigo-600">Account Info</div>
+                        </div>
+
+                        <div class="flex-1 h-1 mx-2 bg-gray-200">
+                            <div id="progressBar" class="h-full bg-indigo-600 w-0 progress-animation"></div>
+                        </div>
+
+                        <div class="flex flex-col items-center">
+                            <div id="step2Circle"
+                                class="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center text-gray-600 font-medium text-sm">
+                                2
+                            </div>
+                            <div id="step2Text" class="text-xs mt-1 font-medium text-gray-500">Profile Details</div>
+                        </div>
+                    </div>
+                </div>
+
+                <form id="registerForm">
+                    <!-- Step 1: Account Information -->
+                    <div id="step1" class="space-y-6">
+                        <div>
+                            <label for="username" class="block text-sm font-medium text-gray-700">Username</label>
+                            <div class="mt-1 relative rounded-md shadow-sm">
+                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <i class="fas fa-user text-gray-400"></i>
+                                </div>
+                                <input type="text" name="username" id="username" required class="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md 
+                                    focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 text-sm"
+                                    placeholder="johnsmith">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label for="email" class="block text-sm font-medium text-gray-700">Email address</label>
+                            <div class="mt-1 relative rounded-md shadow-sm">
+                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <i class="fas fa-envelope text-gray-400"></i>
+                                </div>
+                                <input type="email" name="email" id="email" required class="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md 
+                                    focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 text-sm"
+                                    placeholder="you@example.com">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
+                            <div class="mt-1 relative rounded-md shadow-sm">
+                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <i class="fas fa-lock text-gray-400"></i>
+                                </div>
+                                <input type="password" name="password" id="password" required class="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md 
+                                    focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 text-sm"
+                                    placeholder="••••••••">
+                            </div>
+                            <p class="mt-1 text-xs text-gray-500">
+                                Password must be at least 8 characters
+                            </p>
+                        </div>
+
+                        <div>
+                            <button type="button" id="nextStepBtn"
+                                class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md 
+                                shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 
+                                focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors button-pulse">
+                                Continue to Profile Details
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Step 2: Profile Details -->
+                    <div id="step2" class="space-y-6 hidden">
+                        <div>
+                            <label for="fullName" class="block text-sm font-medium text-gray-700">Full Name</label>
+                            <div class="mt-1 relative rounded-md shadow-sm">
+                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <i class="fas fa-id-card text-gray-400"></i>
+                                </div>
+                                <input type="text" name="fullName" id="fullName" class="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md 
+                                    focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 text-sm"
+                                    placeholder="John Smith">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label for="phoneNumber" class="block text-sm font-medium text-gray-700">Phone
+                                Number</label>
+                            <div class="mt-1 relative rounded-md shadow-sm">
+                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <i class="fas fa-phone text-gray-400"></i>
+                                </div>
+                                <input type="text" name="phoneNumber" id="phoneNumber" class="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md 
+                                    focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 text-sm"
+                                    placeholder="+1 (555) 987-6543">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label for="location" class="block text-sm font-medium text-gray-700">Location
+                                (options)</label>
+                            <div class="mt-1 relative rounded-md shadow-sm">
+                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <i class="fas fa-map-marker-alt text-gray-400"></i>
+                                </div>
+                                <input type="text" name="location" id="location" class="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md 
+                                    focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 text-sm"
+                                    placeholder="City, Country">
+                            </div>
+                        </div>
+
+                        <div class="flex items-center">
+                            <input id="terms" name="terms" type="checkbox" required
+                                class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
+                            <label for="terms" class="ml-2 block text-sm text-gray-900">
+                                I agree to the <a href="#" class="text-indigo-600 hover:text-indigo-500">Terms of
+                                    Service</a> and
+                                <a href="#" class="text-indigo-600 hover:text-indigo-500">Privacy Policy</a>
+                            </label>
+                        </div>
+
+                        <div class="flex space-x-3">
+                            <button type="button" id="prevStepBtn"
+                                class="w-1/3 flex justify-center py-2 px-4 border border-gray-300 rounded-md 
+                                shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 
+                                focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors">
+                                Back
+                            </button>
+
+                            <button type="submit" id="submitBtn"
+                                class="w-2/3 flex justify-center py-2 px-4 border border-transparent rounded-md 
+                                shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 
+                                focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors button-pulse">
+                                <span id="submitBtnText">Create Account</span>
+                                <span id="submitBtnLoader" class="hidden ml-2">
+                                    <i class="fas fa-circle-notch fa-spin"></i>
+                                </span>
+                            </button>
+                        </div>
+                    </div>
+                </form>
+
+                <!-- Registration Success Container (new element) -->
+                <div id="registrationSuccessContainer" class="py-8 text-center hidden">
+                    <div class="flex flex-col items-center">
+                        <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-4">
+                            <i class="fas fa-check text-green-500 text-2xl animate-checkmark"></i>
+                        </div>
+                        <h3 class="text-xl font-medium text-gray-900 mb-2">Registration Successful!</h3>
+                        <p class="text-sm text-gray-600 mb-6">Your account has been created.</p>
+                        <div class="animate__animated animate__fadeIn animate__delay-1s">
+                            <p class="text-sm text-gray-600 mb-4">You will be redirected to the login page shortly.</p>
+                            <div class="w-full bg-gray-200 h-2 rounded-full overflow-hidden">
+                                <div id="redirectProgressBar"
+                                    class="bg-green-500 h-full w-0 transition-all duration-300"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Social Sign-in options only shown in step 1 -->
+                <div id="socialSignIn" class="mt-6">
+                    <div class="relative">
+                        <div class="absolute inset-0 flex items-center">
+                            <div class="w-full border-t border-gray-300"></div>
+                        </div>
+                        <div class="relative flex justify-center text-sm">
+                            <span class="px-2 bg-white text-gray-500">Or continue with</span>
+                        </div>
+                    </div>
+
+                    <div class="mt-6 grid grid-cols-2 gap-3">
+                        <div>
+                            <a href="#"
+                                class="w-full inline-flex justify-center py-2 px-4 border border-gray-300 
+                                rounded-md shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors">
+                                <i class="fab fa-google text-red-600 mr-2"></i>
+                                <span>Google</span>
+                            </a>
+                        </div>
+                        <div>
+                            <a href="#"
+                                class="w-full inline-flex justify-center py-2 px-4 border border-gray-300 
+                                rounded-md shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors">
+                                <i class="fab fa-facebook text-blue-600 mr-2"></i>
+                                <span>Facebook</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <p class="mt-6 text-center text-sm text-gray-600">
+                    Already have an account?
+                    <a href="/login.html" class="font-medium text-indigo-600 hover:text-indigo-500">
+                        Sign in
+                    </a>
+                </p>
+            </div>
+        </div>
+    </main>
+
+
+
+    <script>
+        const apiBaseUrl = '/api/auth';
+
+        // Multi-step form navigation
+        const step1 = document.getElementById('step1');
+        const step2 = document.getElementById('step2');
+        const step1Circle = document.getElementById('step1Circle');
+        const step2Circle = document.getElementById('step2Circle');
+        const step2Text = document.getElementById('step2Text');
+        const nextStepBtn = document.getElementById('nextStepBtn');
+        const prevStepBtn = document.getElementById('prevStepBtn');
+        const progressBar = document.getElementById('progressBar');
+        const socialSignIn = document.getElementById('socialSignIn');
+        const registerForm = document.getElementById('registerForm');
+        const submitBtn = document.getElementById('submitBtn');
+        const submitBtnText = document.getElementById('submitBtnText');
+        const submitBtnLoader = document.getElementById('submitBtnLoader');
+        const registrationSuccessContainer = document.getElementById('registrationSuccessContainer');
+        const redirectProgressBar = document.getElementById('redirectProgressBar');
+
+        // Enhanced message display
+        function showMessage(message, isError = false) {
+            const statusMessageContainer = document.getElementById('statusMessageContainer');
+            const statusMessage = document.getElementById('statusMessage');
+
+            // Remove any existing animation classes
+            statusMessageContainer.classList.remove('slide-in-down', 'fade-out-up');
+
+            // Set message content and styling
+            statusMessage.innerHTML = message;
+
+            if (isError) {
+                statusMessage.className = 'py-2 px-4 rounded-md text-sm font-medium bg-red-100 text-red-700 border border-red-200';
+                statusMessage.innerHTML = `<i class="fas fa-exclamation-circle mr-2"></i>${message}`;
+            } else {
+                statusMessage.className = 'py-2 px-4 rounded-md text-sm font-medium bg-green-100 text-green-700 border border-green-200';
+                statusMessage.innerHTML = `<i class="fas fa-check-circle mr-2"></i>${message}`;
+            }
+
+            // Show and animate the message
+            statusMessageContainer.classList.remove('hidden');
+            statusMessageContainer.classList.add('slide-in-down');
+
+            // Set a timeout to fade out the message
+            setTimeout(() => {
+                statusMessageContainer.classList.remove('slide-in-down');
+                statusMessageContainer.classList.add('fade-out-up');
+
+                // After animation completes, hide the container
+                setTimeout(() => {
+                    statusMessageContainer.classList.add('hidden');
+                }, 500);
+            }, 5000);
+        }
+
+        // Go to step 2 with animation
+        nextStepBtn.addEventListener('click', () => {
+            // Validate step 1 fields
+            const username = document.getElementById('username').value;
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            if (!username || !email || !password) {
+                showMessage('Please fill all required fields', true);
+
+                // Shake animation for empty fields
+                const fields = [
+                    { id: 'username', value: username },
+                    { id: 'email', value: email },
+                    { id: 'password', value: password }
+                ];
+
+                fields.forEach(field => {
+                    if (!field.value) {
+                        const element = document.getElementById(field.id);
+                        element.classList.add('animate__animated', 'animate__shakeX');
+                        element.style.borderColor = 'rgb(239, 68, 68)'; // red-500
+
+                        // Remove animation class after it completes
+                        setTimeout(() => {
+                            element.classList.remove('animate__animated', 'animate__shakeX');
+                        }, 1000);
+
+                        // Add input event to remove red border when user starts typing
+                        element.addEventListener('input', function () {
+                            this.style.borderColor = '';
+                        }, { once: true });
+                    }
+                });
+
+                return;
+            }
+
+            if (password.length < 8) {
+                showMessage('Password must be at least 8 characters long', true);
+
+                const passwordField = document.getElementById('password');
+                passwordField.classList.add('animate__animated', 'animate__shakeX');
+                passwordField.style.borderColor = 'rgb(239, 68, 68)';
+
+                setTimeout(() => {
+                    passwordField.classList.remove('animate__animated', 'animate__shakeX');
+                }, 1000);
+
+                passwordField.addEventListener('input', function () {
+                    this.style.borderColor = '';
+                }, { once: true });
+
+                return;
+            }
+
+            // Animate step transition
+            step1.classList.add('animate__animated', 'animate__fadeOutLeft', 'animate__faster');
+
+            setTimeout(() => {
+                // Hide step 1 and show step 2
+                step1.classList.add('hidden');
+                step1.classList.remove('animate__animated', 'animate__fadeOutLeft', 'animate__faster');
+
+                step2.classList.remove('hidden');
+                step2.classList.add('animate__animated', 'animate__fadeInRight', 'animate__faster');
+
+                socialSignIn.classList.add('hidden');
+
+                // Update progress indicators with animation
+                progressBar.style.width = '100%';
+
+                // Animate step 1 completion
+                step1Circle.innerHTML = '1';
+                step1Circle.classList.add('animate__animated', 'animate__flipOutY');
+
+                setTimeout(() => {
+                    step1Circle.classList.remove('bg-indigo-600', 'animate__animated', 'animate__flipOutY');
+                    step1Circle.classList.add('bg-green-500', 'animate__animated', 'animate__flipInY');
+                    step1Circle.innerHTML = '<i class="fas fa-check"></i>';
+
+                    // Animate step 2 activation
+                    setTimeout(() => {
+                        step2Circle.classList.add('animate__animated', 'animate__pulse');
+                        step2Circle.classList.remove('bg-gray-200');
+                        step2Circle.classList.add('bg-indigo-600');
+
+                        step2Text.classList.remove('text-gray-500');
+                        step2Text.classList.add('text-indigo-600');
+
+                        setTimeout(() => {
+                            step2Circle.classList.remove('animate__animated', 'animate__pulse');
+                        }, 1000);
+                    }, 300);
+                }, 300);
+
+                // Remove animation from step 2
+                setTimeout(() => {
+                    step2.classList.remove('animate__animated', 'animate__fadeInRight', 'animate__faster');
+                }, 500);
+
+            }, 300);
+        });
+
+        // Go back to step 1 with animation
+        prevStepBtn.addEventListener('click', () => {
+            // Animate step transition
+            step2.classList.add('animate__animated', 'animate__fadeOutRight', 'animate__faster');
+
+            setTimeout(() => {
+                // Hide step 2 and show step 1
+                step2.classList.add('hidden');
+                step2.classList.remove('animate__animated', 'animate__fadeOutRight', 'animate__faster');
+
+                step1.classList.remove('hidden');
+                step1.classList.add('animate__animated', 'animate__fadeInLeft', 'animate__faster');
+
+                socialSignIn.classList.remove('hidden');
+                socialSignIn.classList.add('animate__animated', 'animate__fadeIn');
+
+                // Update progress indicators with animation
+                progressBar.style.width = '0%';
+
+                // Animate step indicators
+                step1Circle.classList.add('animate__animated', 'animate__flipOutY');
+
+                setTimeout(() => {
+                    step1Circle.classList.remove('bg-green-500', 'animate__animated', 'animate__flipOutY');
+                    step1Circle.classList.add('bg-indigo-600', 'animate__animated', 'animate__flipInY');
+                    step1Circle.textContent = '1';
+
+                    // Reset step 2 indicator
+                    step2Circle.classList.remove('bg-indigo-600');
+                    step2Circle.classList.add('bg-gray-200');
+                    step2Text.classList.remove('text-indigo-600');
+                    step2Text.classList.add('text-gray-500');
+                }, 300);
+
+                // Remove animation from step 1
+                setTimeout(() => {
+                    step1.classList.remove('animate__animated', 'animate__fadeInLeft', 'animate__faster');
+                    socialSignIn.classList.remove('animate__animated', 'animate__fadeIn');
+                }, 500);
+
+            }, 300);
+        });
+
+        // Register Form Submission with animation
+        registerForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            // Validate terms checkbox
+            if (!document.getElementById('terms').checked) {
+                showMessage('Please agree to Terms and Conditions', true);
+                return;
+            }
+
+            // Disable submit button and show loader
+            submitBtn.disabled = true;
+            submitBtnText.textContent = 'Creating Account...';
+            submitBtnLoader.classList.remove('hidden');
+
+            // Collect form data
+            const formData = new FormData(e.target);
+            const data = Object.fromEntries(formData.entries());
+
+            try {
+                // Simulate API request with delay (remove this in production and use real API)
+                // await new Promise(resolve => setTimeout(resolve, 1500));
+
+                //For demonstration, let's assume success (in production, use actual API)
+                // Uncomment real API call below:
+
+                const response = await fetch(`${apiBaseUrl}/register`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data),
+                });
+
+                const result = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(result.message || 'Registration failed');
+                }
+
+
+                // Hide the form and show success message
+                registerForm.classList.add('animate__animated', 'animate__fadeOut', 'animate__faster');
+                setTimeout(() => {
+                    registerForm.classList.add('hidden');
+                    registrationSuccessContainer.classList.remove('hidden');
+                    registrationSuccessContainer.classList.add('animate__animated', 'animate__fadeIn');
+
+                    // Simulate redirect countdown
+                    let progress = 0;
+                    const redirectTimer = setInterval(() => {
+                        progress += 2;
+                        redirectProgressBar.style.width = `${progress}%`;
+
+                        if (progress >= 100) {
+                            clearInterval(redirectTimer);
+
+                            // Redirect to login page
+                            setTimeout(() => {
+                                window.location.href = '/login.html';
+                            }, 300);
+                        }
+                    }, 50);
+                }, 500);
+
+            } catch (error) {
+                // Re-enable submit button and hide loader
+                submitBtn.disabled = false;
+                submitBtnText.textContent = 'Create Account';
+                submitBtnLoader.classList.add('hidden');
+
+                // Show error message with animation
+                showMessage(error.message || 'Registration failed. Please try again.', true);
+            }
+        });
+
+        // Function to get the token from cookies
+        function getTokenFromCookies() {
+            // Split the cookie string and find the token value
+            const cookie = document.cookie
+                .split('; ')
+                .find(row => row.startsWith('token='));
+            return cookie ? cookie.split('=')[1] : null; // Return the token if found, otherwise return null
+        }
+
+        // Function to check if the token exists in localStorage or cookies
+        function checkAuth() {
+            // Try to get the token from localStorage
+            let token = localStorage.getItem('token');
+
+            // If the token is not found in localStorage, try to get it from cookies
+            if (!token) {
+                token = getTokenFromCookies();
+            }
+
+            // If the token exists, redirect the user to the homepage
+            if (token) {
+                window.location.href = '/'; // Redirect to homepage if the user is logged in
+            }
+        }
+
+        // Call the function to check the token when the page is loaded
+        checkAuth();
+
+        // Social Sign-in Buttons (for demonstration purposes)
+        document.querySelectorAll('#socialSignIn a').forEach(button => {
+            button.addEventListener('click', (e) => {
+                e.preventDefault();
+                showMessage('Social sign-in is not implemented yet.', true);
+            });
+        });
+    </script>
+</body>
+
+</html>

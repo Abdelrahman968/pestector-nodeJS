@@ -1,0 +1,739 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Subscriptions | Pestector</title>
+    <!-- Tailwind CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@3.3.3/dist/tailwind.min.css" rel="stylesheet">
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+
+    <style>
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideInDown {
+            from {
+                transform: translateY(-20px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes fadeOutUp {
+            from {
+                transform: translateY(0);
+                opacity: 1;
+            }
+
+            to {
+                transform: translateY(-20px);
+                opacity: 0;
+            }
+        }
+
+        .slide-in-down {
+            animation: slideInDown 0.5s ease forwards;
+        }
+
+        .fade-out-up {
+            animation: fadeOutUp 0.5s ease forwards;
+        }
+
+        .fade-in {
+            animation: fadeIn 0.4s ease-out forwards;
+        }
+
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+
+        .animate-delay-1 {
+            animation-delay: 0.1s;
+        }
+
+        .animate-delay-2 {
+            animation-delay: 0.2s;
+        }
+
+        .animate-delay-3 {
+            animation-delay: 0.3s;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-50 min-h-screen flex flex-col">
+    <!-- Header -->
+    <header class="bg-white shadow-sm sticky top-0 z-10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center space-x-3">
+                    <div class="bg-indigo-600 text-white p-2 rounded-lg"><i class="fas fa-leaf text-xl"></i></div>
+                    <h1 class="text-2xl font-bold text-gray-900">Pestector</h1>
+                </div>
+                <nav class="hidden md:flex space-x-6">
+                    <a href="index.html"
+                        class="text-gray-500 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium"><i
+                            class="fas fa-home mr-2"></i>Home</a>
+                    <a href="history.html"
+                        class="text-gray-500 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium"><i
+                            class="fas fa-history mr-2"></i>History</a>
+                    <a href="subscribe.html"
+                        class="text-indigo-600 border-b-2 border-indigo-600 px-3 py-2 text-sm font-medium"><i
+                            class="fas fa-star mr-2"></i>Subscriptions</a>
+                    <a href="settings.html"
+                        class="text-gray-500 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium"><i
+                            class="fas fa-cog mr-2"></i>Settings</a>
+                </nav>
+                <div class="relative">
+                    <button id="profileDropdownBtn"
+                        class="flex items-center space-x-2 text-sm font-medium text-gray-700 hover:text-indigo-600 transition-colors duration-200">
+                        <div
+                            class="h-8 w-8 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-700">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <span>Welcome Back</span>
+                        <i class="fas fa-chevron-down text-xs"></i>
+                    </button>
+                    <div id="profileDropdown"
+                        class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-2 hidden">
+                        <a href="/profile.html" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                            <i class="fas fa-user-circle mr-2"></i>Edit Profile
+                        </a>
+                        <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                            <i class="fas fa-lock mr-2"></i>Change Password
+                        </a>
+                        <hr class="my-1">
+                        <button id="logoutBtn"
+                            class="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100">
+                            <i class="fas fa-sign-out-alt mr-2"></i>Logout
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-grow py-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <!-- Subscription Section -->
+            <div class="mb-8">
+                <h2 class="text-2xl font-bold text-gray-900">Your Subscription</h2>
+                <p class="mt-1 text-sm text-gray-500">Manage your Pestector subscription plan and features.</p>
+            </div>
+
+            <!-- Status Message -->
+            <div id="statusMessageContainer" class="mb-6 hidden">
+                <div id="statusMessage" class="py-3 px-4 rounded-md text-sm font-medium"></div>
+            </div>
+
+            <!-- Current Subscription -->
+            <div class="mx-auto bg-white rounded-lg shadow-md p-6 m-10">
+                <!-- Card Header -->
+                <div class="mb-6">
+                    <h3 class="text-2xl font-bold text-gray-800">Subscription Details</h3>
+                </div>
+
+                <!-- Grid Container -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                    <div>
+                        <div class="mb-4">
+                            <div class="text-sm text-gray-500 mb-1">Status</div>
+                            <div class="flex items-center space-x-2">
+                                <i class="fa-solid fa-circle fa-2xs" style="color: #10B981;"></i>
+                                <span class="text-gray-800 font-medium" id="currentStatus">loading...</span>
+                            </div>
+                        </div>
+                        <div class="mb-4">
+                            <div class="text-sm text-gray-500 mb-1">Current Plan</div>
+                            <div class="text-gray-800 font-medium" id="currentPlan">loading...</div>
+                        </div>
+                        <div class="mb-4">
+                            <div class="text-sm text-gray-500 mb-1">Renewal Date</div>
+                            <div class="text-gray-800 font-medium" id="expiresAt">loading...</div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <div class="mb-4">
+                            <div class="text-sm text-gray-500 mb-1">Auto-Renew</div>
+                            <div class="text-gray-800 font-medium" id="autoRenew">loading...</div>
+                        </div>
+                        <div class="mb-4">
+                            <div class="text-sm text-gray-500 mb-1">Daily Scan Limit</div>
+                            <div class="text-gray-800 font-medium" id="scanLimit">loading...</div>
+                        </div>
+                        <div class="mb-4">
+                            <div class="text-sm text-gray-500 mb-1">Scans Remaining Today</div>
+                            <div class="text-gray-800 font-medium" id="scansRemaining">loading...</div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="mb-4">
+                            <div class="text-sm text-gray-500 mb-1">Priority Support</div>
+                            <div class="flex items-center space-x-2">
+                                <i class="fas fa-check text-green-500 hidden" id="prioritySupportIcon"></i>
+                                <i class="fas fa-times text-red-500 hidden" id="prioritySupportNoIcon"></i>
+                                <span class="text-gray-800 font-medium" id="prioritySupport">loading...</span>
+                            </div>
+                        </div>
+                        <div class="mb-4">
+                            <div class="text-sm text-gray-500 mb-1">Advanced Analytics</div>
+                            <div class="flex items-center space-x-2">
+                                <i class="fas fa-check text-green-500 hidden" id="advancedAnalyticsIcon"></i>
+                                <i class="fas fa-times text-red-500 hidden" id="advancedAnalyticsNoIcon"></i>
+                                <span class="text-gray-800 font-medium" id="advancedAnalytics">loading...</span>
+                            </div>
+                        </div>
+                        <div class="mb-4">
+                            <div class="text-sm text-gray-500 mb-1">API Access</div>
+                            <div class="flex items-center space-x-2">
+                                <i class="fas fa-check text-green-500 hidden" id="apiAccessIcon"></i>
+                                <i class="fas fa-times text-red-500 hidden" id="apiAccessNoIcon"></i>
+                                <span class="text-gray-800 font-medium" id="apiAccess">loading...</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Actions Container -->
+                <div class="flex flex-wrap gap-3">
+                    <button id="upgradeSubscriptionBtn"
+                        class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition flex items-center space-x-2">
+                        <i class="fas fa-arrow-up"></i>
+                        <span>Upgrade Plan</span>
+                    </button>
+                    <button id="renewSubscriptionBtn"
+                        class="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600 transition hidden flex items-center space-x-2">
+                        <i class="fas fa-sync"></i>
+                        <span>Renew Now</span>
+                    </button>
+                    <button id="toggleAutoRenewBtn"
+                        class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition hidden flex items-center space-x-2">
+                        <i class="fas fa-toggle-on"></i>
+                        <span>Toggle Auto-Renew</span>
+                    </button>
+                    <button id="cancelSubscriptionBtn"
+                        class="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 transition hidden flex items-center space-x-2">
+                        <i class="fas fa-times"></i>
+                        <span>Cancel Subscription</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Subscription Plans -->
+            <div class="mb-8">
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">Choose a Plan</h3>
+                <p class="text-sm text-gray-500 mb-4">Plan changes require admin approval.</p>
+                <div id="plansContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"></div>
+            </div>
+
+            <!-- Subscription Logs -->
+            <!-- Subscription Logs Section -->
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+                <!-- Section Header -->
+                <div class="flex items-center justify-between mb-6">
+                    <h2 class="text-xl font-bold text-gray-900">Subscription Logs</h2>
+                    <div class="flex space-x-2">
+                        <button
+                            class="px-3 py-1 bg-indigo-600 text-white text-sm rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                            Your subscription log
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Logs Container -->
+                <div class="bg-white rounded-lg shadow overflow-hidden">
+                    <!-- Logs List -->
+                    <div id="logsContainer" class="divide-y divide-gray-200">
+                        <!-- Logs will be populated here -->
+                    </div>
+
+                    <!-- Empty State -->
+                    <div id="noLogsMessage" class="flex flex-col items-center justify-center py-16">
+                        <div class="w-16 h-16 bg-indigo-100 rounded-full flex items-center justify-center mb-4">
+                            <svg class="w-8 h-8 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M5 13l4 4L19 7"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-lg font-medium text-gray-900">No subscription logs</h3>
+                        <p class="mt-2 text-sm text-gray-500 max-w-sm text-center">Your subscription activity and
+                            history will
+                            appear here once available.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-gray-200 mt-12">
+        <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="mb-4 md:mb-0">
+                    <p class="text-sm text-gray-500">© 2025 Pestector. All rights reserved.</p>
+                </div>
+                <div class="flex space-x-6">
+                    <a href="#" class="text-gray-400 hover:text-gray-500"><i class="fab fa-twitter"></i></a>
+                    <a href="#" class="text-gray-400 hover:text-gray-500"><i class="fab fa-facebook"></i></a>
+                    <a href="#" class="text-gray-400 hover:text-gray-500"><i class="fab fa-instagram"></i></a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        const apiBaseUrl = '/api/subscribe';
+        const scanApiBaseUrl = '/api/classify';
+
+        // DOM Elements
+        const currentPlan = document.getElementById('currentPlan');
+        const currentStatus = document.getElementById('currentStatus');
+        const expiresAt = document.getElementById('expiresAt');
+        const autoRenew = document.getElementById('autoRenew');
+        const scanLimit = document.getElementById('scanLimit');
+        const scansRemaining = document.getElementById('scansRemaining');
+        const prioritySupport = document.getElementById('prioritySupport');
+        const prioritySupportIcon = document.getElementById('prioritySupportIcon');
+        const prioritySupportNoIcon = document.getElementById('prioritySupportNoIcon');
+        const advancedAnalytics = document.getElementById('advancedAnalytics');
+        const advancedAnalyticsIcon = document.getElementById('advancedAnalyticsIcon');
+        const advancedAnalyticsNoIcon = document.getElementById('advancedAnalyticsNoIcon');
+        const apiAccess = document.getElementById('apiAccess');
+        const apiAccessIcon = document.getElementById('apiAccessIcon');
+        const apiAccessNoIcon = document.getElementById('apiAccessNoIcon');
+        const renewSubscriptionBtn = document.getElementById('renewSubscriptionBtn');
+        const toggleAutoRenewBtn = document.getElementById('toggleAutoRenewBtn');
+        const cancelSubscriptionBtn = document.getElementById('cancelSubscriptionBtn');
+        const plansContainer = document.getElementById('plansContainer');
+        const logsContainer = document.getElementById('logsContainer');
+        const noLogsMessage = document.getElementById('noLogsMessage');
+        const profileDropdownBtn = document.getElementById('profileDropdownBtn');
+        const profileDropdown = document.getElementById('profileDropdown');
+        const logoutBtn = document.getElementById('logoutBtn');
+
+        // Show status message
+        function showMessage(message, isError = false) {
+            const statusMessageContainer = document.getElementById('statusMessageContainer');
+            const statusMessage = document.getElementById('statusMessage');
+            statusMessageContainer.classList.remove('slide-in-down', 'fade-out-up');
+            statusMessage.innerHTML = isError ? `<i class="fas fa-exclamation-circle mr-2"></i>${message}` : `<i class="fas fa-check-circle mr-2"></i>${message}`;
+            statusMessage.className = `py-3 px-4 rounded-md text-sm font-medium ${isError ? 'bg-red-100 text-red-700 border border-red-200' : 'bg-green-100 text-green-700 border border-green-200'}`;
+            statusMessageContainer.classList.remove('hidden');
+            statusMessageContainer.classList.add('slide-in-down');
+            setTimeout(() => {
+                statusMessageContainer.classList.remove('slide-in-down');
+                statusMessageContainer.classList.add('fade-out-up');
+                setTimeout(() => statusMessageContainer.classList.add('hidden'), 500);
+            }, 5000);
+        }
+
+        // Fetch and display current subscription with scan stats
+        async function fetchSubscription() {
+            try {
+                const token = localStorage.getItem('token') || getTokenFromCookies();
+                if (!token) { window.location.href = '/login.html'; return; }
+
+                // Fetch subscription details
+                const subResponse = await fetch(`${apiBaseUrl}/`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const subData = await subResponse.json();
+
+                if (!subResponse.ok) throw new Error(subData.message || 'Failed to fetch subscription');
+
+                if (subData.status === 'success') {
+                    const sub = subData.subscription;
+                    currentPlan.textContent = sub.currentPlan;
+                    currentStatus.textContent = sub.status;
+                    expiresAt.textContent = sub.expiresAt ? new Date(sub.expiresAt).toLocaleDateString("en") : 'Lifetime';
+                    autoRenew.textContent = sub.autoRenew ? 'Yes' : 'No';
+                    scanLimit.textContent = sub.features.scanLimit || 'N/A';
+
+                    // Update feature icons and text
+                    prioritySupport.textContent = sub.features.prioritySupport ? 'Yes' : 'No';
+                    prioritySupportIcon.classList.toggle('hidden', !sub.features.prioritySupport);
+                    prioritySupportNoIcon.classList.toggle('hidden', sub.features.prioritySupport);
+                    advancedAnalytics.textContent = sub.features.advancedAnalytics ? 'Yes' : 'No';
+                    advancedAnalyticsIcon.classList.toggle('hidden', !sub.features.advancedAnalytics);
+                    advancedAnalyticsNoIcon.classList.toggle('hidden', sub.features.advancedAnalytics);
+                    apiAccess.textContent = sub.features.apiAccess ? 'Yes' : 'No';
+                    apiAccessIcon.classList.toggle('hidden', !sub.features.apiAccess);
+                    apiAccessNoIcon.classList.toggle('hidden', sub.features.apiAccess);
+
+                    // Fetch scan stats
+                    const scanStats = await fetchScanStats(token);
+                    scansRemaining.textContent = scanStats.scansRemainingToday !== undefined ? scanStats.scansRemainingToday : 'N/A';
+
+                    // Update action buttons visibility
+                    if (sub.status === 'active' && sub.currentPlan !== 'free') {
+                        renewSubscriptionBtn.classList.remove('hidden');
+                        toggleAutoRenewBtn.classList.remove('hidden');
+                        toggleAutoRenewBtn.innerHTML = `<i class="fas fa-toggle-${sub.autoRenew ? 'on' : 'off'} mr-2"></i>Toggle Auto-Renew`;
+                        cancelSubscriptionBtn.classList.remove('hidden');
+                    } else {
+                        renewSubscriptionBtn.classList.add('hidden');
+                        toggleAutoRenewBtn.classList.add('hidden');
+                        cancelSubscriptionBtn.classList.add('hidden');
+                    }
+                }
+            } catch (error) {
+                showMessage(error.message || 'Error fetching subscription', true);
+            }
+        }
+
+        // Fetch scan stats (assuming an endpoint exists or using subscription data)
+        async function fetchScanStats(token) {
+            try {
+                const response = await fetch(`${scanApiBaseUrl}/stats`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const data = await response.json();
+
+                if (!response.ok) throw new Error(data.message || 'Failed to fetch scan stats');
+
+                return {
+                    scansUsedToday: data.subscription_info?.scans_used || 0,
+                    scansRemainingToday: data.subscription_info?.scans_remaining || 0
+                };
+            } catch (error) {
+                console.error('Error fetching scan stats:', error);
+                return { scansUsedToday: 'N/A', scansRemainingToday: 'N/A' };
+            }
+        }
+
+        // Render subscription plans
+        function renderPlans() {
+            const plans = {
+                free: { scanLimit: 10, prioritySupport: false, advancedAnalytics: false, apiAccess: false },
+                basic: { scanLimit: 50, prioritySupport: false, advancedAnalytics: true, apiAccess: false },
+                premium: { scanLimit: 200, prioritySupport: true, advancedAnalytics: true, apiAccess: true },
+                enterprise: { scanLimit: 1000, prioritySupport: true, advancedAnalytics: true, apiAccess: true }
+            };
+
+            Object.keys(plans).forEach((plan, index) => {
+                const card = document.createElement('div');
+                card.className = `bg-white rounded-lg shadow overflow-hidden card-hover fade-in animate-delay-${index + 1}`;
+                card.innerHTML = `
+                    <div class="p-5">
+                        <h4 class="text-lg font-semibold text-gray-900 capitalize">${plan}</h4>
+                        <p class="text-sm text-gray-600 mt-2">Daily Scan Limit: ${plans[plan].scanLimit}</p>
+                        <p class="text-sm text-gray-600">Priority Support: ${plans[plan].prioritySupport ? 'Yes' : 'No'}</p>
+                        <p class="text-sm text-gray-600">Advanced Analytics: ${plans[plan].advancedAnalytics ? 'Yes' : 'No'}</p>
+                        <p class="text-sm text-gray-600">API Access: ${plans[plan].apiAccess ? 'Yes' : 'No'}</p>
+                        <button onclick="requestPlanChange('${plan}')" class="mt-4 w-full px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700">
+                            <i class="fas fa-star mr-2"></i>Request Plan
+                        </button>
+                    </div>
+                `;
+                plansContainer.appendChild(card);
+            });
+        }
+
+        // Request plan change (requires admin approval)
+        async function requestPlanChange(plan) {
+            try {
+                const token = localStorage.getItem('token') || getTokenFromCookies();
+                if (!token) { window.location.href = '/login.html'; return; }
+
+                const response = await fetch(`${apiBaseUrl}/`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                    body: JSON.stringify({ plan })
+                });
+                const data = await response.json();
+
+                if (!response.ok) throw new Error(data.message || 'Failed to request plan change');
+
+                showMessage(data.message);
+                fetchLogs();
+            } catch (error) {
+                showMessage(error.message || 'Error requesting plan change', true);
+            }
+        }
+
+        // Renew subscription
+        async function renewSubscription() {
+            try {
+                const token = localStorage.getItem('token') || getTokenFromCookies();
+                if (!token) { window.location.href = '/login.html'; return; }
+
+                const response = await fetch(`${apiBaseUrl}/renew`, {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const data = await response.json();
+
+                if (!response.ok) throw new Error(data.message || 'Failed to renew subscription');
+
+                showMessage(data.message);
+                fetchSubscription();
+                fetchLogs();
+            } catch (error) {
+                showMessage(error.message || 'Error renewing subscription', true);
+            }
+        }
+
+        // Toggle auto-renewal
+        async function toggleAutoRenew() {
+            try {
+                const token = localStorage.getItem('token') || getTokenFromCookies();
+                if (!token) { window.location.href = '/login.html'; return; }
+
+                const currentAutoRenew = autoRenew.textContent === 'Yes';
+                const enable = !currentAutoRenew;
+
+                const response = await fetch(`${apiBaseUrl}/auto-renew`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                    body: JSON.stringify({ enable })
+                });
+                const data = await response.json();
+
+                if (!response.ok) throw new Error(data.message || 'Failed to toggle auto-renewal');
+
+                showMessage(data.message);
+                fetchSubscription();
+                fetchLogs();
+            } catch (error) {
+                showMessage(error.message || 'Error toggling auto-renewal', true);
+            }
+        }
+
+        // Cancel subscription
+        async function cancelSubscription() {
+            try {
+                const token = localStorage.getItem('token') || getTokenFromCookies();
+                if (!token) { window.location.href = '/login.html'; return; }
+
+                const response = await fetch(`${apiBaseUrl}/cancel`, {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const data = await response.json();
+
+                if (!response.ok) throw new Error(data.message || 'Failed to cancel subscription');
+
+                showMessage(data.message);
+                fetchSubscription();
+                fetchLogs();
+            } catch (error) {
+                showMessage(error.message || 'Error canceling subscription', true);
+            }
+        }
+
+        // Fetch and display subscription logs with previous plan and status
+        async function fetchLogs() {
+            try {
+                const logsContainer = document.getElementById('logsContainer');
+                const noLogsMessage = document.getElementById('noLogsMessage');
+
+                // Authentication check
+                const token = localStorage.getItem('token') || getTokenFromCookies();
+                if (!token) {
+                    window.location.href = '/login.html';
+                    return;
+                }
+
+                // Show loading state
+                logsContainer.innerHTML = `
+            <div class="flex justify-center items-center py-12">
+                <svg class="animate-spin h-8 w-8 text-indigo-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+            </div>
+        `;
+
+                // Fetch logs data
+                const response = await fetch(`${apiBaseUrl}/logs`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const data = await response.json();
+
+                if (!response.ok) throw new Error(data.message || 'Failed to fetch subscription logs');
+
+                // Process and display logs
+                if (data.status === 'success' && data.logs && data.logs.length > 0) {
+                    logsContainer.innerHTML = '';
+                    noLogsMessage.classList.add('hidden');
+
+                    data.logs.forEach((log, index) => {
+                        const prevPlan = log.previousPlan || 'None';
+                        const startDate = new Date(log.startDate).toLocaleDateString("en-US", {
+                            year: 'numeric',
+                            month: 'short',
+                            day: 'numeric'
+                        });
+                        const endDate = new Date(log.endDate).toLocaleDateString("en-US", {
+                            year: 'numeric',
+                            month: 'short',
+                            day: 'numeric'
+                        });
+                        const updatedAt = new Date(log.updatedAt).toLocaleString("en-US");
+
+                        // Determine status styling
+                        let statusClass = '';
+                        let statusBgClass = '';
+
+                        switch (log.status.toLowerCase()) {
+                            case 'active':
+                                statusClass = 'text-green-800';
+                                statusBgClass = 'bg-green-100';
+                                break;
+                            case 'pending':
+                                statusClass = 'text-yellow-800';
+                                statusBgClass = 'bg-yellow-100';
+                                break;
+                            case 'cancelled':
+                            case 'expired':
+                                statusClass = 'text-red-800';
+                                statusBgClass = 'bg-red-100';
+                                break;
+                            default:
+                                statusClass = 'text-gray-800';
+                                statusBgClass = 'bg-gray-100';
+                        }
+
+                        // Create log entry with animation delay
+                        const logEntry = document.createElement('div');
+                        logEntry.className = `p-6 border-b border-gray-200 transition duration-200 hover:bg-gray-50 opacity-0 animate-fade-in`;
+                        logEntry.style.animationDelay = `${index * 100}ms`;
+
+                        logEntry.innerHTML = `
+                    <div class="flex flex-col md:flex-row md:items-center md:justify-between">
+                        <div class="flex-grow">
+                            <div class="flex items-center space-x-3 mb-2">
+                                <span class="text-lg font-semibold text-gray-900">${log.plan}</span>
+                                <span class="px-2 py-1 text-xs font-medium rounded ${statusBgClass} ${statusClass}">${log.status}</span>
+                            </div>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm text-gray-600">
+                                <p>Previous Plan: <span class="font-medium">${prevPlan}</span></p>
+                                <p>Start: <span class="font-medium">${startDate}</span></p>
+                                <p>End: <span class="font-medium">${endDate}</span></p>
+                                <p>Updated: <span class="text-gray-500">${updatedAt}</span></p>
+                            </div>
+                        </div>
+                        ${log.status.toLowerCase() === 'active' ? `
+                            <div class="mt-4 md:mt-0">
+                                <button class="px-3 py-1 bg-white border border-gray-300 rounded-md text-sm text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-1">
+                                    Manage
+                                </button>
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+
+                        logsContainer.appendChild(logEntry);
+
+                        // Trigger animation
+                        setTimeout(() => {
+                            logEntry.classList.remove('opacity-0');
+                        }, 10);
+                    });
+                } else {
+                    logsContainer.innerHTML = '';
+                    noLogsMessage.classList.remove('hidden');
+                }
+            } catch (error) {
+                console.error('Error fetching logs:', error);
+                showMessage(error.message || 'Error fetching subscription logs', true);
+                logsContainer.innerHTML = '';
+                noLogsMessage.classList.remove('hidden');
+            }
+        }
+
+        // Helper function for showing toast messages
+        function showMessage(message, isError = false) {
+            const toast = document.createElement('div');
+            toast.className = `fixed bottom-4 right-4 px-6 py-3 rounded-lg shadow-lg ${isError ? 'bg-red-500' : 'bg-green-500'
+                } text-white text-sm font-medium transform transition-opacity duration-300 opacity-0`;
+            toast.textContent = message;
+            document.body.appendChild(toast);
+
+            // Fade in
+            setTimeout(() => {
+                toast.classList.replace('opacity-0', 'opacity-100');
+            }, 10);
+
+            // Fade out and remove
+            setTimeout(() => {
+                toast.classList.replace('opacity-100', 'opacity-0');
+                setTimeout(() => {
+                    document.body.removeChild(toast);
+                }, 300);
+            }, 5000);
+        }
+
+        // Initialize logs on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchLogs();
+        });
+
+        // Event listeners
+        renewSubscriptionBtn.addEventListener('click', renewSubscription);
+        toggleAutoRenewBtn.addEventListener('click', toggleAutoRenew);
+        cancelSubscriptionBtn.addEventListener('click', cancelSubscription);
+        profileDropdownBtn.addEventListener('click', () => profileDropdown.classList.toggle('hidden'));
+        document.addEventListener('click', (event) => {
+            if (!profileDropdownBtn.contains(event.target) && !profileDropdown.contains(event.target)) {
+                profileDropdown.classList.add('hidden');
+            }
+        });
+        logoutBtn.addEventListener('click', () => {
+            localStorage.removeItem('token');
+            document.cookie = 'token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+            window.location.href = '/login.html';
+        });
+
+        // Get token from cookies
+        function getTokenFromCookies() {
+            const cookie = document.cookie.split('; ').find(row => row.startsWith('token='));
+            return cookie ? cookie.split('=')[1] : null;
+        }
+
+        // Check authentication and load data
+        async function checkAuth() {
+            const token = localStorage.getItem('token') || getTokenFromCookies();
+            if (!token) {
+                window.location.href = '/login.html';
+            } else {
+                fetchSubscription();
+                renderPlans();
+                fetchLogs();
+            }
+        }
+
+        // Initial check
+        checkAuth();
+    </script>
+</body>
+
+</html>

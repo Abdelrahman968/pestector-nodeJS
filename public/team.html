@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Our Team | Pestector</title>
+    <!-- Tailwind CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        .team-card {
+            transition: all 0.3s ease;
+        }
+
+        .team-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+
+        .card-overlay {
+            opacity: 0;
+            background: linear-gradient(to top, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0) 100%);
+            transition: opacity 0.3s ease;
+        }
+
+        .team-card:hover .card-overlay {
+            opacity: 1;
+        }
+
+        .modal {
+            transition: opacity 0.3s ease;
+        }
+
+        .modal-content {
+            transition: transform 0.3s ease;
+        }
+
+        .modal.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal.active .modal-content {
+            transform: translateY(0);
+        }
+    </style>
+</head>
+
+<body class="bg-gray-50 text-gray-800">
+    <!-- Header Section -->
+    <header class="bg-white shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+            <div class="flex justify-between items-center">
+                <div>
+                    <h1 class="text-2xl font-bold text-indigo-600">Pestector</h1>
+                    <p class="text-sm text-gray-500">Plant Disease Detection Technology</p>
+                </div>
+                <nav class="hidden md:flex space-x-8">
+                    <a href="#" class="text-gray-500 hover:text-indigo-600">Home</a>
+                    <a href="#" class="text-indigo-600 font-medium">Our Team</a>
+                    <a href="#" class="text-gray-500 hover:text-indigo-600">Technology</a>
+                    <a href="#" class="text-gray-500 hover:text-indigo-600">Contact</a>
+                </nav>
+                <button class="md:hidden text-gray-500 focus:outline-none">
+                    <i class="fas fa-bars text-xl"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <!-- Team Intro -->
+        <div class="text-center mb-16">
+            <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Meet Our Team</h2>
+            <div class="w-16 h-1 bg-indigo-600 mx-auto mb-4"></div>
+            <p class="max-w-2xl mx-auto text-gray-500">
+                The talented individuals behind Pestector V6 are dedicated to advancing plant disease detection
+                technology. Our diverse team of experts brings together knowledge from various fields to create an
+                innovative solution for farmers and gardeners worldwide.
+            </p>
+        </div>
+
+        <!-- Leadership Section -->
+        <div class="mb-16">
+            <h3 class="text-2xl font-bold text-gray-900 mb-8 flex items-center">
+                <span class="w-8 h-8 bg-indigo-600 rounded-full flex items-center justify-center text-white mr-3">
+                    <i class="fas fa-users-cog text-sm"></i>
+                </span>
+                Leadership
+            </h3>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <!-- Dr. Ahmed Dolba -->
+                <div class="team-card bg-white rounded-lg overflow-hidden shadow-md">
+                    <div class="flex flex-col md:flex-row">
+                        <div class="md:w-1/3 relative">
+                            <img src="https://placehold.co/300x300?text=Dr.+Ahmed+Dolba" alt="Dr. Ahmed Dolba"
+                                class="w-full h-64 md:h-full object-cover">
+                        </div>
+                        <div class="md:w-2/3 p-6">
+                            <h4 class="text-xl font-semibold text-gray-900">Dr. Ahmed Dolba</h4>
+                            <p class="text-indigo-600 font-medium mb-2">Lead Supervisor</p>
+                            <p class="text-gray-600 mb-4">Ph.D. in Plant Pathology with over 15 years of experience in
+                                agricultural research.</p>
+                            <div class="border-t border-gray-200 pt-4">
+                                <p class="text-gray-700 mb-2"><span class="font-medium">Expertise:</span> Plant
+                                    Pathology, Disease Resistance, Sustainable Agriculture</p>
+                                <p class="text-gray-700 mb-4"><span class="font-medium">Contact:</span>
+                                    email@pestector.com</p>
+                                <div class="flex space-x-3">
+                                    <a href="#" class="text-indigo-600 hover:text-indigo-800">
+                                        <i class="fab fa-linkedin"></i>
+                                    </a>
+                                    <a href="#" class="text-indigo-600 hover:text-indigo-800">
+                                        <i class="fab fa-twitter"></i>
+                                    </a>
+                                    <a href="#" class="text-indigo-600 hover:text-indigo-800">
+                                        <i class="fas fa-envelope"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Eng. Zinab Awad -->
+                <div class="team-card bg-white rounded-lg overflow-hidden shadow-md">
+                    <div class="flex flex-col md:flex-row">
+                        <div class="md:w-1/3 relative">
+                            <img src="https://placehold.co/300x300?text=Eng.+Zinab+Awad" alt="Eng. Zinab Awad"
+                                class="w-full h-64 md:h-full object-cover">
+                        </div>
+                        <div class="md:w-2/3 p-6">
+                            <h4 class="text-xl font-semibold text-gray-900">Eng. Zinab Awad</h4>
+                            <p class="text-indigo-600 font-medium mb-2">AI Research Supervisor</p>
+                            <p class="text-gray-600 mb-4">Expert in AI and machine learning with a focus on agricultural
+                                applications.</p>
+                            <div class="border-t border-gray-200 pt-4">
+                                <p class="text-gray-700 mb-2"><span class="font-medium">Expertise:</span> Machine
+                                    Learning, Computer Vision, AI in Agriculture</p>
+                                <p class="text-gray-700 mb-4"><span class="font-medium">Contact:</span>
+                                    email@pestector.com</p>
+                                <div class="flex space-x-3">
+                                    <a href="#" class="text-indigo-600 hover:text-indigo-800">
+                                        <i class="fab fa-linkedin"></i>
+                                    </a>
+                                    <a href="#" class="text-indigo-600 hover:text-indigo-800">
+                                        <i class="fab fa-twitter"></i>
+                                    </a>
+                                    <a href="#" class="text-indigo-600 hover:text-indigo-800">
+                                        <i class="fas fa-envelope"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Team Members Section -->
+        <div>
+            <h3 class="text-2xl font-bold text-gray-900 mb-8 flex items-center">
+                <span class="w-8 h-8 bg-indigo-600 rounded-full flex items-center justify-center text-white mr-3">
+                    <i class="fas fa-user-friends text-sm"></i>
+                </span>
+                Team Members
+            </h3>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+                <div
+                    class="team-card bg-gradient-to-br from-indigo-50 to-white rounded-lg overflow-hidden shadow-lg border-2 border-indigo-500 hover:shadow-2xl transform hover:-translate-y-1 transition-all duration-300">
+                    <div class="relative">
+                        <img src="https://placehold.co/300x300?text=Abdelrahman+Ayman" alt="Abdelrahman Ayman"
+                            class="w-full h-64 object-cover">
+                        <div class="absolute top-0 right-0 mt-3 mr-3">
+                            <span
+                                class="bg-indigo-600 text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-md">Team
+                                Leader</span>
+                        </div>
+                        <div
+                            class="card-overlay absolute inset-0 bg-gradient-to-t from-indigo-900/70 to-transparent flex items-end">
+                            <div class="p-4 w-full">
+                                <div class="flex space-x-3 mb-2">
+                                    <a href="#" class="text-white hover:text-indigo-200">
+                                        <i class="fab fa-linkedin"></i>
+                                    </a>
+                                    <a href="#" class="text-white hover:text-indigo-200">
+                                        <i class="fab fa-twitter"></i>
+                                    </a>
+                                    <a href="#" class="text-white hover:text-indigo-200">
+                                        <i class="fas fa-envelope"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <h4 class="text-xl font-bold text-gray-900">Abdelrahman Ayman</h4>
+                                <p class="text-indigo-600 font-medium">Lead Backend Developer</p>
+                            </div>
+                            <span class="bg-indigo-100 text-indigo-800 text-xs font-medium px-2.5 py-0.5 rounded">API
+                                Architect</span>
+                        </div>
+                        <p class="text-gray-600 mt-3">Leads server-side architecture and API development for Pestector.
+                            Oversees backend
+                            team and integration strategies.</p>
+                        <div class="mt-4 flex flex-wrap gap-2">
+                            <span
+                                class="bg-gray-100 text-gray-800 text-xs font-medium px-2.5 py-0.5 rounded">Node.js</span>
+                            <span
+                                class="bg-gray-100 text-gray-800 text-xs font-medium px-2.5 py-0.5 rounded">Express</span>
+                            <span
+                                class="bg-gray-100 text-gray-800 text-xs font-medium px-2.5 py-0.5 rounded">MongoDB</span>
+                            <span class="bg-indigo-100 text-indigo-800 text-xs font-medium px-2.5 py-0.5 rounded">Team
+                                Management</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Abdelrahman Ayman -->
+                <div class="team-card bg-white rounded-lg overflow-hidden shadow-md hover:shadow-xl">
+                    <div class="relative">
+                        <img src="https://placehold.co/300x300?text=Abdelrahman+Ayman" alt="Abdelrahman Ayman"
+                            class="w-full h-64 object-cover">
+                        <div class="card-overlay absolute inset-0 flex items-end">
+                            <div class="p-4 w-full">
+                                <div class="flex space-x-3 mb-2">
+                                    <a href="#" class="text-white hover:text-indigo-200">
+                                        <i class="fab fa-linkedin"></i>
+                                    </a>
+                                    <a href="#" class="text-white hover:text-indigo-200">
+                                        <i class="fab fa-twitter"></i>
+                                    </a>
+                                    <a href="#" class="text-white hover:text-indigo-200">
+                                        <i class="fas fa-envelope"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <h4 class="text-lg font-semibold text-gray-900">Abdelrahman Ayman</h4>
+                                <p class="text-indigo-600 font-medium">Frontend Developer</p>
+                            </div>
+                            <span
+                                class="bg-indigo-100 text-indigo-800 text-xs font-medium px-2.5 py-0.5 rounded">UI/UX</span>
+                        </div>
+                        <p class="text-gray-600 mt-3">Specializes in creating intuitive user interfaces for Pestector
+                            using React and Tailwind CSS.</p>
+                        <div class="mt-4 flex flex-wrap gap-2">
+                            <span
+                                class="bg-gray-100 text-gray-800 text-xs font-medium px-2.5 py-0.5 rounded">React</span>
+                            <span class="bg-gray-100 text-gray-800 text-xs font-medium px-2.5 py-0.5 rounded">Tailwind
+                                CSS</span>
+                            <span class="bg-gray-100 text-gray-800 text-xs font-medium px-2.5 py-0.5 rounded">UI/UX
+                                Design</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Abdelrahman Ayman -->
+                <div class="team-card bg-white rounded-lg overflow-hidden shadow-md hover:shadow-xl">
+                    <div class="relative">
+                        <img src="https://placehold.co/300x300?text=Abdelrahman+Ayman" alt="Abdelrahman Ayman"
+                            class="w-full h-64 object-cover">
+                        <div class="card-overlay absolute inset-0 flex items-end">
+                            <div class="p-4 w-full">
+                                <div class="flex space-x-3 mb-2">
+                                    <a href="#" class="text-white hover:text-indigo-200">
+                                        <i class="fab fa-linkedin"></i>
+                                    </a>
+                                    <a href="#" class="text-white hover:text-indigo-200">
+                                        <i class="fab fa-twitter"></i>
+                                    </a>
+                                    <a href="#" class="text-white hover:text-indigo-200">
+                                        <i class="fas fa-envelope"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <h4 class="text-lg font-semibold text-gray-900">Abdelrahman Ayman</h4>
+                                <p class="text-indigo-600 font-medium">Backend Developer</p>
+                            </div>
+                            <span
+                                class="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded">API</span>
+                        </div>
+                        <p class="text-gray-600 mt-3">Manages server-side logic and API integrations for Pestector.</p>
+                        <div class="mt-4 flex flex-wrap gap-2">
+                            <span
+                                class="bg-gray-100 text-gray-800 text-xs font-medium px-2.5 py-0.5 rounded">Node.js</span>
+                            <span
+                                class="bg-gray-100 text-gray-800 text-xs font-medium px-2.5 py-0.5 rounded">Express</span>
+                            <span
+                                class="bg-gray-100 text-gray-800 text-xs font-medium px-2.5 py-0.5 rounded">MongoDB</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Abdelrahman Ayman -->
+                <div class="team-card bg-white rounded-lg overflow-hidden shadow-md hover:shadow-xl">
+                    <div class="relative">
+                        <img src="https://placehold.co/300x300?text=Abdelrahman+Ayman" alt="Abdelrahman Ayman"
+                            class="w-full h-64 object-cover">
+                        <div class="card-overlay absolute inset-0 flex items-end">
+                            <div class="p-4 w-full">
+                                <div class="flex space-x-3 mb-2">
+                                    <a href="#" class="text-white hover:text-indigo-200">
+                                        <i class="fab fa-linkedin"></i>
+                                    </a>
+                                    <a href="#" class="text-white hover:text-indigo-200">
+                                        <i class="fab fa-twitter"></i>
+                                    </a>
+                                    <a href="#" class="text-white hover:text-indigo-200">
+                                        <i class="fas fa-envelope"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <h4 class="text-lg font-semibold text-gray-900">Abdelrahman Ayman</h4>
+                                <p class="text-indigo-600 font-medium">Backend Developer</p>
+                            </div>
+                            <span
+                                class="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded">API</span>
+                        </div>
+                        <p class="text-gray-600 mt-3">Manages server-side logic and API integrations for Pestector.</p>
+                        <div class="mt-4 flex flex-wrap gap-2">
+                            <span
+                                class="bg-gray-100 text-gray-800 text-xs font-medium px-2.5 py-0.5 rounded">Node.js</span>
+                            <span
+                                class="bg-gray-100 text-gray-800 text-xs font-medium px-2.5 py-0.5 rounded">Express</span>
+                            <span
+                                class="bg-gray-100 text-gray-800 text-xs font-medium px-2.5 py-0.5 rounded">MongoDB</span>
+                        </div>
+                    </div>
+                </div>
+
+
+                <!-- Abdelrahman Ayman -->
+                <div class="team-card bg-white rounded-lg overflow-hidden shadow-md hover:shadow-xl">
+                    <div class="relative">
+                        <img src="https://placehold.co/300x300?text=Abdelrahman+Ayman" alt="Abdelrahman Ayman"
+                            class="w-full h-64 object-cover">
+                        <div class="card-overlay absolute inset-0 flex items-end">
+                            <div class="p-4 w-full">
+                                <div class="flex space-x-3 mb-2">
+                                    <a href="#" class="text-white hover:text-indigo-200">
+                                        <i class="fab fa-linkedin"></i>
+                                    </a>
+                                    <a href="#" class="text-white hover:text-indigo-200">
+                                        <i class="fab fa-twitter"></i>
+                                    </a>
+                                    <a href="#" class="text-white hover:text-indigo-200">
+                                        <i class="fas fa-envelope"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <h4 class="text-lg font-semibold text-gray-900">Abdelrahman Ayman</h4>
+                                <p class="text-indigo-600 font-medium">Backend Developer</p>
+                            </div>
+                            <span
+                                class="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded">API</span>
+                        </div>
+                        <p class="text-gray-600 mt-3">Manages server-side logic and API integrations for Pestector.</p>
+                        <div class="mt-4 flex flex-wrap gap-2">
+                            <span
+                                class="bg-gray-100 text-gray-800 text-xs font-medium px-2.5 py-0.5 rounded">Node.js</span>
+                            <span
+                                class="bg-gray-100 text-gray-800 text-xs font-medium px-2.5 py-0.5 rounded">Express</span>
+                            <span
+                                class="bg-gray-100 text-gray-800 text-xs font-medium px-2.5 py-0.5 rounded">MongoDB</span>
+                        </div>
+                    </div>
+                </div>
+
+
+                <!-- Abdelrahman Ayman -->
+                <div class="team-card bg-white rounded-lg overflow-hidden shadow-md hover:shadow-xl">
+                    <div class="relative">
+                        <img src="https://placehold.co/300x300?text=Abdelrahman+Ayman" alt="Abdelrahman Ayman"
+                            class="w-full h-64 object-cover">
+                        <div class="card-overlay absolute inset-0 flex items-end">
+                            <div class="p-4 w-full">
+                                <div class="flex space-x-3 mb-2">
+                                    <a href="#" class="text-white hover:text-indigo-200">
+                                        <i class="fab fa-linkedin"></i>
+                                    </a>
+                                    <a href="#" class="text-white hover:text-indigo-200">
+                                        <i class="fab fa-twitter"></i>
+                                    </a>
+                                    <a href="#" class="text-white hover:text-indigo-200">
+                                        <i class="fas fa-envelope"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <h4 class="text-lg font-semibold text-gray-900">Abdelrahman Ayman</h4>
+                                <p class="text-indigo-600 font-medium">Backend Developer</p>
+                            </div>
+                            <span
+                                class="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded">API</span>
+                        </div>
+                        <p class="text-gray-600 mt-3">Manages server-side logic and API integrations for Pestector.</p>
+                        <div class="mt-4 flex flex-wrap gap-2">
+                            <span
+                                class="bg-gray-100 text-gray-800 text-xs font-medium px-2.5 py-0.5 rounded">Node.js</span>
+                            <span
+                                class="bg-gray-100 text-gray-800 text-xs font-medium px-2.5 py-0.5 rounded">Express</span>
+                            <span
+                                class="bg-gray-100 text-gray-800 text-xs font-medium px-2.5 py-0.5 rounded">MongoDB</span>
+                        </div>
+                    </div>
+                </div>
+
+
+                <!-- Abdelrahman Ayman -->
+                <div class="team-card bg-white rounded-lg overflow-hidden shadow-md hover:shadow-xl">
+                    <div class="relative">
+                        <img src="https://placehold.co/300x300?text=Abdelrahman+Ayman" alt="Abdelrahman Ayman"
+                            class="w-full h-64 object-cover">
+                        <div class="card-overlay absolute inset-0 flex items-end">
+                            <div class="p-4 w-full">
+                                <div class="flex space-x-3 mb-2">
+                                    <a href="#" class="text-white hover:text-indigo-200">
+                                        <i class="fab fa-linkedin"></i>
+                                    </a>
+                                    <a href="#" class="text-white hover:text-indigo-200">
+                                        <i class="fab fa-twitter"></i>
+                                    </a>
+                                    <a href="#" class="text-white hover:text-indigo-200">
+                                        <i class="fas fa-envelope"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <h4 class="text-lg font-semibold text-gray-900">Abdelrahman Ayman</h4>
+                                <p class="text-indigo-600 font-medium">Backend Developer</p>
+                            </div>
+                            <span
+                                class="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded">API</span>
+                        </div>
+                        <p class="text-gray-600 mt-3">Manages server-side logic and API integrations for Pestector.</p>
+                        <div class="mt-4 flex flex-wrap gap-2">
+                            <span
+                                class="bg-gray-100 text-gray-800 text-xs font-medium px-2.5 py-0.5 rounded">Node.js</span>
+                            <span
+                                class="bg-gray-100 text-gray-800 text-xs font-medium px-2.5 py-0.5 rounded">Express</span>
+                            <span
+                                class="bg-gray-100 text-gray-800 text-xs font-medium px-2.5 py-0.5 rounded">MongoDB</span>
+                        </div>
+                    </div>
+                </div>
+
+
+                <!-- Abdelrahman Ayman -->
+                <div class="team-card bg-white rounded-lg overflow-hidden shadow-md hover:shadow-xl">
+                    <div class="relative">
+                        <img src="https://placehold.co/300x300?text=Abdelrahman+Ayman" alt="Abdelrahman Ayman"
+                            class="w-full h-64 object-cover">
+                        <div class="card-overlay absolute inset-0 flex items-end">
+                            <div class="p-4 w-full">
+                                <div class="flex space-x-3 mb-2">
+                                    <a href="#" class="text-white hover:text-indigo-200">
+                                        <i class="fab fa-linkedin"></i>
+                                    </a>
+                                    <a href="#" class="text-white hover:text-indigo-200">
+                                        <i class="fab fa-twitter"></i>
+                                    </a>
+                                    <a href="#" class="text-white hover:text-indigo-200">
+                                        <i class="fas fa-envelope"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <h4 class="text-lg font-semibold text-gray-900">Abdelrahman Ayman</h4>
+                                <p class="text-indigo-600 font-medium">Backend Developer</p>
+                            </div>
+                            <span
+                                class="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded">API</span>
+                        </div>
+                        <p class="text-gray-600 mt-3">Manages server-side logic and API integrations for Pestector.</p>
+                        <div class="mt-4 flex flex-wrap gap-2">
+                            <span
+                                class="bg-gray-100 text-gray-800 text-xs font-medium px-2.5 py-0.5 rounded">Node.js</span>
+                            <span
+                                class="bg-gray-100 text-gray-800 text-xs font-medium px-2.5 py-0.5 rounded">Express</span>
+                            <span
+                                class="bg-gray-100 text-gray-800 text-xs font-medium px-2.5 py-0.5 rounded">MongoDB</span>
+                        </div>
+                    </div>
+                </div>
+
+
+                <!-- Abdelrahman Ayman -->
+                <div class="team-card bg-white rounded-lg overflow-hidden shadow-md hover:shadow-xl">
+                    <div class="relative">
+                        <img src="https://placehold.co/300x300?text=Abdelrahman+Ayman" alt="Abdelrahman Ayman"
+                            class="w-full h-64 object-cover">
+                        <div class="card-overlay absolute inset-0 flex items-end">
+                            <div class="p-4 w-full">
+                                <div class="flex space-x-3 mb-2">
+                                    <a href="#" class="text-white hover:text-indigo-200">
+                                        <i class="fab fa-linkedin"></i>
+                                    </a>
+                                    <a href="#" class="text-white hover:text-indigo-200">
+                                        <i class="fab fa-twitter"></i>
+                                    </a>
+                                    <a href="#" class="text-white hover:text-indigo-200">
+                                        <i class="fas fa-envelope"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <h4 class="text-lg font-semibold text-gray-900">Abdelrahman Ayman</h4>
+                                <p class="text-indigo-600 font-medium">Backend Developer</p>
+                            </div>
+                            <span
+                                class="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded">API</span>
+                        </div>
+                        <p class="text-gray-600 mt-3">Manages server-side logic and API integrations for Pestector.</p>
+                        <div class="mt-4 flex flex-wrap gap-2">
+                            <span
+                                class="bg-gray-100 text-gray-800 text-xs font-medium px-2.5 py-0.5 rounded">Node.js</span>
+                            <span
+                                class="bg-gray-100 text-gray-800 text-xs font-medium px-2.5 py-0.5 rounded">Express</span>
+                            <span
+                                class="bg-gray-100 text-gray-800 text-xs font-medium px-2.5 py-0.5 rounded">MongoDB</span>
+                        </div>
+                    </div>
+                </div>
+
+
+
+
+
+
+
+            </div>
+        </div>
+    </main>
+
+
+
+
+</body>
+
+</html>

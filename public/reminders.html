@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reminders | Pestector</title>
+    <!-- Tailwind CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@3.3.3/dist/tailwind.min.css" rel="stylesheet">
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        /* Improved animations */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.4s ease-out forwards;
+        }
+
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+    </style>
+</head>
+
+<body class="bg-gray-50 min-h-screen flex flex-col">
+    <!-- Header -->
+    <header class="bg-white shadow-sm sticky top-0 z-10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center space-x-3">
+                    <div class="bg-indigo-600 text-white p-2 rounded-lg">
+                        <i class="fas fa-leaf text-xl"></i>
+                    </div>
+                    <h1 class="text-2xl font-bold text-gray-900">Pestector</h1>
+                </div>
+                <nav class="hidden md:flex space-x-6">
+                    <a href="index.html"
+                        class="text-gray-500 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">
+                        <i class="fas fa-home mr-2"></i>Home
+                    </a>
+                    <a href="history.html"
+                        class="text-gray-500 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">
+                        <i class="fas fa-history mr-2"></i>History
+                    </a>
+                    <a href="settings.html"
+                        class="text-gray-500 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">
+                        <i class="fas fa-cog mr-2"></i>Settings
+                    </a>
+                </nav>
+                <!-- Profile Dropdown -->
+                <div class="relative">
+                    <button id="profileDropdownBtn"
+                        class="flex items-center text-sm font-medium text-indigo-600 transition-colors duration-200">
+                        <i class="fas fa-user-circle mr-2"></i>Profile
+                        <i class="fas fa-chevron-down ml-1 text-xs"></i>
+                    </button>
+                    <div id="profileDropdown"
+                        class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-2 hidden">
+                        <a href="profile.html" class="block px-4 py-2 text-sm text-indigo-600 bg-gray-100">Edit
+                            Profile</a>
+                        <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Change Password</a>
+                        <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Notifications</a>
+                        <button id="logoutBtn"
+                            class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                            <i class="fas fa-sign-out-alt mr-2"></i>Logout
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-grow py-8">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="mb-8">
+                <h2 class="text-2xl font-bold text-gray-900">Reminders</h2>
+                <p class="mt-1 text-sm text-gray-500">Manage your plant care reminders here.</p>
+            </div>
+
+            <!-- Create Reminder Form -->
+            <div class="bg-white shadow rounded-lg p-6 mb-8 fade-in">
+                <h3 class="text-lg font-medium text-gray-900 mb-4">Create a Reminder</h3>
+                <form id="reminderForm" class="space-y-4">
+                    <div class="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-2">
+                        <div>
+                            <label for="plantName" class="block text-sm font-medium text-gray-700">Plant Name</label>
+                            <input type="text" id="plantName" name="plantName" required
+                                class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                        </div>
+                        <div>
+                            <label for="careType" class="block text-sm font-medium text-gray-700">Care Type</label>
+                            <select id="careType" name="careType" required
+                                class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                                <option value="water">Watering</option>
+                                <option value="fertilize">Fertilizing</option>
+                                <option value="prune">Pruning</option>
+                                <option value="repot">Repotting</option>
+                                <option value="inspect">Inspection</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="frequency" class="block text-sm font-medium text-gray-700">Frequency
+                                (days)</label>
+                            <input type="number" id="frequency" name="frequency" required
+                                class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                        </div>
+                        <div>
+                            <label for="notes" class="block text-sm font-medium text-gray-700">Notes</label>
+                            <textarea id="notes" name="notes"
+                                class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"></textarea>
+                        </div>
+                    </div>
+                    <div class="flex justify-end">
+                        <button type="submit"
+                            class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                            <i class="fas fa-bell mr-2"></i>Create Reminder
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Reminders List -->
+            <div class="bg-white shadow rounded-lg p-6 fade-in">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-lg font-medium text-gray-900">Your Reminders</h3>
+                </div>
+                <div id="remindersList" class="space-y-4">
+                    <!-- Reminders will be dynamically populated here -->
+                </div>
+            </div>
+            <!-- Toast Container -->
+            <div id="toastContainer" class="fixed top-4 right-4 space-y-4 z-50"></div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-gray-200 mt-12">
+        <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="mb-4 md:mb-0">
+                    <p class="text-sm text-gray-500">&copy; 2025 Pestector. All rights reserved.</p>
+                </div>
+                <div class="flex space-x-6">
+                    <a href="#" class="text-gray-400 hover:text-gray-500"><i class="fab fa-twitter"></i></a>
+                    <a href="#" class="text-gray-400 hover:text-gray-500"><i class="fab fa-facebook"></i></a>
+                    <a href="#" class="text-gray-400 hover:text-gray-500"><i class="fab fa-instagram"></i></a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script>
+        const apiBaseUrl = '/api';
+
+        // DOM Elements
+        const reminderForm = document.getElementById('reminderForm');
+        const remindersList = document.getElementById('remindersList');
+        const logoutBtn = document.getElementById('logoutBtn');
+        const profileDropdownBtn = document.getElementById('profileDropdownBtn');
+        const profileDropdown = document.getElementById('profileDropdown');
+
+        // Icons for care types
+        const careTypeIcons = {
+            water: 'fas fa-tint', // Water drop icon
+            fertilize: 'fas fa-seedling', // Seedling icon
+            prune: 'fas fa-cut', // Scissors icon
+            repot: 'fas fa-archive', // Box icon
+            inspect: 'fas fa-search', // Magnifying glass icon
+        };
+
+        // Function to show a toast notification
+        function showToast(message, type = 'success') {
+            const toast = document.createElement('div');
+            const bgColor = type === 'success' ? 'bg-green-500' : type === 'error' ? 'bg-red-500' : 'bg-blue-500';
+            toast.className = `flex items-center ${bgColor} text-white text-sm font-medium px-4 py-2 rounded-md shadow-lg fade-in max-w-sm`;
+            toast.innerHTML = `
+        <i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-info-circle'} mr-2"></i>
+        ${message}
+    `;
+            document.getElementById('toastContainer').appendChild(toast);
+
+            // Remove toast after 3 seconds
+            setTimeout(() => {
+                toast.classList.remove('fade-in');
+                toast.classList.add('opacity-0');
+                setTimeout(() => toast.remove(), 400); // Match fade-out duration
+            }, 3000);
+        }
+
+        // Fetch and display reminders
+        async function fetchReminders() {
+            try {
+                const token = localStorage.getItem('token') || getTokenFromCookies();
+                if (!token) {
+                    window.location.href = '/login.html';
+                    return;
+                }
+
+                const response = await fetch(`${apiBaseUrl}/reminders`, {
+                    method: 'GET',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                const data = await response.json();
+                if (!response.ok) throw new Error(data.message || 'Failed to fetch reminders');
+
+                // Clear existing reminders
+                remindersList.innerHTML = '';
+
+                // Group reminders by frequency
+                const remindersByFrequency = data.reminders.reduce((groups, reminder) => {
+                    const frequency = reminder.frequency;
+                    if (!groups[frequency]) {
+                        groups[frequency] = [];
+                    }
+                    groups[frequency].push(reminder);
+                    return groups;
+                }, {});
+
+                // Populate reminders by frequency
+                for (const frequency in remindersByFrequency) {
+                    const frequencyGroup = document.createElement('div');
+                    frequencyGroup.className = 'mb-6';
+                    frequencyGroup.innerHTML = `
+                        <h4 class="text-md font-medium text-gray-900 mb-2">Frequency: Every ${frequency} days</h4>
+                        <div class="space-y-4">
+                            ${remindersByFrequency[frequency].map(reminder => `
+                                <div class="bg-gray-50 p-4 rounded-lg border border-gray-200 card-hover">
+                                    <div class="flex justify-between items-center">
+                                        <div>
+                                            <div class="flex items-center space-x-2">
+                                                <i class="${careTypeIcons[reminder.careType]} text-indigo-600"></i>
+                                                <h4 class="text-sm font-medium text-gray-900">${reminder.plantName}</h4>
+                                            </div>
+                                            <p class="text-sm text-gray-500">Next Due: ${new Date(reminder.nextDue).toLocaleDateString("en")}</p>
+                                            ${reminder.notes ? `<p class="text-sm text-gray-500 mt-2">Notes: ${reminder.notes}</p>` : ''}
+                                            <p class="text-sm text-gray-500">Completed: ${reminder.completedCount} times</p>
+                                        </div>
+                                        <div class="flex space-x-2">
+                                            ${!reminder.lastCompleted || new Date(reminder.nextDue) <= new Date() ? `
+                                                <button onclick="markAsCompleted('${reminder._id}')"
+                                                    class="px-2 py-1 text-sm text-white bg-green-600 rounded hover:bg-green-700">
+                                                    <i class="fas fa-check"></i>
+                                                </button>
+                                            ` : ''}
+                                            <button onclick="deleteReminder('${reminder._id}')"
+                                                class="px-2 py-1 text-sm text-white bg-red-600 rounded hover:bg-red-700">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    `;
+                    remindersList.appendChild(frequencyGroup);
+                }
+            } catch (error) {
+                console.error('Error fetching reminders:', error);
+            }
+        }
+
+        // Create a reminder
+        async function createReminder(event) {
+            event.preventDefault();
+            try {
+                const token = localStorage.getItem('token') || getTokenFromCookies();
+                if (!token) {
+                    window.location.href = '/login.html';
+                    return;
+                }
+
+                const formData = {
+                    plantName: document.getElementById('plantName').value,
+                    careType: document.getElementById('careType').value,
+                    frequency: parseInt(document.getElementById('frequency').value),
+                    notes: document.getElementById('notes').value
+                };
+
+                const response = await fetch(`${apiBaseUrl}/reminders`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                const data = await response.json();
+                if (!response.ok) throw new Error(data.message || 'Failed to create reminder');
+
+                showToast('Reminder created successfully', 'success'); // Updated
+                reminderForm.reset();
+                fetchReminders(); // Refresh the reminders list
+            } catch (error) {
+                console.error('Error creating reminder:', error);
+                showToast('Failed to create reminder', 'error'); // Updated
+            }
+        }
+
+        // Mark a reminder as completed
+        async function markAsCompleted(reminderId) {
+            try {
+                const token = localStorage.getItem('token') || getTokenFromCookies();
+                if (!token) {
+                    window.location.href = '/login.html';
+                    return;
+                }
+
+                const response = await fetch(`${apiBaseUrl}/reminders/${reminderId}/complete`, {
+                    method: 'PUT',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                const data = await response.json();
+                if (!response.ok) throw new Error(data.message || 'Failed to mark reminder as completed');
+
+                showToast('Reminder marked as completed', 'success'); // Updated
+                fetchReminders(); // Refresh the reminders list
+            } catch (error) {
+                console.error('Error marking reminder as completed:', error);
+                showToast('Failed to mark reminder as completed', 'error'); // Updated
+            }
+        }
+
+        // Delete a reminder
+        async function deleteReminder(reminderId) {
+            try {
+                const token = localStorage.getItem('token') || getTokenFromCookies();
+                if (!token) {
+                    window.location.href = '/login.html';
+                    return;
+                }
+
+                const response = await fetch(`${apiBaseUrl}/reminders/${reminderId}`, {
+                    method: 'DELETE',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                const data = await response.json();
+                if (!response.ok) throw new Error(data.message || 'Failed to delete reminder');
+
+                showToast('Reminder deleted successfully', 'success'); // Updated
+                fetchReminders(); // Refresh the reminders list
+            } catch (error) {
+                console.error('Error deleting reminder:', error);
+                showToast('Failed to delete reminder', 'error'); // Updated
+            }
+        }
+
+        // Logout function
+        function logout() {
+            localStorage.removeItem('token');
+            document.cookie = 'token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+            window.location.href = '/login.html';
+        }
+
+        // Event Listeners
+        reminderForm.addEventListener('submit', createReminder);
+        logoutBtn.addEventListener('click', logout);
+        profileDropdownBtn.addEventListener('click', () => {
+            profileDropdown.classList.toggle('hidden');
+        });
+
+        document.addEventListener('click', (event) => {
+            if (!profileDropdownBtn.contains(event.target) && !profileDropdown.contains(event.target)) {
+                profileDropdown.classList.add('hidden');
+            }
+        });
+
+        // Initial fetch
+        fetchReminders();
+    </script>
+</body>
+
+</html>

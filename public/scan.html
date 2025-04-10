@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scan Image - Pestector</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="shortcut icon" href="../static/img/icon.png" type="image/x-icon">
+</head>
+
+<body class="min-h-screen bg-gray-100 flex flex-col">
+    <!-- Header -->
+    <header class="bg-white shadow-md sticky top-0 z-50">
+        <nav class="container mx-auto px-4 py-4 flex justify-between items-center">
+            <a href="/" class="flex items-center space-x-2 text-xl font-bold text-indigo-600">
+                <i class="fas fa-cube"></i>
+                <span>Pestector</span>
+            </a>
+            <div class="flex items-center space-x-6">
+                <a href="#" class="text-gray-600 hover:text-indigo-600 hidden md:block">Home</a>
+                <a href="#" class="text-gray-600 hover:text-indigo-600 hidden md:block">Features</a>
+                <a href="#" class="text-gray-600 hover:text-indigo-600 hidden md:block">About</a>
+                <button id="logoutButton" class="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700">
+                    Logout
+                </button>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-grow container mx-auto px-4 py-8">
+        <div class="flex flex-col lg:flex-row gap-8">
+            <!-- Left Section -->
+            <div class="lg:w-1/3 bg-white rounded-lg shadow-md p-6">
+                <h2 class="text-2xl font-bold text-gray-800 mb-6">Scan Your Plant</h2>
+                <div
+                    class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-indigo-500 transition-colors">
+                    <input type="file" id="imageInput" accept="image/*" class="hidden">
+                    <label for="imageInput" class="cursor-pointer block">
+                        <div id="preview-container" class="mb-4 hidden">
+                            <img id="preview-image" class="max-h-48 mx-auto rounded-md object-contain"
+                                src="./img/image.png" alt="Preview">
+                        </div>
+                        <div id="upload-prompt">
+                            <i class="fas fa-upload text-3xl text-gray-400 mb-2"></i>
+                            <p class="text-gray-600 font-medium">Drop or click to upload an image</p>
+                            <p class="text-sm text-gray-500 mt-1">JPG, PNG, WEBP supported</p>
+                        </div>
+                    </label>
+                </div>
+                <div class="mt-4 flex items-center justify-between bg-gray-50 p-3 rounded-md">
+                    <label for="useGemini" class="text-gray-700 font-medium">AI Analysis</label>
+                    <input type="checkbox" id="useGemini" class="w-5 h-5 text-indigo-600 rounded">
+                </div>
+                <div class="mt-6 flex space-x-4">
+                    <button onclick="classifyImage()"
+                        class="flex-1 bg-indigo-600 text-white py-3 rounded-md hover:bg-indigo-700 flex items-center justify-center space-x-2">
+                        <i class="fas fa-search"></i>
+                        <span>Analyze Plant</span>
+                    </button>
+                    <button onclick="resetForm()"
+                        class="flex-1 bg-gray-600 text-white py-3 rounded-md hover:bg-gray-700 flex items-center justify-center space-x-2">
+                        <i class="fas fa-redo"></i>
+                        <span>New Classify</span>
+                    </button>
+                </div>
+                <button id="generatePdfBtn" onclick="generatePdfReport()"
+                    class="mt-4 w-full bg-green-600 text-white py-3 rounded-md hover:bg-green-700 flex items-center justify-center space-x-2 hidden">
+                    <i class="fas fa-file-pdf"></i>
+                    <span>Generate PDF Report</span>
+                </button>
+                <div id="metadata-content" class="mt-6 hidden space-y-4"></div>
+                <div id="subscription-info" class="mt-6 hidden space-y-4"></div>
+                <!-- Removed PDF Report section -->
+            </div>
+
+            <!-- Right Section -->
+            <div class="lg:w-2/3 bg-white rounded-lg shadow-md p-6">
+                <div id="result-placeholder" class="flex items-center justify-center h-full text-gray-500">
+                    <div class="text-center">
+                        <i class="fas fa-microscope text-5xl mb-4"></i>
+                        <p>Upload an image to see analysis results</p>
+                    </div>
+                </div>
+                <div id="result-content" class="hidden space-y-6">
+                    <div id="results-content"></div>
+                    <div id="alternative-predictions"></div>
+                    <div id="warnings-section"></div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-gray-200 py-6">
+        <div class="container mx-auto px-4 flex flex-col md:flex-row justify-between items-center">
+            <p class="text-sm text-gray-500 mb-4 md:mb-0">© 2025 Pestector. All rights reserved.</p>
+            <div class="flex space-x-6">
+                <a href="#" class="text-gray-400 hover:text-indigo-600"><i class="fab fa-facebook"></i></a>
+                <a href="#" class="text-gray-400 hover:text-indigo-600"><i class="fab fa-twitter"></i></a>
+                <a href="#" class="text-gray-400 hover:text-indigo-600"><i class="fab fa-instagram"></i></a>
+                <a href="#" class="text-gray-400 hover:text-indigo-600"><i class="fab fa-linkedin"></i></a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        let currentHistoryId = null;
+
+        // Image preview
+        const imageInput = document.getElementById('imageInput');
+        const previewContainer = document.getElementById('preview-container');
+        const previewImage = document.getElementById('preview-image');
+        const uploadPrompt = document.getElementById('upload-prompt');
+
+        imageInput.addEventListener('change', function (e) {
+            const file = this.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    previewImage.src = e.target.result;
+                    previewContainer.classList.remove('hidden');
+                    uploadPrompt.classList.add('hidden');
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Classify Image
+        async function classifyImage() {
+            const fileInput = document.getElementById('imageInput');
+            const useGemini = document.getElementById('useGemini').checked;
+            const resultPlaceholder = document.getElementById('result-placeholder');
+            const resultContent = document.getElementById('result-content');
+            const resultsContentDiv = document.getElementById('results-content');
+            const alternativePredictions = document.getElementById('alternative-predictions');
+            const warningsSection = document.getElementById('warnings-section');
+            const metadataContentDiv = document.getElementById('metadata-content');
+            const subscriptionInfoDiv = document.getElementById('subscription-info');
+            const generatePdfBtn = document.getElementById('generatePdfBtn');
+
+            if (!fileInput.files.length) {
+                resultPlaceholder.innerHTML = '<p class="text-red-600">Please upload an image first.</p>';
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('file', fileInput.files[0]);
+            resultPlaceholder.innerHTML = '<div class="flex items-center space-x-2"><svg class="animate-spin h-5 w-5 text-indigo-600" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="4" opacity="0.3"/><path fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"/></svg><span>Analyzing...</span></div>';
+
+            try {
+                const response = await fetch(`/api/classify?use_gemini=${useGemini}&generate_report=true`, {
+                    method: 'POST',
+                    body: formData,
+                    headers: { 'X-API-KEY': '1122333' }
+                });
+
+                if (!response.ok) throw new Error('Analysis failed');
+                const data = await response.json();
+
+                currentHistoryId = data.historyId;
+                resultPlaceholder.classList.add('hidden');
+                resultContent.classList.remove('hidden');
+                generatePdfBtn.classList.remove('hidden');
+
+                resultsContentDiv.innerHTML = `
+                    <div class="space-y-4">
+                        <div class="bg-gray-50 p-4 rounded-md">
+                            <h3 class="text-lg font-semibold">${data.prediction.plant}</h3>
+                            <p class="text-gray-600">${data.prediction.condition}</p>
+                            <div class="mt-2 flex items-center">
+                                <div class="w-full bg-gray-200 rounded-full h-2">
+                                    <div class="bg-indigo-600 h-2 rounded-full" style="width: ${data.prediction.confidence}%"></div>
+                                </div>
+                                <span class="ml-2 text-sm font-medium">${data.prediction.confidence}% (${data.prediction.confidence_level})</span>
+                            </div>
+                            <p class="mt-2 text-sm text-gray-600">Severity: ${data.prediction.disease_info.severity}</p>
+                            <p class="text-sm text-gray-600">Source: ${data.prediction.data_source}</p>
+                        </div>
+                        <div class="bg-blue-50 p-4 rounded-md">
+                            <h4 class="font-semibold">Treatment Recommendations</h4>
+                            <p>${data.prediction.treatment_recommendations}</p>
+                        </div>
+                        <div class="bg-blue-50 p-4 rounded-md">
+                            <h4 class="font-semibold">Reason for Disease</h4>
+                            <p>${data.prediction.reason_for_disease}</p>
+                        </div>
+                    </div>
+                `;
+
+                alternativePredictions.innerHTML = `
+                    <div class="space-y-4">
+                        <h3 class="text-lg font-semibold flex items-center">
+                            <i class="fas fa-list-ol text-green-500 mr-2"></i> Top 3 Predictions
+                        </h3>
+                        ${data.top_3_predictions.map((pred, index) => `
+                            <div class="p-4 rounded-md ${index === 0 ? 'bg-green-50' : 'bg-gray-50'}">
+                                <div class="flex justify-between items-center">
+                                    <span class="font-medium">${pred.class}</span>
+                                    <span class="text-sm bg-white px-2 py-1 rounded-full">${(pred.confidence * 100).toFixed(2)}%</span>
+                                </div>
+                                <p class="text-sm text-gray-600">Patterns: ${pred.disease_info.patterns.join(', ') || 'None'}</p>
+                                <p class="text-sm text-gray-600">Severity: ${pred.disease_info.severity}</p>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+
+                if (data.warnings.low_confidence || data.warnings.severe_disease || data.warnings.requires_expert_review) {
+                    warningsSection.innerHTML = `
+                        <div class="bg-yellow-50 p-4 rounded-md">
+                            <h3 class="font-semibold flex items-center">
+                                <i class="fas fa-exclamation-circle text-yellow-500 mr-2"></i> Warnings
+                            </h3>
+                            <ul class="mt-2 space-y-2 text-sm">
+                                ${data.warnings.low_confidence ? '<li class="text-yellow-700"><i class="fas fa-exclamation-triangle mr-2"></i>Low confidence</li>' : ''}
+                                ${data.warnings.severe_disease ? '<li class="text-red-700"><i class="fas fa-virus mr-2"></i>Severe disease</li>' : ''}
+                                ${data.warnings.requires_expert_review ? '<li class="text-blue-700"><i class="fas fa-user-md mr-2"></i>Expert review recommended</li>' : ''}
+                            </ul>
+                        </div>
+                    `;
+                }
+
+                metadataContentDiv.innerHTML = `
+                    <div class="bg-gray-50 p-4 rounded-md">
+                        <h3 class="font-semibold">Image Metadata</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2 text-sm">
+                            <p><span class="font-medium">Filename:</span> ${data.metadata.filename}</p>
+                            <p><span class="font-medium">Resolution:</span> ${data.metadata.resolution}</p>
+                            <p><span class="font-medium">Size:</span> ${data.metadata.size}</p>
+                            <p><span class="font-medium">Format:</span> ${data.metadata.format}</p>
+                            <p><span class="font-medium">Timestamp:</span> ${data.metadata.timestamp}</p>
+                        </div>
+                    </div>
+                `;
+                metadataContentDiv.classList.remove('hidden');
+
+                subscriptionInfoDiv.innerHTML = `
+                    <div class="bg-green-50 p-4 rounded-md">
+                        <h3 class="font-semibold">Subscription Info</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2 text-sm">
+                            <p><span class="font-medium">Plan:</span> ${data.subscription_info.plan}</p>
+                            <p><span class="font-medium">Scan Limit:</span> ${data.subscription_info.scanLimit}</p>
+                            <p><span class="font-medium">Scans Used:</span> ${data.subscription_info.scans_used}</p>
+                            <p><span class="font-medium">Scans Remaining:</span> ${data.subscription_info.scans_remaining}</p>
+                        </div>
+                    </div>
+                `;
+                subscriptionInfoDiv.classList.remove('hidden');
+            } catch (error) {
+                resultPlaceholder.innerHTML = `<p class="text-red-600">Error: ${error.message}</p>`;
+            }
+        }
+
+        // Reset Form
+        function resetForm() {
+            const fileInput = document.getElementById('imageInput');
+            const previewContainer = document.getElementById('preview-container');
+            const uploadPrompt = document.getElementById('upload-prompt');
+            const resultContent = document.getElementById('result-content');
+            const resultPlaceholder = document.getElementById('result-placeholder');
+            const metadataContentDiv = document.getElementById('metadata-content');
+            const subscriptionInfoDiv = document.getElementById('subscription-info');
+            const generatePdfBtn = document.getElementById('generatePdfBtn');
+
+            fileInput.value = '';
+            previewContainer.classList.add('hidden');
+            uploadPrompt.classList.remove('hidden');
+            resultContent.classList.add('hidden');
+            resultPlaceholder.classList.remove('hidden');
+            resultPlaceholder.innerHTML = `
+                <div class="text-center">
+                    <i class="fas fa-microscope text-5xl mb-4"></i>
+                    <p>Upload an image to see analysis results</p>
+                </div>
+            `;
+            metadataContentDiv.classList.add('hidden');
+            subscriptionInfoDiv.classList.add('hidden');
+            generatePdfBtn.classList.add('hidden');
+            currentHistoryId = null;
+        }
+
+        // Generate PDF Report
+        async function generatePdfReport() {
+            if (!currentHistoryId) {
+                alert("No classification history available to generate a report.");
+                return;
+            }
+
+            try {
+                const token = localStorage.getItem('token');
+                if (!token) {
+                    throw new Error("No authentication token found. Please log in.");
+                }
+
+                const response = await fetch(`/api/reports/generate/${currentHistoryId}`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Accept': 'application/pdf',
+                    },
+                });
+
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    throw new Error(`Server error: ${response.status} - ${errorText}`);
+                }
+
+                const contentType = response.headers.get('Content-Type');
+                if (!contentType.includes('application/pdf')) {
+                    throw new Error(`Unexpected response type: ${contentType}`);
+                }
+
+                const blob = await response.blob();
+                const url = window.URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = `classification_report_${currentHistoryId}.pdf`;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                window.URL.revokeObjectURL(url);
+
+            } catch (error) {
+                console.error("PDF Generation Error:", error);
+                alert(`Error generating PDF: ${error.message}`);
+            }
+        }
+
+        // Drag and drop
+        const dropZone = document.querySelector('.border-dashed');
+        dropZone.addEventListener('dragover', (e) => e.preventDefault());
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            imageInput.files = e.dataTransfer.files;
+            imageInput.dispatchEvent(new Event('change'));
+        });
+    </script>
+</body>
+
+</html>

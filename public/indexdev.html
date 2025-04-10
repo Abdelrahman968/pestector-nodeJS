@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Main Page | Pestector</title>
+    <!-- Tailwind CSS v3 -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@3.3.3/dist/tailwind.min.css" rel="stylesheet">
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Animate.css for animations -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+
+    <style>
+        /* Custom animation for message fade-in and fade-out */
+        @keyframes slideInDown {
+            from {
+                transform: translateY(-20px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes fadeOutUp {
+            from {
+                transform: translateY(0);
+                opacity: 1;
+            }
+
+            to {
+                transform: translateY(-20px);
+                opacity: 0;
+            }
+        }
+
+        .slide-in-down {
+            animation: slideInDown 0.5s ease forwards;
+        }
+
+        .fade-out-up {
+            animation: fadeOutUp 0.5s ease forwards;
+        }
+
+        .button-pulse:hover {
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.05);
+            }
+
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        /* Bar chart animation */
+        .bar-grow {
+            animation: growBar 1s ease-out forwards;
+        }
+
+        @keyframes growBar {
+            from {
+                width: 0%;
+            }
+
+            to {
+                width: var(--bar-width);
+            }
+        }
+    </style>
+</head>
+
+<body class="bg-gray-50 min-h-screen flex flex-col">
+    <!-- Header with improved styling -->
+    <header class="bg-white shadow-sm sticky top-0 z-10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center space-x-3">
+                    <div class="bg-indigo-600 text-white p-2 rounded-lg">
+                        <i class="fas fa-leaf text-xl"></i>
+                    </div>
+                    <h1 class="text-2xl font-bold text-gray-900">Pestector</h1>
+                </div>
+                <nav class="hidden md:flex space-x-6">
+                    <a href="index.html"
+                        class="text-gray-500 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">
+                        <i class="fas fa-home mr-2"></i>Home
+                    </a>
+                    <a href="history.html"
+                        class="text-indigo-600 border-b-2 border-indigo-600 px-3 py-2 text-sm font-medium">
+                        <i class="fas fa-history mr-2"></i>History
+                    </a>
+                    <a href="settings.html"
+                        class="text-gray-500 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">
+                        <i class="fas fa-cog mr-2"></i>Settings
+                    </a>
+                </nav>
+                <button id="logoutBtn"
+                    class="flex items-center text-sm font-medium text-gray-700 hover:text-indigo-600 transition-colors duration-200">
+                    <i class="fas fa-sign-out-alt mr-2"></i>Logout
+                </button>
+            </div>
+        </div>
+    </header>
+    <div class="max-w-4xl mx-auto my-12 px-4 sm:px-6 lg:px-8">
+        <div class="bg-white py-8 px-6 shadow rounded-lg sm:px-10">
+            <h1 class="text-3xl font-bold text-center mb-6">Welcome to Pestector</h1>
+
+            <!-- Status Message Container -->
+            <div id="statusMessageContainer" class="mb-4 hidden">
+                <div id="statusMessage" class="py-2 px-4 rounded-md text-sm font-medium"></div>
+            </div>
+
+            <!-- Navigation Links (Hidden if Logged In) -->
+            <div id="navLinks" class="mb-8">
+                <a href="/login.html"
+                    class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md 
+                    shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 
+                    focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors button-pulse mb-4">
+                    Login
+                </a>
+                <a href="/register.html"
+                    class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md 
+                    shadow-sm text-sm font-medium text-white bg-green-500 hover:bg-green-600 
+                    focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-colors button-pulse mb-4">
+                    Register
+                </a>
+                <a href="/dashboard.html"
+                    class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md 
+                    shadow-sm text-sm font-medium text-white bg-purple-500 hover:bg-purple-600 
+                    focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 transition-colors button-pulse">
+                    Dashboard
+                </a>
+            </div>
+
+            <!-- System Analytics Section -->
+            <div id="analyticsSection" class="mb-8">
+                <h2 class="text-2xl font-semibold mb-4 text-gray-900">System Analytics</h2>
+
+                <!-- Summary Stats -->
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+                    <div class="p-4 bg-gray-100 rounded-md text-center animate__animated animate__fadeIn">
+                        <h3 class="text-lg font-medium text-gray-800">Total Users</h3>
+                        <p id="userCount" class="text-2xl font-bold text-indigo-600">0</p>
+                    </div>
+                    <div class="p-4 bg-gray-100 rounded-md text-center animate__animated animate__fadeIn">
+                        <h3 class="text-lg font-medium text-gray-800">Total Guests</h3>
+                        <p id="guestCount" class="text-2xl font-bold text-indigo-600">0</p>
+                    </div>
+                    <div class="p-4 bg-gray-100 rounded-md text-center animate__animated animate__fadeIn">
+                        <h3 class="text-lg font-medium text-gray-800">Total Scans</h3>
+                        <p id="totalScans" class="text-2xl font-bold text-indigo-600">0</p>
+                    </div>
+                </div>
+
+                <!-- User Growth -->
+                <div class="mb-6">
+                    <h3 class="text-lg font-medium text-gray-800 mb-2">User Growth</h3>
+                    <div id="userGrowthChart" class="space-y-2"></div>
+                </div>
+
+                <!-- Scan Volume -->
+                <div class="mb-6">
+                    <h3 class="text-lg font-medium text-gray-800 mb-2">Scan Volume</h3>
+                    <div id="scanVolumeChart" class="space-y-2"></div>
+                </div>
+
+                <!-- Common Diseases (System) -->
+                <div class="mb-6">
+                    <h3 class="text-lg font-medium text-gray-800 mb-2">Most Common Diseases (System)</h3>
+                    <ul id="commonDiseasesSystem" class="space-y-2"></ul>
+                </div>
+
+                <!-- Common Diseases (User) -->
+                <div class="mb-6" id="userCommonDiseasesSection">
+                    <h3 class="text-lg font-medium text-gray-800 mb-2">Most Common Diseases (User)</h3>
+                    <ul id="commonDiseasesUser" class="space-y-2"></ul>
+                </div>
+            </div>
+
+            <!-- Token Display (Visible if Logged In) -->
+            <div id="tokenDisplay" class="mb-8 p-6 bg-gray-50 rounded-lg shadow hidden">
+                <h2 class="text-2xl font-semibold mb-4">Token Information</h2>
+                <p id="tokenInfo" class="text-sm text-gray-600" style="overflow-wrap: anywhere;"></p>
+            </div>
+
+            <!-- Logout Button (Visible if Logged In) -->
+            <button id="logoutButton"
+                class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md 
+                shadow-sm text-sm font-medium text-white bg-red-500 hover:bg-red-600 
+                focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors button-pulse hidden">
+                Logout
+            </button>
+        </div>
+    </div>
+
+    <script>
+        const apiBaseUrl = '/api';
+        const apiKey = '0000'; // Hardcoded for demo; should be handled server-side in production
+        const navLinks = document.getElementById('navLinks');
+        const analyticsSection = document.getElementById('analyticsSection');
+        const tokenDisplay = document.getElementById('tokenDisplay');
+        const tokenInfo = document.getElementById('tokenInfo');
+        const logoutButton = document.getElementById('logoutButton');
+        const userCommonDiseasesSection = document.getElementById('userCommonDiseasesSection');
+
+        // Show status message
+        function showMessage(message, isError = false) {
+            const statusMessageContainer = document.getElementById('statusMessageContainer');
+            const statusMessage = document.getElementById('statusMessage');
+            statusMessageContainer.classList.remove('slide-in-down', 'fade-out-up');
+            statusMessage.innerHTML = isError
+                ? `<i class="fas fa-exclamation-circle mr-2"></i>${message}`
+                : `<i class="fas fa-check-circle mr-2"></i>${message}`;
+            statusMessage.className = `py-2 px-4 rounded-md text-sm font-medium ${isError ? 'bg-red-100 text-red-700 border border-red-200' : 'bg-green-100 text-green-700 border border-green-200'
+                }`;
+            statusMessageContainer.classList.remove('hidden');
+            statusMessageContainer.classList.add('slide-in-down');
+            setTimeout(() => {
+                statusMessageContainer.classList.remove('slide-in-down');
+                statusMessageContainer.classList.add('fade-out-up');
+                setTimeout(() => statusMessageContainer.classList.add('hidden'), 500);
+            }, 5000);
+        }
+
+        // Fetch system analytics
+        async function fetchAnalytics() {
+            try {
+                const response = await fetch(`${apiBaseUrl}/analytics`, {
+                    headers: { 'x-api-key-analytics': apiKey }
+                });
+                const data = await response.json();
+
+                if (!response.ok) throw new Error(data.message || 'Failed to fetch analytics');
+
+                renderAnalytics(data.analytics);
+            } catch (error) {
+                showMessage(error.message || 'Error fetching analytics', true);
+            }
+        }
+
+        // Fetch user-specific analytics
+        async function fetchUserAnalytics() {
+            try {
+                const token = localStorage.getItem('token') || getTokenFromCookies();
+                if (!token) {
+                    userCommonDiseasesSection.classList.add('hidden');
+                    return;
+                }
+
+                const response = await fetch(`${apiBaseUrl}/analytics/user`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const data = await response.json();
+
+                if (!response.ok) throw new Error(data.message || 'Failed to fetch user analytics');
+
+                renderUserAnalytics(data.analytics);
+            } catch (error) {
+                showMessage(error.message || 'Error fetching user analytics', true);
+            }
+        }
+
+        // Render system analytics data
+        function renderAnalytics(analytics) {
+            const userCount = document.getElementById('userCount');
+            const guestCount = document.getElementById('guestCount');
+            const totalScans = document.getElementById('totalScans');
+            const userGrowthChart = document.getElementById('userGrowthChart');
+            const scanVolumeChart = document.getElementById('scanVolumeChart');
+            const commonDiseasesSystem = document.getElementById('commonDiseasesSystem');
+            const logoutBtn = document.getElementById('logoutBtn');
+
+
+            // Summary Stats
+            userCount.textContent = analytics.userCount || 0;
+            guestCount.textContent = analytics.guestCount || 0;
+            totalScans.textContent = analytics.totalScans || 0;
+
+            // User Growth
+            userGrowthChart.innerHTML = '';
+            const maxUsers = Math.max(...analytics.userGrowth.map(item => item.count), 1);
+            analytics.userGrowth.forEach(item => {
+                const percentage = (item.count / maxUsers) * 100;
+                const date = `${item._id.month}/${item._id.year}`;
+                const bar = document.createElement('div');
+                bar.className = 'flex items-center space-x-2';
+                bar.innerHTML = `
+                    <span class="text-sm text-gray-600 w-20">${date}</span>
+                    <div class="flex-1 h-4 bg-gray-200 rounded-full overflow-hidden">
+                        <div class="h-full bg-indigo-600 bar-grow" style="--bar-width: ${percentage}%"></div>
+                    </div>
+                    <span class="text-sm text-gray-600 w-12 text-right">${item.count}</span>
+                `;
+                userGrowthChart.appendChild(bar);
+            });
+
+            // Scan Volume
+            scanVolumeChart.innerHTML = '';
+            const maxScans = Math.max(...analytics.scanVolume.map(item => item.count), 1);
+            analytics.scanVolume.forEach(item => {
+                const percentage = (item.count / maxScans) * 100;
+                const date = `${item._id.month}/${item._id.year}`;
+                const bar = document.createElement('div');
+                bar.className = 'flex items-center space-x-2';
+                bar.innerHTML = `
+                    <span class="text-sm text-gray-600 w-20">${date}</span>
+                    <div class="flex-1 h-4 bg-gray-200 rounded-full overflow-hidden">
+                        <div class="h-full bg-indigo-600 bar-grow" style="--bar-width: ${percentage}%"></div>
+                    </div>
+                    <span class="text-sm text-gray-600 w-12 text-right">${item.count}</span>
+                `;
+                scanVolumeChart.appendChild(bar);
+            });
+
+            // Common Diseases (System)
+            commonDiseasesSystem.innerHTML = '';
+            analytics.commonDiseases.forEach(disease => {
+                const li = document.createElement('li');
+                li.className = 'flex justify-between items-center p-2 bg-gray-100 rounded-md animate__animated animate__fadeIn';
+                li.innerHTML = `
+                    <span class="text-sm text-gray-700">${disease._id || 'Unknown'}</span>
+                    <span class="text-sm text-gray-600">${disease.count} scans</span>
+                `;
+                commonDiseasesSystem.appendChild(li);
+            });
+        }
+
+        // Render user-specific analytics data
+        function renderUserAnalytics(analytics) {
+            const commonDiseasesUser = document.getElementById('commonDiseasesUser');
+            userCommonDiseasesSection.classList.remove('hidden');
+
+            // Common Diseases (User)
+            commonDiseasesUser.innerHTML = '';
+            analytics.commonDiseases.forEach(disease => {
+                const li = document.createElement('li');
+                li.className = 'flex justify-between items-center p-2 bg-gray-100 rounded-md animate__animated animate__fadeIn';
+                li.innerHTML = `
+                    <span class="text-sm text-gray-700">${disease._id || 'Unknown'}</span>
+                    <span class="text-sm text-gray-600">${disease.count} scans</span>
+                `;
+                commonDiseasesUser.appendChild(li);
+            });
+        }
+
+        // Get token from cookies
+        function getTokenFromCookies() {
+            const cookie = document.cookie.split('; ').find(row => row.startsWith('token='));
+            return cookie ? cookie.split('=')[1] : null;
+        }
+
+        // Check authentication and update UI
+        function checkAuth() {
+            const token = localStorage.getItem('token') || getTokenFromCookies();
+            if (token) {
+                navLinks.classList.add('hidden');
+                tokenDisplay.classList.remove('hidden');
+                tokenInfo.textContent = `Token: ${token}`;
+                logoutButton.classList.remove('hidden');
+            } else {
+                navLinks.classList.remove('hidden');
+                tokenDisplay.classList.add('hidden');
+                logoutButton.classList.add('hidden');
+            }
+            // Fetch analytics regardless of login status (system-wide)
+            fetchAnalytics();
+            // Fetch user-specific analytics if logged in
+            fetchUserAnalytics();
+        }
+        // Logout functionality
+        logoutBtn.addEventListener('click', () => {
+            localStorage.removeItem('token');
+            document.cookie = 'token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+            window.location.href = '/login.html';
+        });
+
+        // Logout functionality
+        logoutButton.addEventListener('click', () => {
+            localStorage.removeItem('token');
+            document.cookie = 'token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT;';
+            window.location.reload(); // Refresh to show login/register options
+        });
+
+        // Initial check
+        checkAuth();
+    </script>
+</body>
+
+</html>

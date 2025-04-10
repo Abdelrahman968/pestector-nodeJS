@@ -1,0 +1,978 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Profile | Pestector</title>
+    <!-- Tailwind CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@3.3.3/dist/tailwind.min.css" rel="stylesheet">
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        /* Improved animations */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideInDown {
+            from {
+                transform: translateY(-20px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes fadeOutUp {
+            from {
+                transform: translateY(0);
+                opacity: 1;
+            }
+
+            to {
+                transform: translateY(-20px);
+                opacity: 0;
+            }
+        }
+
+        .slide-in-down {
+            animation: slideInDown 0.5s ease forwards;
+        }
+
+        .fade-out-up {
+            animation: fadeOutUp 0.5s ease forwards;
+        }
+
+        .fade-in {
+            animation: fadeIn 0.4s ease-out forwards;
+        }
+
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+
+        .animate-delay-1 {
+            animation-delay: 0.1s;
+        }
+
+        .animate-delay-2 {
+            animation-delay: 0.2s;
+        }
+
+        .animate-delay-3 {
+            animation-delay: 0.3s;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-50 min-h-screen flex flex-col">
+    <!-- Header -->
+    <header class="bg-white shadow-sm sticky top-0 z-10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center space-x-3">
+                    <div class="bg-indigo-600 text-white p-2 rounded-lg">
+                        <i class="fas fa-leaf text-xl"></i>
+                    </div>
+                    <h1 class="text-2xl font-bold text-gray-900">Pestector</h1>
+                </div>
+                <nav class="hidden md:flex space-x-6">
+                    <a href="index.html"
+                        class="text-gray-500 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">
+                        <i class="fas fa-home mr-2"></i>Home
+                    </a>
+                    <a href="history.html"
+                        class="text-gray-500 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">
+                        <i class="fas fa-history mr-2"></i>History
+                    </a>
+                    <a href="settings.html"
+                        class="text-gray-500 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">
+                        <i class="fas fa-cog mr-2"></i>Settings
+                    </a>
+                </nav>
+                <!-- Profile Dropdown -->
+                <div class="relative">
+                    <button id="profileDropdownBtn"
+                        class="flex items-center text-sm font-medium text-indigo-600 transition-colors duration-200">
+                        <i class="fas fa-user-circle mr-2"></i>Profile
+                        <i class="fas fa-chevron-down ml-1 text-xs"></i>
+                    </button>
+                    <div id="profileDropdown"
+                        class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-2 hidden">
+                        <a href="#" class="block px-4 py-2 text-sm text-indigo-600 bg-gray-100">Edit Profile</a>
+                        <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Change Password</a>
+                        <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Notifications</a>
+                        <button id="logoutBtn"
+                            class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                            <i class="fas fa-sign-out-alt mr-2"></i>Logout
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-grow py-8">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="mb-8">
+                <h2 class="text-2xl font-bold text-gray-900">Edit Profile</h2>
+                <p class="mt-1 text-sm text-gray-500">Update your personal information and account settings.</p>
+            </div>
+
+            <div id="statusMessageContainer" class="mb-6 hidden">
+                <div id="statusMessage" class="py-3 px-4 rounded-md text-sm font-medium"></div>
+            </div>
+
+            <div class="bg-white shadow rounded-lg overflow-hidden fade-in">
+                <div class="p-6">
+                    <form id="profileForm" class="space-y-6">
+                        <!-- Profile Image -->
+                        <div
+                            class="flex flex-col items-center sm:flex-row sm:items-start space-y-4 sm:space-y-0 sm:space-x-6 mb-6">
+                            <div class="relative">
+                                <img id="profileImagePreview" src="/uploads/1741704513522-937751577.png"
+                                    alt="Profile Image"
+                                    class="h-24 w-24 rounded-full object-cover border-4 border-gray-200">
+                                <button type="button" id="changeImageBtn"
+                                    class="absolute bottom-0 right-0 bg-indigo-600 text-white rounded-full p-2 shadow-md hover:bg-indigo-700 focus:outline-none">
+                                    <i class="fas fa-camera text-xs"></i>
+                                </button>
+                                <input type="file" id="profileImageInput" accept="image/*" class="hidden">
+                            </div>
+                            <div class="flex-1">
+                                <h3 class="text-lg font-medium text-gray-900" id="fullName-h3"></h3>
+                                <p class="text-sm text-gray-500 mb-3">Upload a clear photo to help others recognize you.
+                                </p>
+                                <div class="flex space-x-3">
+                                    <button type="button" id="uploadImageBtn"
+                                        class="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                                        <i class="fas fa-upload mr-1.5"></i>Upload
+                                    </button>
+                                    <button type="button" id="removeImageBtn"
+                                        class="inline-flex items-center px-3 py-1.5 border border-gray-300 text-xs font-medium rounded shadow-sm text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                                        <i class="fas fa-trash-alt mr-1.5"></i>Remove
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Personal Information -->
+                        <div>
+                            <h3 class="text-lg font-medium text-gray-900 mb-4">Personal Information</h3>
+                            <div class="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-2">
+                                <div>
+                                    <label for="fullName" class="block text-sm font-medium text-gray-700">Full
+                                        Name</label>
+                                    <input type="text" id="fullName" name="fullName" value="Loading..."
+                                        class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                                </div>
+                                <div>
+                                    <label for="username"
+                                        class="block text-sm font-medium text-gray-700">Username</label>
+                                    <input type="text" id="username" name="username" value="Loading..."
+                                        class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                                </div>
+                                <div>
+                                    <label for="email" class="block text-sm font-medium text-gray-700">Email
+                                        Address</label>
+                                    <input type="email" id="email" name="email" value="Loading..."
+                                        class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                                </div>
+                                <div>
+                                    <label for="phoneNumber" class="block text-sm font-medium text-gray-700">Phone
+                                        Number</label>
+                                    <input type="tel" id="phoneNumber" name="phoneNumber" value="Loading..."
+                                        class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Form Actions -->
+                        <div class="pt-4 border-t border-gray-200 flex justify-end space-x-3">
+                            <button type="button" id="cancelBtn"
+                                class="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                                Cancel
+                            </button>
+                            <button type="submit" id="saveChangesBtn"
+                                class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                                Save Changes
+                            </button>
+                        </div>
+                        <!-- Change Password -->
+                        <div class="pb-2">
+                            <h3 class="text-lg font-medium text-gray-900 mb-4">Change Password</h3>
+                            <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                                <div class="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-2">
+                                    <div>
+                                        <label for="currentPassword"
+                                            class="block text-sm font-medium text-gray-700">Current Password</label>
+                                        <input type="password" id="currentPassword" name="currentPassword"
+                                            class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                                    </div>
+                                    <div>
+                                        <label for="newPassword" class="block text-sm font-medium text-gray-700">New
+                                            Password</label>
+                                        <input type="password" id="newPassword" name="newPassword"
+                                            class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                                    </div>
+                                </div>
+                                <div class="mt-4">
+                                    <button type="button" id="changePasswordBtn"
+                                        class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                                        <i class="fas fa-key mr-2"></i>Change Password
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Location Information -->
+                        <div>
+                            <h3 class="text-lg font-medium text-gray-900 mb-4">Location Information</h3>
+                            <p class="text-sm text-gray-500 mb-4">Your location helps us provide region-specific plant
+                                disease information.</p>
+                            <div class="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-2">
+                                <div>
+                                    <label for="latitude"
+                                        class="block text-sm font-medium text-gray-700">Latitude</label>
+                                    <input type="text" id="latitude" name="latitude" value="Loading..." readonly
+                                        class="mt-1 block w-full bg-gray-50 border border-gray-300 rounded-md shadow-sm py-2 px-3 text-gray-500 sm:text-sm">
+                                </div>
+                                <div>
+                                    <label for="longitude"
+                                        class="block text-sm font-medium text-gray-700">Longitude</label>
+                                    <input type="text" id="longitude" name="longitude" value="Loading..." readonly
+                                        class="mt-1 block w-full bg-gray-50 border border-gray-300 rounded-md shadow-sm py-2 px-3 text-gray-500 sm:text-sm">
+                                </div>
+                                <div>
+                                    <label for="cityRegion"
+                                        class="block text-sm font-medium text-gray-700">City/Region</label>
+                                    <input type="text" id="cityRegion" name="cityRegion" value="Loading..." readonly
+                                        class="mt-1 block w-full bg-gray-50 border border-gray-300 rounded-md shadow-sm py-2 px-3 text-gray-500 sm:text-sm">
+                                </div>
+                                <div>
+                                    <label for="country" class="block text-sm font-medium text-gray-700">Country</label>
+                                    <input type="text" id="country" name="country" value="Loading..." readonly
+                                        class="mt-1 block w-full bg-gray-50 border border-gray-300 rounded-md shadow-sm py-2 px-3 text-gray-500 sm:text-sm">
+                                </div>
+                            </div>
+                            <div class="mt-6">
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Your Location on Map</label>
+                                <div id="map" class="h-64 w-full rounded-lg border border-gray-200"></div>
+                            </div>
+                            <div class="mt-4">
+                                <button type="button" id="updateLocationBtn"
+                                    class="inline-flex items-center px-3 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                                    <i class="fas fa-map-marker-alt mr-2"></i>Update Location
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Subscription Information -->
+                        <div class="pb-2">
+                            <h3 class="text-lg font-medium text-gray-900 mb-4">Subscription Information</h3>
+                            <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                                <div class="flex flex-col sm:flex-row sm:items-center justify-between">
+                                    <div>
+                                        <span id="subscriptionPlanBadge"
+                                            class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                            Loading...
+                                        </span>
+                                        <p id="scanInfo" class="mt-2 text-sm text-gray-500">Loading...</p>
+                                        <p id="scansRemaining" class="mt-1 text-sm text-gray-500">Loading...</p>
+                                        <p id="analyticsInfo" class="mt-1 text-sm text-gray-500">Loading...</p>
+                                    </div>
+                                    <div class="mt-3 sm:mt-0">
+                                        <a href="#"
+                                            class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                                            Upgrade Plan
+                                        </a>
+                                    </div>
+                                </div>
+                                <div class="mt-3">
+                                    <div class="w-full bg-gray-200 rounded-full h-2.5">
+                                        <div id="scanProgressBar" class="bg-indigo-600 h-2.5 rounded-full"
+                                            style="width: 0%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Two-Factor Authentication -->
+                        <div class="pb-2">
+                            <h3 class="text-lg font-medium text-gray-900 mb-4">Two-Factor Authentication</h3>
+                            <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                                <div class="flex flex-col space-y-4">
+                                    <div>
+                                        <p id="twoFAStatus" class="text-sm text-gray-500">2FA Status: Loading...</p>
+                                    </div>
+                                    <div id="twoFASetup" class="hidden flex flex-col space-y-2">
+                                        <p class="text-sm text-gray-500">Scan this QR code with your authenticator app:
+                                        </p>
+                                        <img id="twoFAQrcode" src="#" alt="2FA QR Code" class="max-w-xs w-48 h-48">
+                                        <p class="text-sm text-gray-500">Secret: <span id="twoFASecret"
+                                                class="font-mono"></span></p>
+                                    </div>
+                                    <div class="flex space-x-3">
+                                        <button type="button" id="enableTwoFABtn"
+                                            class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                                            Enable 2FA
+                                        </button>
+                                        <button type="button" id="disableTwoFABtn"
+                                            class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md shadow-sm text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 hidden">
+                                            Disable 2FA
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Delete Account -->
+                        <div class="pb-2">
+                            <h3 class="text-lg font-medium text-gray-900 mb-4">Delete Account</h3>
+                            <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                                <p class="text-sm text-gray-500 mb-4">Permanently delete your account and all associated
+                                    data. This action
+                                    cannot be undone.</p>
+                                <button type="button" id="deleteAccountBtn"
+                                    class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
+                                    <i class="fas fa-trash-alt mr-2"></i>Delete Account
+                                </button>
+                            </div>
+                        </div>
+                        <!-- Delete Account Confirmation Modal -->
+                        <div id="deleteAccountModal"
+                            class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
+                            <div
+                                class="relative top-20 mx-auto p-5 border w-full max-w-md shadow-lg rounded-lg bg-white">
+                                <div class="mt-3 text-center">
+                                    <div
+                                        class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-100">
+                                        <i class="fas fa-exclamation-triangle text-red-600 text-xl"></i>
+                                    </div>
+                                    <h3 class="text-lg leading-6 font-medium text-gray-900 mt-4">Delete Account</h3>
+                                    <div class="mt-2 px-7 py-3">
+                                        <p class="text-sm text-gray-500">
+                                            Are you sure you want to delete your account? This action cannot be undone
+                                            and all your data will be
+                                            permanently removed.
+                                        </p>
+                                    </div>
+                                    <div class="items-center px-4 py-3 space-x-3">
+                                        <button id="cancelDeleteBtn"
+                                            class="px-4 py-2 bg-gray-100 text-gray-700 text-base font-medium rounded-md w-32 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-300">
+                                            Cancel
+                                        </button>
+                                        <button id="confirmDeleteBtn"
+                                            class="px-4 py-2 bg-red-600 text-white text-base font-medium rounded-md w-32 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500">
+                                            Delete
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-gray-200 mt-12">
+        <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="mb-4 md:mb-0">
+                    <p class="text-sm text-gray-500">&copy; 2025 Pestector. All rights reserved.</p>
+                </div>
+                <div class="flex space-x-6">
+                    <a href="#" class="text-gray-400 hover:text-gray-500"><i class="fab fa-twitter"></i></a>
+                    <a href="#" class="text-gray-400 hover:text-gray-500"><i class="fab fa-facebook"></i></a>
+                    <a href="#" class="text-gray-400 hover:text-gray-500"><i class="fab fa-instagram"></i></a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script>
+        const apiBaseUrl = '/api/auth';
+
+        // DOM Elements
+        const profileForm = document.getElementById('profileForm');
+        const profileImagePreview = document.getElementById('profileImagePreview');
+        const profileImageInput = document.getElementById('profileImageInput');
+        const changeImageBtn = document.getElementById('changeImageBtn');
+        const uploadImageBtn = document.getElementById('uploadImageBtn');
+        const removeImageBtn = document.getElementById('removeImageBtn');
+        const updateLocationBtn = document.getElementById('updateLocationBtn');
+        const saveChangesBtn = document.getElementById('saveChangesBtn');
+        const cancelBtn = document.getElementById('cancelBtn');
+        const logoutBtn = document.getElementById('logoutBtn');
+        const profileDropdownBtn = document.getElementById('profileDropdownBtn');
+        const profileDropdown = document.getElementById('profileDropdown');
+        const subscriptionPlanBadge = document.getElementById('subscriptionPlanBadge');
+        const scanInfo = document.getElementById('scanInfo');
+        const scansRemaining = document.getElementById('scansRemaining');
+        const analyticsInfo = document.getElementById('analyticsInfo');
+        const scanProgressBar = document.getElementById('scanProgressBar');
+        const twoFAStatus = document.getElementById('twoFAStatus');
+        const twoFASetup = document.getElementById('twoFASetup');
+        const twoFAQrcode = document.getElementById('twoFAQrcode');
+        const twoFASecret = document.getElementById('twoFASecret');
+        const enableTwoFABtn = document.getElementById('enableTwoFABtn');
+        const disableTwoFABtn = document.getElementById('disableTwoFABtn');
+
+        const changePasswordBtn = document.getElementById('changePasswordBtn');
+        const deleteAccountBtn = document.getElementById('deleteAccountBtn');
+        const currentPassword = document.getElementById('currentPassword');
+        const newPassword = document.getElementById('newPassword');
+
+        const deleteAccountModal = document.getElementById('deleteAccountModal');
+        const cancelDeleteBtn = document.getElementById('cancelDeleteBtn');
+        const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
+
+        // Show status message
+        function showMessage(message, isError = false) {
+            const statusMessageContainer = document.getElementById('statusMessageContainer');
+            const statusMessage = document.getElementById('statusMessage');
+
+            statusMessageContainer.classList.remove('slide-in-down', 'fade-out-up');
+            statusMessage.innerHTML = isError
+                ? `<i class="fas fa-exclamation-circle mr-2"></i>${message}`
+                : `<i class="fas fa-check-circle mr-2"></i>${message}`;
+
+            statusMessage.className = `py-3 px-4 rounded-md text-sm font-medium ${isError ? 'bg-red-100 text-red-700 border border-red-200' : 'bg-green-100 text-green-700 border border-green-200'}`;
+
+            statusMessageContainer.classList.remove('hidden');
+            statusMessageContainer.classList.add('slide-in-down');
+
+            setTimeout(() => {
+                statusMessageContainer.classList.remove('slide-in-down');
+                statusMessageContainer.classList.add('fade-out-up');
+                setTimeout(() => statusMessageContainer.classList.add('hidden'), 500);
+            }, 5000);
+        }
+
+
+        // Update 2FA UI
+        function updateTwoFAUI(isEnabled) {
+            twoFAStatus.textContent = `2FA Status: ${isEnabled ? 'Enabled' : 'Disabled'}`;
+            enableTwoFABtn.classList.toggle('hidden', isEnabled);
+            disableTwoFABtn.classList.toggle('hidden', !isEnabled);
+            twoFASetup.classList.add('hidden'); // Hide by default, shown only on enable
+        }
+
+        // Enable 2FA
+        async function enableTwoFA() {
+            try {
+                const token = localStorage.getItem('token') || getTokenFromCookies();
+                if (!token) {
+                    window.location.href = '/login.html';
+                    return;
+                }
+
+                const response = await fetch(`${apiBaseUrl}/2fa/enable`, {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                const data = await response.json();
+                console.log('2FA Enable Response:', data); // Debug
+
+                if (!response.ok) throw new Error(data.message || 'Failed to enable 2FA');
+
+                showMessage('2FA enabled successfully');
+                if (data.qrCode) {
+                    twoFAQrcode.src = ''; // Reset src to force reload
+                    twoFAQrcode.src = data.qrCode; // Set new QR code
+                    twoFASecret.textContent = data.secret || 'N/A';
+                    twoFASetup.classList.remove('hidden');
+                    // Force DOM update
+                    setTimeout(() => {
+                        twoFAQrcode.style.display = 'block'; // Ensure visibility
+                        console.log('QR Code src set to:', twoFAQrcode.src); // Debug
+                    }, 100);
+                } else {
+                    console.error('QR code data missing in response');
+                    showMessage('QR code not received from server', true);
+                }
+                updateTwoFAUI(true);
+            } catch (error) {
+                showMessage(error.message || 'Error enabling 2FA', true);
+            }
+        }
+
+        // Update 2FA UI
+        function updateTwoFAUI(isEnabled) {
+            twoFAStatus.textContent = `2FA Status: ${isEnabled ? 'Enabled' : 'Disabled'}`;
+            enableTwoFABtn.classList.toggle('hidden', isEnabled);
+            disableTwoFABtn.classList.toggle('hidden', !isEnabled);
+            if (!isEnabled) {
+                twoFASetup.classList.add('hidden'); // Hide setup when disabled
+            }
+        }
+
+        // Disable 2FA
+        async function disableTwoFA() {
+            try {
+                const token = localStorage.getItem('token') || getTokenFromCookies();
+                if (!token) {
+                    window.location.href = '/login.html';
+                    return;
+                }
+
+                const response = await fetch(`${apiBaseUrl}/2fa/disable`, {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) throw new Error(data.message || 'Failed to disable 2FA');
+
+                showMessage('2FA disabled successfully');
+                updateTwoFAUI(false);
+            } catch (error) {
+                showMessage(error.message || 'Error disabling 2FA', true);
+            }
+        }
+
+        // Initialize the map
+        let map;
+        function initMap(latitude, longitude) {
+            if (!map) {
+                map = L.map('map').setView([latitude, longitude], 13);
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                }).addTo(map);
+            } else {
+                map.setView([latitude, longitude], 13);
+            }
+            L.marker([latitude, longitude]).addTo(map)
+                .bindPopup('Your Location')
+                .openPopup();
+        }
+
+        // Reverse geocode coordinates to get city and country
+        async function reverseGeocode(latitude, longitude) {
+            try {
+                const response = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=json&accept-language=en`);
+                const data = await response.json();
+                const city = data.address.city || data.address.town || data.address.village || 'Unknown';
+                const country = data.address.country || 'Unknown';
+                document.getElementById('cityRegion').value = city;
+                document.getElementById('country').value = country;
+            } catch (error) {
+                console.error('Error during reverse geocoding:', error);
+                document.getElementById('cityRegion').value = 'Error';
+                document.getElementById('country').value = 'Error';
+            }
+        }
+
+        // Update fetchUserProfile to include map and geocoding
+        async function fetchUserProfile() {
+            try {
+                const token = localStorage.getItem('token') || getTokenFromCookies();
+                if (!token) {
+                    window.location.href = '/login.html';
+                    return;
+                }
+
+                const response = await fetch(`${apiBaseUrl}/profile`, {
+                    method: 'GET',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                const data = await response.json();
+                console.log('Profile data:', data);
+
+                if (!response.ok) throw new Error(data.message || 'Failed to fetch profile');
+
+                if (data.user) {
+                    document.getElementById('fullName').value = data.user.fullName || '';
+                    document.getElementById('fullName-h3').textContent = data.user.fullName || "Change Your Full Name";
+                    document.getElementById('username').value = data.user.username || '';
+                    document.getElementById('email').value = data.user.email || '';
+                    document.getElementById('phoneNumber').value = data.user.phoneNumber || '';
+
+                    if (data.user.location) {
+                        const latitude = data.user.location.latitude || 0;
+                        const longitude = data.user.location.longitude || 0;
+                        document.getElementById('latitude').value = latitude;
+                        document.getElementById('longitude').value = longitude;
+                        await reverseGeocode(latitude, longitude);
+                        initMap(latitude, longitude);
+                    } else {
+                        document.getElementById('cityRegion').value = 'Not Set';
+                        document.getElementById('country').value = 'Not Set';
+                        initMap(0, 0); // Default to (0,0) if no location
+                    }
+
+                    if (data.user.profileImage) {
+                        profileImagePreview.src = `${data.user.profileImage}`;
+                    }
+
+                    const isTwoFAEnabled = !!data.user.twoFactorSecret;
+                    updateTwoFAUI(isTwoFAEnabled);
+                }
+
+                if (data.subscription_info) {
+                    const subInfo = data.subscription_info;
+                    subscriptionPlanBadge.textContent = `${subInfo.plan.charAt(0).toUpperCase() + subInfo.plan.slice(1)} Plan • Active`;
+                    scanInfo.textContent = `Scans used: ${subInfo.scans_used}/${subInfo.scan_limit}`;
+                    scansRemaining.textContent = `Scans remaining: ${subInfo.scans_remaining}`;
+                    analyticsInfo.textContent = `Advanced Analytics: ${subInfo.has_advanced_analytics ? 'Yes' : 'No'}`;
+                    const percentage = (subInfo.scans_used / subInfo.scan_limit) * 100;
+                    scanProgressBar.style.width = `${percentage}%`;
+                }
+            } catch (error) {
+                showMessage(error.message || 'Error fetching profile', true);
+            }
+        }
+
+        // Update user location with map and geocoding
+        async function updateUserLocation() {
+            try {
+                if (!navigator.geolocation) throw new Error('Geolocation is not supported by your browser');
+
+                navigator.geolocation.getCurrentPosition(async (position) => {
+                    const { latitude, longitude } = position.coords;
+
+                    document.getElementById('latitude').value = latitude;
+                    document.getElementById('longitude').value = longitude;
+                    await reverseGeocode(latitude, longitude);
+                    initMap(latitude, longitude);
+
+                    const token = localStorage.getItem('token') || getTokenFromCookies();
+                    if (!token) {
+                        window.location.href = '/login.html';
+                        return;
+                    }
+
+                    const response = await fetch(`${apiBaseUrl}/location`, {
+                        method: 'POST',
+                        headers: {
+                            'Authorization': `Bearer ${token}`,
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ latitude, longitude })
+                    });
+
+                    const data = await response.json();
+
+                    if (!response.ok) throw new Error(data.message || 'Failed to update location');
+
+                    showMessage('Location updated successfully');
+                }, (error) => {
+                    throw new Error(`Error getting location: ${error.message}`);
+                });
+            } catch (error) {
+                showMessage(error.message || 'Error updating location', true);
+            }
+        }
+
+        // Update user profile
+        async function updateUserProfile(formData) {
+            try {
+                const token = localStorage.getItem('token') || getTokenFromCookies();
+                if (!token) {
+                    window.location.href = '/login.html';
+                    return;
+                }
+
+                const response = await fetch(`${apiBaseUrl}/profile`, {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) throw new Error(data.message || 'Failed to update profile');
+
+                showMessage('Profile updated successfully');
+                fetchUserProfile();
+                return true;
+            } catch (error) {
+                showMessage(error.message || 'Error updating profile', true);
+                return false;
+            }
+        }
+
+        // Upload profile image
+        async function uploadProfileImage(file) {
+            try {
+                const token = localStorage.getItem('token') || getTokenFromCookies();
+                if (!token) {
+                    window.location.href = '/login.html';
+                    return;
+                }
+
+                const formData = new FormData();
+                formData.append('profileImage', file);
+
+                const response = await fetch(`${apiBaseUrl}/profile`, {
+                    method: 'PUT',
+                    headers: { 'Authorization': `Bearer ${token}` },
+                    body: formData
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) throw new Error(data.message || 'Failed to upload image');
+
+                showMessage('Profile image updated successfully');
+                if (data.user && data.user.profileImage) {
+                    profileImagePreview.src = `${data.user.profileImage}`;
+                }
+                return true;
+            } catch (error) {
+                showMessage(error.message || 'Error uploading image', true);
+                return false;
+            }
+        }
+
+
+        // Get token from cookies
+        function getTokenFromCookies() {
+            const cookie = document.cookie.split('; ').find(row => row.startsWith('token='));
+            return cookie ? cookie.split('=')[1] : null;
+        }
+
+        // Change Password function
+        async function changePassword() {
+            try {
+                const token = localStorage.getItem('token') || getTokenFromCookies();
+                if (!token) {
+                    window.location.href = '/login.html';
+                    return;
+                }
+
+                const currentPass = currentPassword.value;
+                const newPass = newPassword.value;
+
+                if (!currentPass || !newPass) {
+                    showMessage('Please enter both current and new passwords', true);
+                    return;
+                }
+
+                const response = await fetch(`${apiBaseUrl}/profile`, {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        password: newPass
+                    })
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) throw new Error(data.message || 'Failed to change password');
+
+                showMessage('Password changed successfully');
+                currentPassword.value = '';
+                newPassword.value = '';
+            } catch (error) {
+                showMessage(error.message || 'Error changing password', true);
+            }
+        }
+
+        // Add this function if not already present (for smooth scrolling utility)
+        function smoothScrollTo(element) {
+            element.scrollIntoView({
+                behavior: 'smooth',
+                block: 'start'
+            });
+        }
+
+        // Modified Delete Account button event listener
+        deleteAccountBtn.addEventListener('click', () => {
+            // Get the Delete Account section
+            const deleteAccountSection = deleteAccountBtn.closest('div.pb-2');
+
+            // Smooth scroll to the section
+            smoothScrollTo(deleteAccountSection);
+
+            // Show modal after a slight delay to allow scrolling to complete
+            setTimeout(() => {
+                showDeleteAccountModal();
+            }, 600); // Adjust timing as needed (600ms matches typical scroll duration)
+        });
+
+        // Keep the existing showDeleteAccountModal function
+        function showDeleteAccountModal() {
+            deleteAccountModal.classList.remove('hidden');
+            deleteAccountModal.classList.add('fade-in');
+        }
+
+        // Rest of your existing delete account related code remains the same
+        async function deleteAccount() {
+            try {
+                const token = localStorage.getItem('token') || getTokenFromCookies();
+                if (!token) {
+                    window.location.href = '/login.html';
+                    return;
+                }
+
+                const response = await fetch(`${apiBaseUrl}/account`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) throw new Error(data.message || 'Failed to delete account');
+
+                showMessage('Account deleted successfully');
+                localStorage.removeItem('token');
+                document.cookie = 'token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+                setTimeout(() => {
+                    window.location.href = '/login.html';
+                }, 2000);
+            } catch (error) {
+                showMessage(error.message || 'Error deleting account', true);
+                deleteAccountModal.classList.add('hidden');
+            }
+        }
+
+        // Existing modal close listeners remain unchanged
+        cancelDeleteBtn.addEventListener('click', () => {
+            deleteAccountModal.classList.remove('fade-in');
+            deleteAccountModal.classList.add('fade-out-up');
+            setTimeout(() => {
+                deleteAccountModal.classList.add('hidden');
+                deleteAccountModal.classList.remove('fade-out-up');
+            }, 500);
+        });
+
+        confirmDeleteBtn.addEventListener('click', deleteAccount);
+
+        document.addEventListener('click', (event) => {
+            if (event.target === deleteAccountModal) {
+                deleteAccountModal.classList.remove('fade-in');
+                deleteAccountModal.classList.add('fade-out-up');
+                setTimeout(() => {
+                    deleteAccountModal.classList.add('hidden');
+                    deleteAccountModal.classList.remove('fade-out-up');
+                }, 500);
+            }
+        });
+
+        // Event Listeners section
+        changePasswordBtn.addEventListener('click', changePassword);
+
+        // Event Listeners
+        changeImageBtn.addEventListener('click', () => profileImageInput.click());
+        uploadImageBtn.addEventListener('click', () => profileImageInput.click());
+
+        profileImageInput.addEventListener('change', (event) => {
+            if (event.target.files && event.target.files[0]) {
+                const file = event.target.files[0];
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    profileImagePreview.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+                uploadProfileImage(file);
+            }
+        });
+
+        removeImageBtn.addEventListener('click', async () => {
+            try {
+                profileImagePreview.src = '/assets/default-profile.png';
+                showMessage('Profile image removed successfully');
+                await updateUserProfile({ profileImage: null });
+            } catch (error) {
+                showMessage(error.message || 'Error removing image', true);
+            }
+        });
+
+        updateLocationBtn.addEventListener('click', updateUserLocation);
+
+        profileForm.addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const formData = {
+                fullName: document.getElementById('fullName').value,
+                username: document.getElementById('username').value,
+                email: document.getElementById('email').value,
+                phoneNumber: document.getElementById('phoneNumber').value
+            };
+            await updateUserProfile(formData);
+        });
+
+        cancelBtn.addEventListener('click', () => {
+            window.location.href = 'history.html';
+        });
+
+        logoutBtn.addEventListener('click', () => {
+            localStorage.removeItem('token');
+            document.cookie = 'token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+            window.location.href = '/login.html';
+        });
+
+        profileDropdownBtn.addEventListener('click', () => {
+            profileDropdown.classList.toggle('hidden');
+        });
+
+        document.addEventListener('click', (event) => {
+            if (!profileDropdownBtn.contains(event.target) && !profileDropdown.contains(event.target)) {
+                profileDropdown.classList.add('hidden');
+            }
+        });
+
+        enableTwoFABtn.addEventListener('click', enableTwoFA);
+        disableTwoFABtn.addEventListener('click', disableTwoFA);
+
+        // Check authentication and load profile
+        function checkAuth() {
+            const token = localStorage.getItem('token') || getTokenFromCookies();
+            if (!token) {
+                window.location.href = '/login.html';
+            } else {
+                fetchUserProfile();
+            }
+        }
+
+        // Initial check
+        checkAuth();
+    </script>
+</body>
+
+</html>

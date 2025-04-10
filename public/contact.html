@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Help &amp; Support | Pestector</title>
+    <!-- Tailwind CSS (updated to v3.3.3 for consistency with previous files) -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideInDown {
+            from {
+                transform: translateY(-20px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes fadeOutUp {
+            from {
+                transform: translateY(0);
+                opacity: 1;
+            }
+
+            to {
+                transform: translateY(-20px);
+                opacity: 0;
+            }
+        }
+
+        .slide-in-down {
+            animation: slideInDown 0.5s ease forwards;
+        }
+
+        .fade-out-up {
+            animation: fadeOutUp 0.5s ease forwards;
+        }
+
+        .fade-in {
+            animation: fadeIn 0.4s ease-out forwards;
+        }
+
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+
+        /* Spinner Animation */
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 1rem;
+            height: 1rem;
+            border: 2px solid #ffffff;
+            border-top: 2px solid transparent;
+            border-radius: 50%;
+            animation: spin 0.75s linear infinite;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-50 min-h-screen flex flex-col">
+    <!-- Header -->
+    <header class="bg-white shadow-sm sticky top-0 z-10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center space-x-3">
+                    <div class="bg-indigo-600 text-white p-2 rounded-lg"><i class="fas fa-leaf text-xl"></i></div>
+                    <h1 class="text-2xl font-bold text-gray-900">Pestector</h1>
+                </div>
+                <nav class="hidden md:flex space-x-6">
+                    <a href="index.html"
+                        class="text-gray-500 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium"><i
+                            class="fas fa-home mr-2"></i>Home</a>
+                    <a href="history.html"
+                        class="text-gray-500 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium"><i
+                            class="fas fa-history mr-2"></i>History</a>
+                    <a href="plantsCollection.html"
+                        class="text-gray-500 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium"><i
+                            class="fas fa-seedling mr-2"></i>My Plants</a>
+                    <a href="settings.html"
+                        class="text-gray-500 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium"><i
+                            class="fas fa-cog mr-2"></i>Settings</a>
+                    <a href="contactUs.html"
+                        class="text-gray-500 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium"><i
+                            class="fas fa-envelope mr-2"></i>Contact Us</a>
+                    <a href="helpSupport.html"
+                        class="text-indigo-600 border-b-2 border-indigo-600 px-3 py-2 text-sm font-medium"><i
+                            class="fas fa-question-circle mr-2"></i>Help &amp; Support</a>
+                </nav>
+                <div class="relative">
+                    <button id="profileDropdownBtn"
+                        class="flex items-center text-sm font-medium text-gray-700 hover:text-indigo-600 transition-colors duration-200">
+                        <i class="fas fa-user-circle mr-2"></i>Profile<i class="fas fa-chevron-down ml-1 text-xs"></i>
+                    </button>
+                    <div id="profileDropdown"
+                        class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-2 hidden">
+                        <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Edit Profile</a>
+                        <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Change Password</a>
+                        <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Notifications</a>
+                        <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Settings</a>
+                        <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Help</a>
+                        <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">About</a>
+                        <button id="logoutBtn"
+                            class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"><i
+                                class="fas fa-sign-out-alt mr-2"></i>Logout</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-grow py-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <!-- Help &amp; Support Section -->
+            <div class="mb-8">
+                <h2 class="text-2xl font-bold text-gray-900">Help &amp; Support</h2>
+                <p class="mt-1 text-sm text-gray-500">Find answers to common questions or get in touch with our support
+                    team.</p>
+            </div>
+
+            <!-- FAQs Section -->
+            <div class="mb-12">
+                <h3 class="text-xl font-semibold text-gray-900 mb-4">Frequently Asked Questions</h3>
+                <div class="space-y-4">
+                    <div class="bg-white p-4 rounded-lg shadow-sm card-hover">
+                        <h4 class="text-lg font-medium text-gray-900">How do I identify a plant disease?</h4>
+                        <p class="mt-2 text-sm text-gray-500">Upload an image of your plant using the Pestector app, and
+                            our AI will analyze it to identify potential diseases or pests.</p>
+                    </div>
+                    <div class="bg-white p-4 rounded-lg shadow-sm card-hover">
+                        <h4 class="text-lg font-medium text-gray-900">Can I track my plant history?</h4>
+                        <p class="mt-2 text-sm text-gray-500">Yes, go to the "History" page to view all your past scans
+                            and their results.</p>
+                    </div>
+                    <div class="bg-white p-4 rounded-lg shadow-sm card-hover">
+                        <h4 class="text-lg font-medium text-gray-900">What if I don’t get a response?</h4>
+                        <p class="mt-2 text-sm text-gray-500">If our AI can’t identify an issue, you can contact support
+                            below, and we’ll assist you manually.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Status Message -->
+            <div id="statusMessageContainer" class="mb-6 hidden">
+                <div id="statusMessage" class="py-3 px-4 rounded-md text-sm font-medium"></div>
+            </div>
+
+            <!-- Contact Form -->
+            <div class="bg-white p-6 rounded-lg shadow-sm mb-12">
+                <h3 class="text-xl font-semibold text-gray-900 mb-4">Contact Support</h3>
+                <form id="contactForm" class="space-y-6">
+                    <div>
+                        <label for="name" class="block text-sm font-medium text-gray-700 mb-1">Name</label>
+                        <input type="text" id="name" name="name" required
+                            class="block w-full pl-3 pr-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                            placeholder="Your Name">
+                    </div>
+                    <div>
+                        <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                        <input type="email" id="email" name="email" required
+                            class="block w-full pl-3 pr-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                            placeholder="Your Email">
+                    </div>
+                    <div>
+                        <label for="subject" class="block text-sm font-medium text-gray-700 mb-1">Subject</label>
+                        <input type="text" id="subject" name="subject" required
+                            class="block w-full pl-3 pr-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                            placeholder="Subject">
+                    </div>
+                    <div>
+                        <label for="message" class="block text-sm font-medium text-gray-700 mb-1">Message</label>
+                        <textarea id="message" name="message" rows="4" required
+                            class="block w-full pl-3 pr-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                            placeholder="Your Message"></textarea>
+                    </div>
+                    <div class="flex justify-end">
+                        <button type="submit" id="submitButton"
+                            class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 flex items-center">
+                            <span id="buttonText"><i class="fas fa-paper-plane mr-2"></i>Send Message</span>
+                            <span id="loadingSpinner" class=" hidden ml-2"></span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Support Contact Information -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="bg-white p-6 rounded-lg shadow-sm card-hover">
+                    <div class="flex items-center justify-center w-12 h-12 bg-indigo-100 rounded-full mb-4">
+                        <i class="fas fa-envelope text-indigo-600 text-xl"></i>
+                    </div>
+                    <h3 class="text-lg font-semibold text-gray-900">Email</h3>
+                    <p class="mt-2 text-sm text-gray-500">se.abdelrahman968@gmail.com</p>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-sm card-hover">
+                    <div class="flex items-center justify-center w-12 h-12 bg-indigo-100 rounded-full mb-4">
+                        <i class="fas fa-phone text-indigo-600 text-xl"></i>
+                    </div>
+                    <h3 class="text-lg font-semibold text-gray-900">Phone</h3>
+                    <p class="mt-2 text-sm text-gray-500">+20 (127) 550-2636</p>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-sm card-hover">
+                    <div class="flex items-center justify-center w-12 h-12 bg-indigo-100 rounded-full mb-4">
+                        <i class="fas fa-map-marker-alt text-indigo-600 text-xl"></i>
+                    </div>
+                    <h3 class="text-lg font-semibold text-gray-900">Address</h3>
+                    <p class="mt-2 text-sm text-gray-500">Mansoura, Dakahlia, Egypt</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Enhanced Footer -->
+    <footer class="bg-white border-t border-gray-200 mt-12">
+        <div class="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+            <!-- Main Footer Content -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Company Info -->
+                <div class="flex flex-col">
+                    <h3 class="text-sm font-semibold text-gray-900 tracking-wider uppercase mb-3">Pestector</h3>
+                    <p class="text-sm text-gray-600 max-w-xs">Helping plant lovers keep their green friends healthy and
+                        thriving since 2023.</p>
+                    <div class="mt-4">
+                        <p class="text-sm text-gray-500">© 2025 Pestector. All rights reserved.</p>
+                    </div>
+                </div>
+
+                <!-- Quick Links -->
+                <div class="flex flex-col md:items-center">
+                    <h3 class="text-sm font-semibold text-gray-900 tracking-wider uppercase mb-3">Quick Links</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-sm text-gray-600 hover:text-green-600 transition-colors">Home</a>
+                        </li>
+                        <li><a href="#" class="text-sm text-gray-600 hover:text-green-600 transition-colors">My
+                                Plants</a></li>
+                        <li><a href="#" class="text-sm text-gray-600 hover:text-green-600 transition-colors">Plant
+                                Database</a></li>
+                        <li><a href="#" class="text-sm text-gray-600 hover:text-green-600 transition-colors">Help &
+                                Support</a></li>
+                    </ul>
+                </div>
+
+                <!-- Connect Section -->
+                <div class="flex flex-col md:items-end">
+                    <h3 class="text-sm font-semibold text-gray-900 tracking-wider uppercase mb-3">Connect With Us</h3>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-gray-400 hover:text-blue-400 transition-colors"><i
+                                class="fab fa-twitter h-6 w-6"></i></a>
+                        <a href="#" class="text-gray-400 hover:text-blue-600 transition-colors"><i
+                                class="fab fa-facebook h-6 w-6"></i></a>
+                        <a href="#" class="text-gray-400 hover:text-pink-600 transition-colors"><i
+                                class="fab fa-instagram h-6 w-6"></i></a>
+                        <a href="#" class="text-gray-400 hover:text-red-600 transition-colors"><i
+                                class="fab fa-pinterest h-6 w-6"></i></a>
+                    </div>
+                    <div class="mt-6">
+                        <h4 class="text-xs font-semibold text-gray-900 uppercase mb-2">Subscribe for updates</h4>
+                        <div class="flex mt-1">
+                            <input type="email" placeholder="Your email"
+                                class="min-w-0 px-3 py-2 text-gray-900 placeholder-gray-500 border border-gray-300 rounded-l-md focus:outline-none focus:ring-1 focus:ring-green-500 focus:border-green-500 text-sm" />
+                            <button
+                                class="inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-r-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">Subscribe</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bottom Bar -->
+            <div
+                class="pt-8 mt-8 border-t border-gray-200 flex flex-col md:flex-row justify-between items-center text-xs text-gray-500">
+                <div class="flex space-x-6 mb-4 md:mb-0">
+                    <a href="#" class="hover:text-gray-900 transition-colors">Privacy Policy</a>
+                    <a href="#" class="hover:text-gray-900 transition-colors">Terms of Service</a>
+                    <a href="#" class="hover:text-gray-900 transition-colors">Contact Us</a>
+                </div>
+                <p>Designed with ♥ for plant enthusiasts everywhere</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        const apiBaseUrl = '/api';
+
+        // DOM Elements
+        const contactForm = document.getElementById('contactForm');
+        const profileDropdownBtn = document.getElementById('profileDropdownBtn');
+        const profileDropdown = document.getElementById('profileDropdown');
+        const logoutBtn = document.getElementById('logoutBtn');
+        const submitButton = document.getElementById('submitButton');
+        const buttonText = document.getElementById('buttonText');
+        const loadingSpinner = document.getElementById('loadingSpinner');
+
+        // Show status message
+        function showMessage(message, isError = false) {
+            const statusMessageContainer = document.getElementById('statusMessageContainer');
+            const statusMessage = document.getElementById('statusMessage');
+            statusMessageContainer.classList.remove('slide-in-down', 'fade-out-up');
+            statusMessage.innerHTML = isError ? `<i class="fas fa-exclamation-circle mr-2"></i>${message}` : `<i class="fas fa-check-circle mr-2"></i>${message}`;
+            statusMessage.className = `py-3 px-4 rounded-md text-sm font-medium ${isError ? 'bg-red-100 text-red-700 border border-red-200' : 'bg-green-100 text-green-700 border border-green-200'}`;
+            statusMessageContainer.classList.remove('hidden');
+            statusMessageContainer.classList.add('slide-in-down');
+            setTimeout(() => {
+                statusMessageContainer.classList.remove('slide-in-down');
+                statusMessageContainer.classList.add('fade-out-up');
+                setTimeout(() => statusMessageContainer.classList.add('hidden'), 500);
+            }, 5000);
+        }
+
+        // Toggle loading state
+        function toggleLoading(isLoading) {
+            if (isLoading) {
+                submitButton.disabled = true;
+                buttonText.classList.add('hidden');
+                loadingSpinner.classList.add('spinner');
+                loadingSpinner.classList.remove('hidden');
+            } else {
+                submitButton.disabled = false;
+                buttonText.classList.remove('hidden');
+                loadingSpinner.classList.add('hidden');
+                loadingSpinner.classList.remove('spinner');
+            }
+        }
+
+
+        // Submit contact form
+        async function submitContactForm(event) {
+            event.preventDefault();
+
+            const formData = new FormData(contactForm);
+            const data = Object.fromEntries(formData);
+            console.log("Form Data:", data); // Log form data for debugging
+
+            try {
+                toggleLoading(true); // Show loading spinner
+
+                const token = localStorage.getItem('token') || getTokenFromCookies();
+                const headers = { 'Content-Type': 'application/json' };
+                if (token) headers['Authorization'] = `Bearer ${token}`;
+
+                const response = await fetch(`${apiBaseUrl}/contact`, {
+                    method: 'POST',
+                    headers,
+                    body: JSON.stringify(data)
+                });
+                const result = await response.json();
+
+                if (!response.ok) throw new Error(result.message || 'Failed to send message');
+
+                showMessage('Message sent successfully! We will reply to your email soon.');
+                contactForm.reset();
+            } catch (error) {
+                showMessage(error.message || 'Error sending message', true);
+            } finally {
+                toggleLoading(false); // Hide loading spinner
+            }
+        }
+
+        // Event listeners
+        contactForm.addEventListener('submit', submitContactForm);
+        profileDropdownBtn.addEventListener('click', () => profileDropdown.classList.toggle('hidden'));
+        document.addEventListener('click', (event) => {
+            if (!profileDropdownBtn.contains(event.target) && !profileDropdown.contains(event.target)) {
+                profileDropdown.classList.add('hidden');
+            }
+        });
+        logoutBtn.addEventListener('click', () => {
+            localStorage.removeItem('token');
+            document.cookie = 'token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+            window.location.href = '/login.html';
+        });
+
+        // Get token from cookies
+        function getTokenFromCookies() {
+            const cookie = document.cookie.split('; ').find(row => row.startsWith('token='));
+            return cookie ? cookie.split('=')[1] : null;
+        }
+
+        // Check authentication (optional - keeps page accessible to guests)
+        function checkAuth() {
+            const token = localStorage.getItem('token') || getTokenFromCookies();
+            if (!token) {
+                console.log('Guest user');
+            }
+        }
+
+        // Initial check (ensure no accidental loading trigger)
+        checkAuth();
+        toggleLoading(false); // Explicitly ensure loading is off on page load
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Privacy Policy | Pestector</title>
+    <!-- Tailwind CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@3.3.3/dist/tailwind.min.css" rel="stylesheet">
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideInDown {
+            from {
+                transform: translateY(-20px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes fadeOutUp {
+            from {
+                transform: translateY(0);
+                opacity: 1;
+            }
+
+            to {
+                transform: translateY(-20px);
+                opacity: 0;
+            }
+        }
+
+        .slide-in-down {
+            animation: slideInDown 0.5s ease forwards;
+        }
+
+        .fade-out-up {
+            animation: fadeOutUp 0.5s ease forwards;
+        }
+
+        .fade-in {
+            animation: fadeIn 0.4s ease-out forwards;
+        }
+
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+
+        .animate-delay-1 {
+            animation-delay: 0.1s;
+        }
+
+        .animate-delay-2 {
+            animation-delay: 0.2s;
+        }
+
+        .animate-delay-3 {
+            animation-delay: 0.3s;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-50 min-h-screen flex flex-col">
+    <!-- Header -->
+    <header class="bg-white shadow-md sticky top-0 z-20 transition-all duration-300">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+            <div class="flex justify-between items-center">
+                <!-- Logo and Brand -->
+                <a href="/" class="flex items-center space-x-3 flex-shrink-0">
+                    <div
+                        class="bg-gradient-to-r from-indigo-600 to-indigo-800 text-white p-2.5 rounded-lg shadow-sm hover:shadow transition-all duration-300">
+                        <i class="fas fa-leaf text-xl"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-2xl font-bold text-gray-900">Pestector </h1>
+                    </div>
+                </a>
+
+                <!-- Main Navigation - Desktop -->
+                <nav class="hidden lg:flex space-x-2">
+                    <a href="/"
+                        class="text-gray-600 hover:text-indigo-600 hover:bg-indigo-50 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">
+                        <i class="fas fa-home mr-2"></i>Home
+                    </a>
+
+                    <a href="/library"
+                        class="text-gray-600 hover:text-indigo-600 hover:bg-indigo-50 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">
+                        <i class="fas fa-book-medical mr-2"></i>Library
+                    </a>
+                    <a href="/about-us"
+                        class="text-gray-600 hover:text-indigo-600 hover:bg-indigo-50 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">
+                        <i class="fas fa-users mr-2"></i>About Us
+                    </a>
+                </nav>
+
+                <!-- Mobile Navigation Button -->
+                <button id="mobileMenuBtn" class="lg:hidden flex items-center text-gray-600 hover:text-indigo-600">
+                    <i class="fas fa-bars text-xl"></i>
+                </button>
+
+                <!-- User Profile / Login-register -->
+                <div class="relative ml-4">
+                    <!-- Logged-in user -->
+                    <div id="userLoggedIn" class="hidden">
+                        <button id="profileDropdownBtn"
+                            class="flex items-center text-sm font-medium text-gray-700 hover:text-indigo-600 transition-colors duration-200 bg-gray-50 hover:bg-indigo-50 rounded-full px-4 py-2">
+                            <i class="fas fa-user-circle mr-2 text-lg"></i>
+                            <span id="welcomeMessage">Welcome, User</span>
+                            <i class="fas fa-chevron-down ml-2 text-xs"></i>
+                        </button>
+                        <div id="profileDropdown"
+                            class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-2 hidden">
+                            <a href="/dashboard"
+                                class="block px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-600">
+                                <i class="fas fa-tachometer-alt mr-2 opacity-75"></i>Dashboard
+                            </a>
+                            <a href="/scan"
+                                class="block px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-600">
+                                <i class="fas fa-camera mr-2 opacity-75"></i>Scan
+                            </a>
+                            <a href="/history"
+                                class="block px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-600">
+                                <i class="fas fa-history mr-2 opacity-75"></i>History
+                            </a>
+                            <a href="/weather"
+                                class="block px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-600">
+                                <i class="fas fa-cloud-sun mr-2"></i>Weather
+                            </a>
+                            <a href="/plants"
+                                class="block px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-600">
+                                <i class="fas fa-seedling mr-2 opacity-75"></i>My Plants
+                            </a>
+                            <a href="/reminders"
+                                class="block px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-600">
+                                <i class="fas fa-bell mr-2 opacity-75"></i>Reminders
+                            </a>
+                            <a href="/treatment"
+                                class="block px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-600">
+                                <i class="fas fa-medkit mr-2 opacity-75"></i>Treatment
+                            </a>
+                            <a href="/subscribe"
+                                class="block px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-600">
+                                <i class="fas fa-star mr-2 opacity-75"></i>Subscription
+                            </a>
+                            <a href="/profile"
+                                class="block px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-600">
+                                <i class="fas fa-user-edit mr-2"></i>Edit Profile
+                            </a>
+                            <div class="border-t border-gray-100 my-1"></div>
+                            <button id="logoutBtn"
+                                class="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50">
+                                <i class="fas fa-sign-out-alt mr-2"></i>Logout
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Not logged-in -->
+                    <div id="userNotLoggedIn" class="flex space-x-2">
+                        <a href="/login"
+                            class="text-gray-700 hover:text-indigo-600 bg-gray-50 hover:bg-indigo-50 px-4 py-2 rounded-full text-sm font-medium transition-colors duration-200">
+                            <i class="fas fa-sign-in-alt mr-2"></i>Login
+                        </a>
+                        <a href="/register"
+                            class="text-white bg-indigo-600 hover:bg-indigo-700 px-4 py-2 rounded-full text-sm font-medium transition-colors duration-200">
+                            <i class="fas fa-user-plus mr-2"></i>Sign Up
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Mobile Navigation Menu (Hidden by default) -->
+            <div id="mobileMenu" class="lg:hidden hidden pt-4 pb-3 border-t border-gray-200 mt-4">
+                <div class="space-y-1">
+                    <a href="/"
+                        class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-indigo-600 hover:bg-indigo-50">
+                        <i class="fas fa-home mr-2"></i>Home
+                    </a>
+                    <a href="/Library"
+                        class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-indigo-600 hover:bg-indigo-50">
+                        <i class="fas fa-book-medical mr-2"></i>Library
+                    </a>
+                    <a href="/about-us"
+                        class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-indigo-600 hover:bg-indigo-50">
+                        <i class="fas fa-users mr-2"></i>About Us
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Enhanced More Header Section -->
+    <div class="bg-gradient-to-r from-indigo-50 to-purple-50 border-t border-b border-indigo-100">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2">
+            <!-- Desktop View -->
+            <div class="hidden md:flex items-center">
+                <div class="flex items-center px-3 py-1.5 bg-white rounded-full shadow-sm border border-indigo-100">
+                    <span class="text-lg font-medium text-indigo-700"><i class="fas fa-compass mr-2"></i>More</span>
+                    <div class="h-4 mx-3 border-r border-indigo-200"></div>
+                    <span class="text-xs text-indigo-500">Quick Links</span>
+                </div>
+
+                <div class="ml-auto flex items-center">
+                    <div class="flex space-x-1 overflow-x-auto pb-1 scrollbar-hide">
+                        <a href="/help"
+                            class="text-gray-600 hover:text-white hover:bg-indigo-600 px-3 py-1.5 rounded-full text-sm font-medium transition-all duration-200 flex items-center whitespace-nowrap">
+                            <i class="fas fa-question-circle mr-1.5"></i>Help
+                        </a>
+                        <a href="/terms"
+                            class="text-gray-600 hover:text-white hover:bg-indigo-600 px-3 py-1.5 rounded-full text-sm font-medium transition-all duration-200 flex items-center whitespace-nowrap">
+                            <i class="fas fa-file-contract mr-1.5"></i>Terms
+                        </a>
+                        <a href="/official-rules"
+                            class="text-gray-600 hover:text-white hover:bg-indigo-600 px-3 py-1.5 rounded-full text-sm font-medium transition-all duration-200 flex items-center whitespace-nowrap">
+                            <i class="fas fa-gavel mr-1.5"></i>Rules
+                        </a>
+                        <a href="/donate"
+                            class="text-gray-600 hover:text-white hover:bg-indigo-600 px-3 py-1.5 rounded-full text-sm font-medium transition-all duration-200 flex items-center whitespace-nowrap">
+                            <i class="fas fa-gift mr-1.5"></i>Donate
+                        </a>
+                        <a href="/advertisement"
+                            class="text-gray-600 hover:text-white hover:bg-indigo-600 px-3 py-1.5 rounded-full text-sm font-medium transition-all duration-200 flex items-center whitespace-nowrap">
+                            <i class="fas fa-ad mr-1.5"></i>Ads
+                        </a>
+                        <a href="/dmca"
+                            class="text-gray-600 hover:text-white hover:bg-indigo-600 px-3 py-1.5 rounded-full text-sm font-medium transition-all duration-200 flex items-center whitespace-nowrap">
+                            <i class="fas fa-lock mr-1.5"></i>DMCA
+                        </a>
+                        <a href="/adding-files"
+                            class="text-gray-600 hover:text-white hover:bg-indigo-600 px-3 py-1.5 rounded-full text-sm font-medium transition-all duration-200 flex items-center whitespace-nowrap">
+                            <i class="fas fa-file-upload mr-1.5"></i>Files
+                        </a>
+                        <a href="/privacy-policy"
+                            class="text-white bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 px-3 py-1.5 rounded-full text-sm font-medium transition-all duration-200 flex items-center whitespace-nowrap shadow-sm">
+                            <i class="fas fa-shield-alt mr-1.5"></i>Privacy
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Mobile View -->
+            <div class="md:hidden">
+                <div class="flex items-center justify-between mb-2">
+                    <div class="flex items-center px-3 py-1.5 bg-white rounded-full shadow-sm border border-indigo-100">
+                        <span class="text-lg font-medium text-indigo-700"><i class="fas fa-compass mr-2"></i>More</span>
+                    </div>
+                    <button id="moreMenuToggle" class="px-2 py-1 text-indigo-600 hover:text-indigo-800">
+                        <i class="fas fa-chevron-down text-xs"></i>
+                    </button>
+                </div>
+                <div id="moreMenuMobile" class="grid grid-cols-2 gap-2 mt-2">
+                    <a href="/help"
+                        class="text-gray-600 bg-white hover:bg-indigo-600 hover:text-white px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 flex items-center shadow-sm border border-indigo-100">
+                        <i class="fas fa-question-circle mr-2"></i>Help
+                    </a>
+                    <a href="/terms"
+                        class="text-gray-600 bg-white hover:bg-indigo-600 hover:text-white px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 flex items-center shadow-sm border border-indigo-100">
+                        <i class="fas fa-file-contract mr-2"></i>Terms
+                    </a>
+                    <a href="/official-rules"
+                        class="text-gray-600 bg-white hover:bg-indigo-600 hover:text-white px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 flex items-center shadow-sm border border-indigo-100">
+                        <i class="fas fa-gavel mr-2"></i>Rules
+                    </a>
+                    <a href="/donate"
+                        class="text-gray-600 bg-white hover:bg-indigo-600 hover:text-white px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 flex items-center shadow-sm border border-indigo-100">
+                        <i class="fas fa-gift mr-2"></i>Donate
+                    </a>
+                    <a href="/advertisement"
+                        class="text-gray-600 bg-white hover:bg-indigo-600 hover:text-white px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 flex items-center shadow-sm border border-indigo-100">
+                        <i class="fas fa-ad mr-2"></i>Advertisements
+                    </a>
+                    <a href="/dmca"
+                        class="text-gray-600 bg-white hover:bg-indigo-600 hover:text-white px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 flex items-center shadow-sm border border-indigo-100">
+                        <i class="fas fa-lock mr-2"></i>DMCA
+                    </a>
+                    <a href="/adding-files"
+                        class="text-gray-600 bg-white hover:bg-indigo-600 hover:text-white px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 flex items-center shadow-sm border border-indigo-100">
+                        <i class="fas fa-file-upload mr-2"></i>Adding Files
+                    </a>
+                    <a href="/privacy-policy"
+                        class="text-white bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 flex items-center shadow-sm">
+                        <i class="fas fa-shield-alt mr-2"></i>Privacy Policy
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="flex-grow py-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <!-- Privacy Policy Section -->
+            <div class="mb-8">
+                <h2 class="text-2xl font-bold text-gray-900">Privacy Policy</h2>
+                <p class="mt-1 text-sm text-gray-500">Learn how Pestector protects your personal information and
+                    privacy.</p>
+            </div>
+
+            <!-- Status Message -->
+            <div id="statusMessageContainer" class="mb-6 hidden">
+                <div id="statusMessage" class="py-3 px-4 rounded-md text-sm font-medium"></div>
+            </div>
+
+            <!-- Privacy Policy Content -->
+            <div class="bg-white rounded-lg shadow overflow-hidden card-hover fade-in">
+                <div class="p-5">
+                    <div class="flex items-center mb-4">
+                        <i class="fas fa-shield-alt text-indigo-600 text-2xl mr-3"></i>
+                        <h3 class="text-lg font-semibold text-gray-900">Pestector Privacy Policy</h3>
+                    </div>
+                    <div class="text-sm text-gray-600 space-y-4">
+                        <p>
+                            We are Pestector | Premium Plant Care Community ("we", "our", "us"). We’re committed to
+                            protecting and respecting your privacy. If you have questions about your personal
+                            information, please contact us at <a href="/mailto:privacy@pestector.com"
+                                class="text-indigo-600 hover:text-indigo-800">privacy@pestector.com</a>.
+                        </p>
+                        <h4 class="font-medium text-gray-900 mt-2">What Information We Hold About You</h4>
+                        <p>
+                            The type of data that we collect and process includes:
+                        </p>
+                        <ul class="list-disc pl-5 space-y-2">
+                            <li>Your name or username.</li>
+                            <li>Your email address.</li>
+                            <li>Your IP address.</li>
+                            <li>Further data may be collected if you choose to share it, such as if you fill out fields
+                                on your profile.</li>
+                        </ul>
+                        <p>
+                            We collect some or all of this information in the following cases:
+                        </p>
+                        <ul class="list-disc pl-5 space-y-2">
+                            <li>You register as a member on this site.</li>
+                            <li>You fill out our contact form.</li>
+                            <li>You browse this site. See "Cookie Policy" below.</li>
+                            <li>You fill out fields on your profile.</li>
+                        </ul>
+
+                        <h4 class="font-medium text-gray-900 mt-2">How Your Personal Information Is Used</h4>
+                        <p>
+                            We may use your personal information in the following ways:
+                        </p>
+                        <ul class="list-disc pl-5 space-y-2">
+                            <li>For the purposes of making you a registered member of our site, in order for you to
+                                contribute content to this site.</li>
+                            <li>We may use your email address to inform you of activity on our site.</li>
+                            <li>Your IP address is recorded when you perform certain actions on our site. Your IP
+                                address is never publicly visible.</li>
+                            <li>Other ways we may use your personal information.</li>
+                        </ul>
+                        <p>
+                            In addition to notifying you of activity on our site which may be relevant to you, from time
+                            to time we may wish to communicate with all members any important information such as
+                            newsletters or announcements by email. You can opt-in to or opt-out of such emails in your
+                            profile.
+                        </p>
+                        <p>
+                            We may collect non-personally identifiable information about you in the course of your
+                            interaction with our site. This information may include technical information about the
+                            browser or type of device you're using. This information will be used purely for the
+                            purposes of analytics and tracking the number of visitors to our site.
+                        </p>
+
+                        <h4 class="font-medium text-gray-900 mt-2">Keeping Your Data Secure</h4>
+                        <p>
+                            We are committed to ensuring that any information you provide to us is secure. In order to
+                            prevent unauthorized access or disclosure, we have put in place suitable measures and
+                            procedures to safeguard and secure the information that we collect.
+                        </p>
+
+                        <h4 class="font-medium text-gray-900 mt-2">Cookie Policy</h4>
+                        <p>
+                            Cookies are small text files which are set by us on your computer which allow us to provide
+                            certain functionality on our site, such as being able to log in, or remembering certain
+                            preferences.
+                        </p>
+                        <p>
+                            We have a detailed cookie policy and more information about the cookies that we set on <a
+                                href="#" class="text-indigo-600 hover:text-indigo-800">this page</a> (to be
+                            implemented).
+                        </p>
+
+                        <h4 class="font-medium text-gray-900 mt-2">Rights</h4>
+                        <p>
+                            You have a right to access the personal data we hold about you or obtain a copy of it. To do
+                            so, please contact us at <a href="/mailto:privacy@pestector.com"
+                                class="text-indigo-600 hover:text-indigo-800">privacy@pestector.com</a>. If you believe
+                            that the information we hold for you is incomplete or inaccurate, you may contact us to ask
+                            us to complete or correct that information.
+                        </p>
+                        <p>
+                            You also have the right to request the erasure of your personal data. Please contact us at
+                            <a href="/mailto:privacy@pestector.com"
+                                class="text-indigo-600 hover:text-indigo-800">privacy@pestector.com</a> if you would
+                            like us to remove your personal data.
+                        </p>
+
+                        <h4 class="font-medium text-gray-900 mt-2">Acceptance of This Policy</h4>
+                        <p>
+                            Continued use of our site signifies your acceptance of this policy. If you do not accept the
+                            policy, then please do not use this site. When registering, we will further request your
+                            explicit acceptance of the privacy policy.
+                        </p>
+
+                        <h4 class="font-medium text-gray-900 mt-2">Changes to This Policy</h4>
+                        <p>
+                            We may make changes to this policy at any time. You may be asked to review and re-accept the
+                            information in this policy if it changes in the future.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Enhanced Footer -->
+    <footer class="bg-white border-t border-gray-200 mt-12">
+        <div class="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+            <!-- Main Footer Content -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Company Info -->
+                <div class="flex flex-col">
+                    <h3 class="text-sm font-semibold text-gray-900 tracking-wider uppercase mb-3">Pestector</h3>
+                    <p class="text-sm text-gray-600 max-w-xs">Helping plant lovers keep their green friends healthy and
+                        thriving since 2023.</p>
+                    <div class="mt-4">
+                        <p class="text-sm text-gray-500">© 2025 Pestector. All rights reserved.</p>
+                    </div>
+                </div>
+
+                <!-- Quick Links -->
+                <div class="flex flex-col md:items-center">
+                    <h3 class="text-sm font-semibold text-gray-900 tracking-wider uppercase mb-3">Quick Links</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#"
+                                class="text-sm text-gray-600 hover:text-gradient-to-r from-indigo-600 to-indigo-800 text-white p-2.5-600 transition-colors">Home</a>
+                        </li>
+                        <li><a href="#"
+                                class="text-sm text-gray-600 hover:text-gradient-to-r from-indigo-600 to-indigo-800 text-white p-2.5-600 transition-colors">My
+                                Plants</a></li>
+                        <li><a href="#"
+                                class="text-sm text-gray-600 hover:text-gradient-to-r from-indigo-600 to-indigo-800 text-white p-2.5-600 transition-colors">Plant
+                                Database</a></li>
+                        <li><a href="#"
+                                class="text-sm text-gray-600 hover:text-gradient-to-r from-indigo-600 to-indigo-800 text-white p-2.5-600 transition-colors">Help
+                                &
+                                Support</a></li>
+                    </ul>
+                </div>
+
+                <!-- Connect Section -->
+                <div class="flex flex-col md:items-end">
+                    <h3 class="text-sm font-semibold text-gray-900 tracking-wider uppercase mb-3">Connect With Us</h3>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-gray-400 hover:text-blue-400 transition-colors"><i
+                                class="fab fa-twitter h-6 w-6"></i></a>
+                        <a href="#" class="text-gray-400 hover:text-blue-600 transition-colors"><i
+                                class="fab fa-facebook h-6 w-6"></i></a>
+                        <a href="#" class="text-gray-400 hover:text-pink-600 transition-colors"><i
+                                class="fab fa-instagram h-6 w-6"></i></a>
+                        <a href="#" class="text-gray-400 hover:text-red-600 transition-colors"><i
+                                class="fab fa-pinterest h-6 w-6"></i></a>
+                    </div>
+                    <div class="mt-6">
+                        <h4 class="text-xs font-semibold text-gray-900 uppercase mb-2">Subscribe for updates</h4>
+                        <div class="flex mt-1">
+                            <input type="email" placeholder="Your email"
+                                class="min-w-0 px-3 py-2 text-gray-900 placeholder-gray-500 border border-gray-300 rounded-l-md focus:outline-none focus:ring-1 focus:ring-gradient-to-r from-indigo-600 to-indigo-800 text-white p-2.5-500 focus:border-gradient-to-r from-indigo-600 to-indigo-800 text-white p-2.5-500 text-sm" />
+                            <button
+                                class="inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-r-md text-white bg-gradient-to-r from-indigo-600 to-indigo-800 text-white p-2.5-600 hover:bg-gradient-to-r from-indigo-600 to-indigo-800 text-white p-2.5-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gradient-to-r from-indigo-600 to-indigo-800 text-white p-2.5-500">Subscribe</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bottom Bar -->
+            <div
+                class="pt-8 mt-8 border-t border-gray-200 flex flex-col md:flex-row justify-between items-center text-xs text-gray-500">
+                <div class="flex space-x-6 mb-4 md:mb-0">
+                    <a href="#" class="hover:text-gray-900 transition-colors">Privacy Policy</a>
+                    <a href="#" class="hover:text-gray-900 transition-colors">Terms of Service</a>
+                    <a href="#" class="hover:text-gray-900 transition-colors">Contact Us</a>
+                </div>
+                <p>Designed with ♥ for plant enthusiasts everywhere</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="scripts/header.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pestector - Plant Health Scanner</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.css" rel="stylesheet">
+    <link rel="shortcut icon" href="/static/img/icon.png" type="image/x-icon">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        .loader {
+            border: 4px solid #e5e7eb;
+            border-top: 4px solid #4f46e5;
+            /* Changed from emerald to indigo */
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .drop-zone-active {
+            border-color: #4f46e5;
+            /* Changed from emerald to indigo */
+            background-color: rgba(79, 70, 229, 0.1);
+            /* Changed from emerald to indigo */
+        }
+
+        .gemini-highlight {
+            border-left: 2px solid #3b82f6;
+        }
+
+        .confidence-bar {
+            height: 0.5rem;
+            background-color: #4f46e5;
+            /* Changed from emerald to indigo */
+            border-radius: 9999px;
+            transition: width 0.5s ease-in-out;
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #4f46e5;
+            /* Changed from emerald to indigo */
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #4338ca;
+            /* Changed from emerald to indigo */
+        }
+
+        .card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-primary {
+            background: linear-gradient(90deg, #4f46e5, #4338ca);
+            /* Changed from emerald to indigo */
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(90deg, #4338ca, #3730a3);
+            /* Changed from emerald to indigo */
+            transform: translateY(-1px);
+        }
+
+        .gradient-text {
+            background: linear-gradient(90deg, #4f46e5, #4338ca);
+            /* Changed from emerald to indigo */
+            /* -webkit-background-clip: text; */
+            -webkit-text-fill-color: transparent;
+        }
+
+        .cropper-container {
+            max-height: 500px;
+            /* Increased for better visibility */
+            max-width: 100%;
+            overflow: auto;
+            /* Allow scrolling if needed */
+        }
+
+        .cropper-controls button {
+            transition: background-color 0.2s ease;
+        }
+
+        .cropper-controls button:hover {
+            background-color: #4338ca;
+            /* Changed from emerald to indigo */
+        }
+    </style>
+</head>
+
+<body class="bg-gradient-to-b from-gray-50 to-emerald-50 text-gray-900">
+    <div class="min-h-screen flex flex-col">
+        <header class="bg-white shadow-md sticky top-0 z-20 transition-all duration-300">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+                <div class="flex justify-between items-center">
+                    <!-- Logo and Brand -->
+                    <a href="/" class="flex items-center space-x-3 flex-shrink-0">
+                        <div
+                            class="bg-gradient-to-r from-indigo-600 to-indigo-800 text-white p-2.5 rounded-lg shadow-sm hover:shadow transition-all duration-300">
+                            <i class="fas fa-leaf text-xl"></i>
+                        </div>
+                        <div>
+                            <h1 class="text-2xl font-bold text-gray-900">Pestector </h1>
+                        </div>
+                    </a>
+
+                    <!-- Main Navigation - Desktop -->
+                    <nav class="hidden lg:flex space-x-2">
+                        <a href="/"
+                            class="text-gray-600 hover:text-indigo-600 hover:bg-indigo-50 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">
+                            <i class="fas fa-home mr-2"></i>Home
+                        </a>
+
+                        <a href="/library"
+                            class="text-gray-600 hover:text-indigo-600 hover:bg-indigo-50 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">
+                            <i class="fas fa-book-medical mr-2"></i>Library
+                        </a>
+                        <a href="/about-us"
+                            class="text-gray-600 hover:text-indigo-600 hover:bg-indigo-50 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">
+                            <i class="fas fa-users mr-2"></i>About Us
+                        </a>
+                    </nav>
+
+                    <!-- Mobile Navigation Button -->
+                    <button id="mobileMenuBtn" class="lg:hidden flex items-center text-gray-600 hover:text-indigo-600">
+                        <i class="fas fa-bars text-xl"></i>
+                    </button>
+
+                    <!-- User Profile / Login-register -->
+                    <div class="relative ml-4">
+                        <!-- Logged-in user -->
+                        <div id="userLoggedIn" class="hidden">
+                            <button id="profileDropdownBtn"
+                                class="flex items-center text-sm font-medium text-gray-700 hover:text-indigo-600 transition-colors duration-200 bg-gray-50 hover:bg-indigo-50 rounded-full px-4 py-2">
+                                <i class="fas fa-user-circle mr-2 text-lg"></i>
+                                <span id="welcomeMessage">Welcome, User</span>
+                                <i class="fas fa-chevron-down ml-2 text-xs"></i>
+                            </button>
+                            <div id="profileDropdown"
+                                class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-2 hidden">
+                                <a href="/dashboard"
+                                    class="block px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-600">
+                                    <i class="fas fa-tachometer-alt mr-2 opacity-75"></i>Dashboard
+                                </a>
+                                <a href="/scan"
+                                    class="block px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 bg-indigo-50 text-indigo-600 font-semibold">
+                                    <i class="fas fa-camera mr-2 opacity-75"></i>Scan
+                                </a>
+                                <a href="/history"
+                                    class="block px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-600">
+                                    <i class="fas fa-history mr-2 opacity-75"></i>History
+                                </a>
+                                <a href="/weather"
+                                    class="block px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-600">
+                                    <i class="fas fa-cloud-sun mr-2"></i>Weather
+                                </a>
+                                <a href="/plants"
+                                    class="block px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-600">
+                                    <i class="fas fa-seedling mr-2 opacity-75"></i>My Plants
+                                </a>
+                                <a href="/reminders"
+                                    class="block px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-600">
+                                    <i class="fas fa-bell mr-2 opacity-75"></i>Reminders
+                                </a>
+                                <a href="/treatment"
+                                    class="block px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-600">
+                                    <i class="fas fa-medkit mr-2 opacity-75"></i>Treatment
+                                </a>
+                                <a href="/subscribe"
+                                    class="block px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-600">
+                                    <i class="fas fa-star mr-2 opacity-75"></i>Subscription
+                                </a>
+                                <a href="/profile"
+                                    class="block px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-600">
+                                    <i class="fas fa-user-edit mr-2"></i>Edit Profile
+                                </a>
+                                <div class="border-t border-gray-100 my-1"></div>
+                                <button id="logoutBtn"
+                                    class="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50">
+                                    <i class="fas fa-sign-out-alt mr-2"></i>Logout
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Not logged-in -->
+                        <div id="userNotLoggedIn" class="flex space-x-2">
+                            <a href="/login"
+                                class="text-gray-700 hover:text-indigo-600 bg-gray-50 hover:bg-indigo-50 px-4 py-2 rounded-full text-sm font-medium transition-colors duration-200">
+                                <i class="fas fa-sign-in-alt mr-2"></i>Login
+                            </a>
+                            <a href="/register"
+                                class="text-white bg-indigo-600 hover:bg-indigo-700 px-4 py-2 rounded-full text-sm font-medium transition-colors duration-200">
+                                <i class="fas fa-user-plus mr-2"></i>Sign Up
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Mobile Navigation Menu (Hidden by default) -->
+                <div id="mobileMenu" class="lg:hidden hidden pt-4 pb-3 border-t border-gray-200 mt-4">
+                    <div class="space-y-1">
+                        <a href="/"
+                            class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-indigo-600 hover:bg-indigo-50">
+                            <i class="fas fa-home mr-2"></i>Home
+                        </a>
+                        <a href="/Library"
+                            class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-indigo-600 hover:bg-indigo-50">
+                            <i class="fas fa-book-medical mr-2"></i>Library
+                        </a>
+                        <a href="/about-us"
+                            class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-indigo-600 hover:bg-indigo-50">
+                            <i class="fas fa-users mr-2"></i>About Us
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </header>
+        <div class="bg-gradient-to-r from-indigo-50 to-purple-50 border-t border-b border-indigo-100">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2">
+                <!-- Desktop View -->
+                <div class="hidden md:flex items-center">
+                    <div class="flex items-center px-3 py-1.5 bg-white rounded-full shadow-sm border border-indigo-100">
+                        <span class="text-lg font-medium text-indigo-700"><i class="fas fa-compass mr-2"></i>More</span>
+                        <div class="h-4 mx-3 border-r border-indigo-200"></div>
+                        <span class="text-xs text-indigo-500">Quick Links</span>
+                    </div>
+
+                    <div class="ml-auto flex items-center">
+                        <div class="flex space-x-1 overflow-x-auto pb-1 scrollbar-hide">
+                            <a href="/help"
+                                class="text-gray-600 hover:text-white hover:bg-indigo-600 px-3 py-1.5 rounded-full text-sm font-medium transition-all duration-200 flex items-center whitespace-nowrap">
+                                <i class="fas fa-question-circle mr-1.5"></i>Help
+                            </a>
+                            <a href="/terms"
+                                class="text-gray-600 hover:text-white hover:bg-indigo-600 px-3 py-1.5 rounded-full text-sm font-medium transition-all duration-200 flex items-center whitespace-nowrap">
+                                <i class="fas fa-file-contract mr-1.5"></i>Terms
+                            </a>
+                            <a href="/official-rules"
+                                class="text-gray-600 hover:text-white hover:bg-indigo-600 px-3 py-1.5 rounded-full text-sm font-medium transition-all duration-200 flex items-center whitespace-nowrap">
+                                <i class="fas fa-gavel mr-1.5"></i>Rules
+                            </a>
+                            <a href="/donate"
+                                class="text-gray-600 hover:text-white hover:bg-indigo-600 px-3 py-1.5 rounded-full text-sm font-medium transition-all duration-200 flex items-center whitespace-nowrap">
+                                <i class="fas fa-gift mr-1.5"></i>Donate
+                            </a>
+                            <a href="/advertisement"
+                                class="text-gray-600 hover:text-white hover:bg-indigo-600 px-3 py-1.5 rounded-full text-sm font-medium transition-all duration-200 flex items-center whitespace-nowrap">
+                                <i class="fas fa-ad mr-1.5"></i>Ads
+                            </a>
+                            <a href="/dmca"
+                                class="text-gray-600 hover:text-white hover:bg-indigo-600 px-3 py-1.5 rounded-full text-sm font-medium transition-all duration-200 flex items-center whitespace-nowrap">
+                                <i class="fas fa-lock mr-1.5"></i>DMCA
+                            </a>
+                            <a href="/adding-files"
+                                class="text-gray-600 hover:text-white hover:bg-indigo-600 px-3 py-1.5 rounded-full text-sm font-medium transition-all duration-200 flex items-center whitespace-nowrap">
+                                <i class="fas fa-file-upload mr-1.5"></i>Files
+                            </a>
+                            <a href="/privacy-policy"
+                                class="text-gray-600 hover:text-white hover:bg-indigo-600 px-3 py-1.5 rounded-full text-sm font-medium transition-all duration-200 flex items-center whitespace-nowrap">
+                                <i class="fas fa-shield-alt mr-1.5"></i>Privacy
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Mobile View -->
+                <div class="md:hidden">
+                    <div class="flex items-center justify-between mb-2">
+                        <div
+                            class="flex items-center px-3 py-1.5 bg-white rounded-full shadow-sm border border-indigo-100">
+                            <span class="text-lg font-medium text-indigo-700"><i
+                                    class="fas fa-compass mr-2"></i>More</span>
+                        </div>
+                        <button id="moreMenuToggle" class="px-2 py-1 text-indigo-600 hover:text-indigo-800">
+                            <i class="fas fa-chevron-down text-xs"></i>
+                        </button>
+                    </div>
+                    <div id="moreMenuMobile" class="grid grid-cols-2 gap-2 mt-2 hidden">
+                        <a href="/help"
+                            class="text-gray-600 bg-white hover:bg-indigo-600 hover:text-white px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 flex items-center shadow-sm border border-indigo-100">
+                            <i class="fas fa-question-circle mr-2"></i>Help
+                        </a>
+                        <a href="/terms"
+                            class="text-gray-600 bg-white hover:bg-indigo-600 hover:text-white px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 flex items-center shadow-sm border border-indigo-100">
+                            <i class="fas fa-file-contract mr-2"></i>Terms
+                        </a>
+                        <a href="/official-rules"
+                            class="text-gray-600 bg-white hover:bg-indigo-600 hover:text-white px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 flex items-center shadow-sm border border-indigo-100">
+                            <i class="fas fa-gavel mr-2"></i>Rules
+                        </a>
+                        <a href="/donate"
+                            class="text-gray-600 bg-white hover:bg-indigo-600 hover:text-white px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 flex items-center shadow-sm border border-indigo-100">
+                            <i class="fas fa-gift mr-2"></i>Donate
+                        </a>
+                        <a href="/advertisement"
+                            class="text-gray-600 bg-white hover:bg-indigo-600 hover:text-white px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 flex items-center shadow-sm border border-indigo-100">
+                            <i class="fas fa-ad mr-2"></i>Advertisements
+                        </a>
+                        <a href="/dmca"
+                            class="text-gray-600 bg-white hover:bg-indigo-600 hover:text-white px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 flex items-center shadow-sm border border-indigo-100">
+                            <i class="fas fa-lock mr-2"></i>DMCA
+                        </a>
+                        <a href="/adding-files"
+                            class="text-gray-600 bg-white hover:bg-indigo-600 hover:text-white px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 flex items-center shadow-sm border border-indigo-100">
+                            <i class="fas fa-file-upload mr-2"></i>Adding Files
+                        </a>
+                        <a href="/privacy-policy"
+                            class="text-gray-600 bg-white hover:bg-indigo-600 hover:text-white px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 flex items-center shadow-sm border border-indigo-100">
+                            <i class="fas fa-shield-alt mr-2"></i>Privacy Policy
+                        </a>
+                        <a href="/library"
+                            class="text-gray-600 bg-white hover:bg-indigo-600 hover:text-white px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 flex items-center shadow-sm border border-indigo-100">
+                            <i class="fas fa-book-medical mr-2"></i>Disease Library
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <main class="flex-grow container mx-auto px-6 py-8 max-w-9xl">
+            <div class="bg-emerald-100 rounded-xl p-6 mb-8 shadow-sm">
+                <h2 class="text-xl font-semibold text-emerald-800">Scan Your Plant</h2>
+                <p class="text-md text-emerald-700 mt-1">Upload or crop an image to detect diseases and receive
+                    personalized treatment plans.</p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Upload Section -->
+                <div class="lg:col-span-1 space-y-6">
+                    <section class="bg-white p-6 rounded-xl shadow-lg border border-gray-100 card">
+                        <h2 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+                            <span class="bg-emerald-100 p-2 rounded-full mr-3">
+                                <i class="fa-solid fa-camera text-emerald-600 text-lg"></i>
+                            </span>
+                            Upload &amp; Crop Image
+                        </h2>
+                        <div class="space-y-4">
+                            <div class="border-2 border-dashed border-gray-200 rounded-xl p-6 text-center cursor-pointer"
+                                id="drop-zone">
+                                <input type="file" id="imageInput" accept="image/jpeg,image/png,image/webp"
+                                    class="hidden">
+                                <div id="upload-prompt" class="flex flex-col items-center text-gray-500">
+                                    <div class="bg-emerald-50 p-3 rounded-full mb-3">
+                                        <i class="fa-solid fa-cloud-arrow-up text-2xl text-emerald-500"></i>
+                                    </div>
+                                    <label for="imageInput"
+                                        class="font-semibold text-emerald-600 hover:text-emerald-700 cursor-pointer">
+                                        Choose Image
+                                    </label>
+                                    <p class="text-sm mt-2">or drag and drop</p>
+                                    <p class="text-sm mt-1 text-gray-400" id="file-name">No file selected</p>
+                                </div>
+                                <div id="preview-container" class="mt-4 hidden">
+                                    <img id="preview-image" class="w-full h-auto rounded-lg max-h-48 object-contain"
+                                        alt="Selected plant image">
+                                    <button onclick="showCropper()"
+                                        class="mt-2 btn-primary text-white px-3 py-1 rounded-lg text-sm">
+                                        Crop Image
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Cropper Modal -->
+
+
+                            <div class="space-y-4">
+                                <div class="flex items-center space-x-2">
+                                    <input type="checkbox" id="useGemini"
+                                        class="h-4 w-4 text-emerald-600 border-gray-200 rounded focus:ring-emerald-500">
+                                    <label for="useGemini" class="text-sm text-gray-700 flex items-center">
+                                        Use Gemini AI
+                                        <span
+                                            class="ml-2 px-2 py-0.5 text-xs bg-blue-100 text-blue-800 rounded-full">Pro</span>
+                                    </label>
+                                </div>
+                                <div class="mb-4">
+                                    <label for="modelChoice"
+                                        class="block text-sm font-medium text-gray-700 mb-2">Analysis Model</label>
+                                    <div class="relative">
+                                        <select id="modelChoice"
+                                            class="block w-full rounded-md border-gray-300 py-2 pl-3 pr-10 text-base focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-white shadow-sm">
+                                            <option value="best">Best (ViT + VGG)</option>
+                                            <option value="vit">Vision Transformer</option>
+                                            <option value="vgg">VGG</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div hidden>
+                                    <label for="confidenceThreshold" class="block text-sm text-gray-700 mb-1">Confidence
+                                        Threshold</label>
+                                    <input type="range" id="confidenceThreshold" min="0" max="1" step="0.01" value="0.7"
+                                        class="w-full h-2 bg-gray-200 rounded-lg cursor-pointer">
+                                    <span id="thresholdValue" class="text-sm text-gray-600">0.7</span>
+                                </div>
+                            </div>
+
+                            <button onclick="classifyImage()"
+                                class="w-full btn-primary text-white font-semibold py-3 rounded-lg flex items-center justify-center disabled:opacity-50"
+                                id="analyze-button">
+                                <i class="fa-solid fa-magnifying-glass mr-2"></i> Scan Plant
+                            </button>
+
+                            <button onclick="resetForm()"
+                                class="w-full text-gray-600 hover:text-gray-800 text-sm flex items-center justify-center">
+                                <i class="fa-solid fa-rotate-right mr-2"></i> Reset
+                            </button>
+
+                            <div id="loading-spinner"
+                                class="hidden flex items-center justify-center p-3 bg-emerald-50 rounded-lg">
+                                <div class="loader"></div>
+                                <span class="ml-2 text-sm text-emerald-700">Scanning...</span>
+                            </div>
+
+                            <div id="error-message" class="hidden p-3 bg-red-50 border-l-4 border-red-500 rounded-lg">
+                                <div class="flex items-center">
+                                    <i class="fa-solid fa-circle-exclamation mr-2 text-red-500"></i>
+                                    <p id="error-message-text" class="text-sm text-red-800"></p>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+
+                <div id="cropper-modal"
+                    class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                    <div class="bg-white p-6 rounded-xl max-w-4xl w-full">
+                        <h3 class="text-lg font-semibold mb-4">Crop Image</h3>
+                        <div class="cropper-container mb-4">
+                            <img id="cropper-image" class="w-full" alt="Image to crop">
+                        </div>
+                        <div class="cropper-controls flex flex-wrap gap-2 mb-4">
+                            <button onclick="zoomCropper(0.1)"
+                                class="bg-gradient-to-r from-indigo-600 to-indigo-800 text-white px-3 py-1 rounded-lg text-sm hover:from-indigo-700 hover:to-indigo-900 transition-all duration-300">
+                                <i class="fa-solid fa-magnifying-glass-plus mr-1"></i> Zoom In
+                            </button>
+                            <button onclick="zoomCropper(-0.1)"
+                                class="bg-gradient-to-r from-indigo-600 to-indigo-800 text-white px-3 py-1 rounded-lg text-sm hover:from-indigo-700 hover:to-indigo-900 transition-all duration-300">
+                                <i class="fa-solid fa-magnifying-glass-minus mr-1"></i> Zoom Out
+                            </button>
+                            <button onclick="rotateCropper(90)"
+                                class="bg-gradient-to-r from-indigo-600 to-indigo-800 text-white px-3 py-1 rounded-lg text-sm hover:from-indigo-700 hover:to-indigo-900 transition-all duration-300">
+                                <i class="fa-solid fa-rotate-right mr-1"></i> Rotate
+                            </button>
+                            <button onclick="resetCropper()"
+                                class="bg-gray-600 text-white px-3 py-1 rounded-lg text-sm hover:bg-gray-700 transition-all duration-300">
+                                <i class="fa-solid fa-undo mr-1"></i> Reset
+                            </button>
+                            <select id="aspect-ratio" onchange="setAspectRatio()"
+                                class="rounded-md border-gray-300 py-1 px-2 text-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                <option value="">Free</option>
+                                <option value="1">1:1 (Square)</option>
+                                <option value="1.3333">4:3</option>
+                                <option value="1.7778">16:9</option>
+                            </select>
+                        </div>
+                        <div class="text-sm text-gray-600 mb-4">
+                            Crop Size: <span id="crop-size">N/A</span>
+                        </div>
+                        <div class="flex justify-end space-x-2">
+                            <button onclick="closeCropper()"
+                                class="text-gray-600 px-4 py-2 rounded-lg hover:bg-gray-100 transition-all duration-300">Cancel</button>
+                            <button onclick="cropImage()"
+                                class="bg-gradient-to-r from-indigo-600 to-indigo-800 text-white px-4 py-2 rounded-lg hover:from-indigo-700 hover:to-indigo-900 transition-all duration-300">Apply
+                                Crop</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Results Section -->
+                <div class="lg:col-span-2">
+                    <section class="bg-white p-6 rounded-xl shadow-lg border border-gray-100 card">
+                        <h2 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+                            <span class="bg-blue-100 p-2 rounded-full mr-3">
+                                <i class="fa-solid fa-chart-simple text-blue-600"></i>
+                            </span>
+                            Scan Results
+                        </h2>
+
+                        <div id="result-placeholder"
+                            class="text-center py-10 px-6 bg-gray-50 rounded-lg border border-gray-200">
+                            <div class="bg-gray-100 p-3 rounded-full inline-flex mb-3">
+                                <i class="fa-solid fa-leaf text-3xl text-gray-400"></i>
+                            </div>
+                            <h3 class="text-gray-700 font-semibold">Upload an image to start</h3>
+                            <p class="text-gray-500 text-sm mt-2 max-w-md mx-auto">Detect plant diseases and get
+                                tailored treatment plans.</p>
+                        </div>
+
+                        <div id="result-content" class="hidden space-y-6">
+                            <div id="results-content" class="border border-gray-200 rounded-lg p-6"></div>
+                            <div id="treatment-plan" class="border border-gray-200 rounded-lg p-6 hidden"></div>
+                            <div id="warnings-section"
+                                class="p-3 bg-yellow-50 border-l-4 border-yellow-400 rounded-lg hidden"></div>
+                            <div id="alternative-predictions" class="border border-gray-200 rounded-lg p-6"></div>
+                            <div id="metadata-content" class="border border-gray-200 rounded-lg p-6 hidden"></div>
+                            <div id="actions" class="flex space-x-3">
+                                <button onclick="downloadResults()"
+                                    class="btn-primary text-white px-4 py-2 rounded-lg flex items-center">
+                                    <i class="fa-solid fa-download mr-2"></i> Download PDF
+                                </button>
+                                <button onclick="shareResults()"
+                                    class="bg-gray-600 text-white px-4 py-2 rounded-lg flex items-center">
+                                    <i class="fa-solid fa-share mr-2"></i> FeedBack Or Report
+                                </button>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="bg-white border-t border-gray-200 mt-12">
+            <div class="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+                <!-- Main Footer Content -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <!-- Company Info -->
+                    <div class="flex flex-col">
+                        <h3 class="text-sm font-semibold text-gray-900 tracking-wider uppercase mb-3">Pestector</h3>
+                        <p class="text-sm text-gray-600 max-w-xs">Helping plant lovers keep their green friends healthy
+                            and
+                            thriving since 2024.</p>
+                        <div class="mt-4">
+                            <p class="text-sm text-gray-500">© 2025 Pestector. All rights reserved.</p>
+                        </div>
+                    </div>
+
+                    <!-- Quick Links -->
+                    <div class="flex flex-col md:items-center">
+                        <h3 class="text-sm font-semibold text-gray-900 tracking-wider uppercase mb-3">Quick Links</h3>
+                        <ul class="space-y-2">
+                            <li><a href="/"
+                                    class="text-sm text-gray-600 hover:text-indigo-600 transition-colors">Home</a>
+                            </li>
+                            <li><a href="/plants"
+                                    class="text-sm text-gray-600 hover:text-indigo-600 transition-colors">My
+                                    Plants</a></li>
+                            <li><a href="/library"
+                                    class="text-sm text-gray-600 hover:text-indigo-600 transition-colors">Plant
+                                    Database</a></li>
+                            <li><a href="/help"
+                                    class="text-sm text-gray-600 hover:text-indigo-600 transition-colors">Help &
+                                    Support</a></li>
+                        </ul>
+                    </div>
+
+                    <!-- Connect Section -->
+                    <div class="flex flex-col md:items-end">
+                        <h3 class="text-sm font-semibold text-gray-900 tracking-wider uppercase mb-3">Connect With Us
+                        </h3>
+                        <div class="flex space-x-4">
+                            <a href="#soon-twitter" class="text-gray-400 hover:text-blue-400 transition-colors"><i
+                                    class="fab fa-twitter h-6 w-6"></i></a>
+                            <a href="#soon-facebook" class="text-gray-400 hover:text-blue-600 transition-colors"><i
+                                    class="fab fa-facebook h-6 w-6"></i></a>
+                            <a href="#soon-instagram" class="text-gray-400 hover:text-pink-600 transition-colors"><i
+                                    class="fab fa-instagram h-6 w-6"></i></a>
+                            <a href="#soon-pinterest" class="text-gray-400 hover:text-red-600 transition-colors"><i
+                                    class="fab fa-pinterest h-6 w-6"></i></a>
+                        </div>
+                        <div class="mt-6">
+                            <h4 class="text-xs font-semibold text-gray-900 uppercase mb-2">Subscribe for updates</h4>
+                            <div class="flex mt-1">
+                                <input type="email" placeholder="Your email"
+                                    class="min-w-0 px-3 py-2 text-gray-900 placeholder-gray-500 border border-gray-300 rounded-l-md focus:outline-none focus:ring-1 focus:ring-green-500 focus:border-green-500 text-sm" />
+                                <button
+                                    class="inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-r-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Subscribe</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bottom Bar -->
+                <div
+                    class="pt-8 mt-8 border-t border-gray-200 flex flex-col md:flex-row justify-between items-center text-xs text-gray-500">
+                    <div class="flex space-x-6 mb-4 md:mb-0">
+                        <a href="/privacy-policy" class="hover:text-gray-900 transition-colors">Privacy Policy</a>
+                        <a href="/terms" class="hover:text-gray-900 transition-colors">Terms of Service</a>
+                        <a href="/contact" class="hover:text-gray-900 transition-colors">Contact Us</a>
+                    </div>
+                    <p>Designed with ♥ for plant enthusiasts everywhere</p>
+                </div>
+            </div>
+        </footer>
+    </div>
+    <!-- JavaScript -->
+    <script src="scripts/scan.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+</body>
+
+</html>

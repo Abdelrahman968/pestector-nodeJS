@@ -94,30 +94,30 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
             <div class="flex justify-between items-center">
                 <!-- Logo and Brand -->
-                <div class="flex items-center space-x-3">
+                <a href="/" class="flex items-center space-x-3 flex-shrink-0">
                     <div
                         class="bg-gradient-to-r from-indigo-600 to-indigo-800 text-white p-2.5 rounded-lg shadow-sm hover:shadow transition-all duration-300">
                         <i class="fas fa-leaf text-xl"></i>
                     </div>
-                    <div class="text-center p-4">
-                        <h1 class="text-2xl font-bold text-gray-900">Pestector <sup>V6</sup></h1>
-                        <!-- <p class="text-sm text-gray-600">AI Plant Disease Detection</p> -->
+                    <div>
+                        <h1 class="text-2xl font-bold text-gray-900">Pestector </h1>
                     </div>
-                </div>
+                </a>
 
                 <!-- Main Navigation - Desktop -->
                 <nav class="hidden lg:flex space-x-2">
-                    <a href="index.html"
+                    <a href="/"
                         class="text-gray-600 hover:text-indigo-600 hover:bg-indigo-50 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">
                         <i class="fas fa-home mr-2"></i>Home
                     </a>
-                    <a href="history.html"
+
+                    <a href="/library"
                         class="text-gray-600 hover:text-indigo-600 hover:bg-indigo-50 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">
-                        <i class="fas fa-history mr-2"></i>History
+                        <i class="fas fa-book-medical mr-2"></i>Library
                     </a>
-                    <a href="settings.html"
+                    <a href="/about-us"
                         class="text-gray-600 hover:text-indigo-600 hover:bg-indigo-50 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">
-                        <i class="fas fa-cog mr-2"></i>Settings
+                        <i class="fas fa-users mr-2"></i>About Us
                     </a>
                 </nav>
 
@@ -126,7 +126,7 @@
                     <i class="fas fa-bars text-xl"></i>
                 </button>
 
-                <!-- User Profile / Login-Signup -->
+                <!-- User Profile / Login-register -->
                 <div class="relative ml-4">
                     <!-- Logged-in user -->
                     <div id="userLoggedIn" class="hidden">
@@ -138,21 +138,41 @@
                         </button>
                         <div id="profileDropdown"
                             class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-2 hidden">
-                            <a href="#"
+                            <a href="/dashboard"
+                                class="block px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-600">
+                                <i class="fas fa-tachometer-alt mr-2 opacity-75"></i>Dashboard
+                            </a>
+                            <a href="/scan"
+                                class="block px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-600">
+                                <i class="fas fa-camera mr-2 opacity-75"></i>Scan
+                            </a>
+                            <a href="/history"
+                                class="block px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-600">
+                                <i class="fas fa-history mr-2 opacity-75"></i>History
+                            </a>
+                            <a href="/weather"
+                                class="block px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-600">
+                                <i class="fas fa-cloud-sun mr-2"></i>Weather
+                            </a>
+                            <a href="/plants"
+                                class="block px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-600">
+                                <i class="fas fa-seedling mr-2 opacity-75"></i>My Plants
+                            </a>
+                            <a href="/reminders"
+                                class="block px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-600">
+                                <i class="fas fa-bell mr-2 opacity-75"></i>Reminders
+                            </a>
+                            <a href="/treatment"
+                                class="block px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-600">
+                                <i class="fas fa-medkit mr-2 opacity-75"></i>Treatment
+                            </a>
+                            <a href="/subscribe"
+                                class="block px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-600">
+                                <i class="fas fa-star mr-2 opacity-75"></i>Subscription
+                            </a>
+                            <a href="/profile"
                                 class="block px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-600">
                                 <i class="fas fa-user-edit mr-2"></i>Edit Profile
-                            </a>
-                            <a href="#"
-                                class="block px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-600">
-                                <i class="fas fa-key mr-2"></i>Change Password
-                            </a>
-                            <a href="#"
-                                class="block px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-600">
-                                <i class="fas fa-bell mr-2"></i>Notifications
-                            </a>
-                            <a href="#"
-                                class="block px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-600">
-                                <i class="fas fa-cog mr-2"></i>Settings
                             </a>
                             <div class="border-t border-gray-100 my-1"></div>
                             <button id="logoutBtn"
@@ -164,11 +184,11 @@
 
                     <!-- Not logged-in -->
                     <div id="userNotLoggedIn" class="flex space-x-2">
-                        <a href="/login.html"
+                        <a href="/login"
                             class="text-gray-700 hover:text-indigo-600 bg-gray-50 hover:bg-indigo-50 px-4 py-2 rounded-full text-sm font-medium transition-colors duration-200">
                             <i class="fas fa-sign-in-alt mr-2"></i>Login
                         </a>
-                        <a href="/signup.html"
+                        <a href="/register"
                             class="text-white bg-indigo-600 hover:bg-indigo-700 px-4 py-2 rounded-full text-sm font-medium transition-colors duration-200">
                             <i class="fas fa-user-plus mr-2"></i>Sign Up
                         </a>
@@ -179,49 +199,17 @@
             <!-- Mobile Navigation Menu (Hidden by default) -->
             <div id="mobileMenu" class="lg:hidden hidden pt-4 pb-3 border-t border-gray-200 mt-4">
                 <div class="space-y-1">
-                    <a href="index.html"
+                    <a href="/"
                         class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-indigo-600 hover:bg-indigo-50">
                         <i class="fas fa-home mr-2"></i>Home
                     </a>
-                    <a href="history.html"
+                    <a href="/Library"
                         class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-indigo-600 hover:bg-indigo-50">
-                        <i class="fas fa-history mr-2"></i>History
+                        <i class="fas fa-book-medical mr-2"></i>Library
                     </a>
-                    <a href="settings.html"
+                    <a href="/about-us"
                         class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-indigo-600 hover:bg-indigo-50">
-                        <i class="fas fa-cog mr-2"></i>Settings
-                    </a>
-                    <a href="help.html"
-                        class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-indigo-600 hover:bg-indigo-50">
-                        <i class="fas fa-question-circle mr-2"></i>Help
-                    </a>
-                    <a href="terms.html"
-                        class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-indigo-600 hover:bg-indigo-50">
-                        <i class="fas fa-file-contract mr-2"></i>Terms
-                    </a>
-                    <a href="official-rules.html"
-                        class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-indigo-600 hover:bg-indigo-50">
-                        <i class="fas fa-gavel mr-2"></i>Official Rules
-                    </a>
-                    <a href="donate.html"
-                        class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-indigo-600 hover:bg-indigo-50">
-                        <i class="fas fa-gift mr-2"></i>Donate
-                    </a>
-                    <a href="advertisement.html"
-                        class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-indigo-600 hover:bg-indigo-50">
-                        <i class="fas fa-ad mr-2"></i>Advertisement
-                    </a>
-                    <a href="dmca.html"
-                        class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-indigo-600 hover:bg-indigo-50">
-                        <i class="fas fa-lock mr-2"></i>DMCA
-                    </a>
-                    <a href="adding-files.html"
-                        class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-indigo-600 hover:bg-indigo-50">
-                        <i class="fas fa-file-upload mr-2"></i>Adding Files
-                    </a>
-                    <a href="privacy-policy.html"
-                        class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-indigo-600 hover:bg-indigo-50">
-                        <i class="fas fa-shield-alt mr-2"></i>Privacy Policy
+                        <i class="fas fa-users mr-2"></i>About Us
                     </a>
                 </div>
             </div>
@@ -241,35 +229,35 @@
 
                 <div class="ml-auto flex items-center">
                     <div class="flex space-x-1 overflow-x-auto pb-1 scrollbar-hide">
-                        <a href="help.html"
+                        <a href="/help"
                             class="text-gray-600 hover:text-white hover:bg-indigo-600 px-3 py-1.5 rounded-full text-sm font-medium transition-all duration-200 flex items-center whitespace-nowrap">
                             <i class="fas fa-question-circle mr-1.5"></i>Help
                         </a>
-                        <a href="terms.html"
+                        <a href="/terms"
                             class="text-white bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 px-3 py-1.5 rounded-full text-sm font-medium transition-all duration-200 flex items-center whitespace-nowrap shadow-sm">
                             <i class="fas fa-file-contract mr-1.5"></i>Terms
                         </a>
-                        <a href="official-rules.html"
+                        <a href="/official-rules"
                             class="text-gray-600 hover:text-white hover:bg-indigo-600 px-3 py-1.5 rounded-full text-sm font-medium transition-all duration-200 flex items-center whitespace-nowrap">
                             <i class="fas fa-gavel mr-1.5"></i>Rules
                         </a>
-                        <a href="donate.html"
+                        <a href="/donate"
                             class="text-gray-600 hover:text-white hover:bg-indigo-600 px-3 py-1.5 rounded-full text-sm font-medium transition-all duration-200 flex items-center whitespace-nowrap">
                             <i class="fas fa-gift mr-1.5"></i>Donate
                         </a>
-                        <a href="advertisement.html"
+                        <a href="/advertisement"
                             class="text-gray-600 hover:text-white hover:bg-indigo-600 px-3 py-1.5 rounded-full text-sm font-medium transition-all duration-200 flex items-center whitespace-nowrap">
                             <i class="fas fa-ad mr-1.5"></i>Ads
                         </a>
-                        <a href="dmca.html"
+                        <a href="/dmca"
                             class="text-gray-600 hover:text-white hover:bg-indigo-600 px-3 py-1.5 rounded-full text-sm font-medium transition-all duration-200 flex items-center whitespace-nowrap">
                             <i class="fas fa-lock mr-1.5"></i>DMCA
                         </a>
-                        <a href="adding-files.html"
+                        <a href="/adding-files"
                             class="text-gray-600 hover:text-white hover:bg-indigo-600 px-3 py-1.5 rounded-full text-sm font-medium transition-all duration-200 flex items-center whitespace-nowrap">
                             <i class="fas fa-file-upload mr-1.5"></i>Files
                         </a>
-                        <a href="privacy-policy.html"
+                        <a href="/privacy-policy"
                             class="text-gray-600 hover:text-white hover:bg-indigo-600 px-3 py-1.5 rounded-full text-sm font-medium transition-all duration-200 flex items-center whitespace-nowrap">
                             <i class="fas fa-shield-alt mr-1.5"></i>Privacy
                         </a>
@@ -288,35 +276,35 @@
                     </button>
                 </div>
                 <div id="moreMenuMobile" class="grid grid-cols-2 gap-2 mt-2">
-                    <a href="help.html"
+                    <a href="/help"
                         class="text-gray-600 bg-white hover:bg-indigo-600 hover:text-white px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 flex items-center shadow-sm border border-indigo-100">
                         <i class="fas fa-question-circle mr-2"></i>Help
                     </a>
-                    <a href="terms.html"
+                    <a href="/terms"
                         class="text-white bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 flex items-center shadow-sm">
                         <i class="fas fa-file-contract mr-2"></i>Terms
                     </a>
-                    <a href="official-rules.html"
+                    <a href="/official-rules"
                         class="text-gray-600 bg-white hover:bg-indigo-600 hover:text-white px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 flex items-center shadow-sm border border-indigo-100">
                         <i class="fas fa-gavel mr-2"></i>Rules
                     </a>
-                    <a href="donate.html"
+                    <a href="/donate"
                         class="text-gray-600 bg-white hover:bg-indigo-600 hover:text-white px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 flex items-center shadow-sm border border-indigo-100">
                         <i class="fas fa-gift mr-2"></i>Donate
                     </a>
-                    <a href="advertisement.html"
+                    <a href="/advertisement"
                         class="text-gray-600 bg-white hover:bg-indigo-600 hover:text-white px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 flex items-center shadow-sm border border-indigo-100">
                         <i class="fas fa-ad mr-2"></i>Advertisements
                     </a>
-                    <a href="dmca.html"
+                    <a href="/dmca"
                         class="text-gray-600 bg-white hover:bg-indigo-600 hover:text-white px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 flex items-center shadow-sm border border-indigo-100">
                         <i class="fas fa-lock mr-2"></i>DMCA
                     </a>
-                    <a href="adding-files.html"
+                    <a href="/adding-files"
                         class="text-gray-600 bg-white hover:bg-indigo-600 hover:text-white px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 flex items-center shadow-sm border border-indigo-100">
                         <i class="fas fa-file-upload mr-2"></i>Adding Files
                     </a>
-                    <a href="privacy-policy.html"
+                    <a href="/privacy-policy"
                         class="text-gray-600 bg-white hover:bg-indigo-600 hover:text-white px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 flex items-center shadow-sm border border-indigo-100">
                         <i class="fas fa-shield-alt mr-2"></i>Privacy Policy
                     </a>
@@ -392,7 +380,7 @@
                         <p>
                             If you do not agree with these terms, please do not register or use the Service. Use of the
                             Service constitutes acceptance of these terms. If you wish to close your account, please <a
-                                href="mailto:support@pestector.com"
+                                href="/mailto:support@pestector.com"
                                 class="text-indigo-600 hover:text-indigo-800">contact us</a>.
                         </p>
                     </div>

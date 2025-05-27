@@ -89,8 +89,8 @@ document.getElementById("loginForm").addEventListener("submit", async (e) => {
 
       // Wait for the message to be visible before redirecting
       setTimeout(() => {
-        console.log("Redirecting to index.html");
-        window.location.href = "/index.html";
+        console.log("Redirecting to Home Page");
+        window.location.href = "/";
       }, 2000);
     } else {
       throw new Error("Unexpected response from server");
@@ -155,7 +155,7 @@ document.getElementById("twoFAForm").addEventListener("submit", async (e) => {
       "twoFAStatusMessageContainer",
       "2FA verification successful! Redirecting..."
     );
-    setTimeout(() => (window.location.href = "/index.html"), 2000);
+    setTimeout(() => (window.location.href = "/"), 2000);
   } catch (error) {
     console.error("Error during 2FA verification:", error);
     twoFASubmitBtn.disabled = false;

@@ -94,45 +94,127 @@
 </head>
 
 <body class="bg-gray-50 min-h-screen flex flex-col">
-    <!-- Header (unchanged) -->
-    <header class="bg-white shadow-sm sticky top-0 z-10">
+    <header class="bg-white shadow-md sticky top-0 z-20 transition-all duration-300">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
             <div class="flex justify-between items-center">
-                <div class="flex items-center space-x-3">
-                    <div class="bg-indigo-600 text-white p-2 rounded-lg"><i class="fas fa-leaf text-xl"></i></div>
-                    <h1 class="text-2xl font-bold text-gray-900">Pestector</h1>
-                </div>
-                <nav class="hidden md:flex space-x-6">
-                    <a href="index.html"
-                        class="text-gray-500 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium"><i
-                            class="fas fa-home mr-2"></i>Home</a>
-                    <a href="history.html"
-                        class="text-gray-500 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium"><i
-                            class="fas fa-history mr-2"></i>History</a>
-                    <a href="treatment.html"
-                        class="text-indigo-600 border-b-2 border-indigo-600 px-3 py-2 text-sm font-medium"><i
-                            class="fas fa-medkit mr-2"></i>Treatment</a>
-                    <a href="settings.html"
-                        class="text-gray-500 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium"><i
-                            class="fas fa-cog mr-2"></i>Settings</a>
-                </nav>
-                <div class="relative">
-                    <button id="profileDropdownBtn"
-                        class="flex items-center text-sm font-medium text-gray-700 hover:text-indigo-600 transition-colors duration-200">
-                        <i class="fas fa-user-circle mr-2"></i>Profile<i class="fas fa-chevron-down ml-1 text-xs"></i>
-                    </button>
-                    <div id="profileDropdown"
-                        class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-2 hidden">
-                        <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Edit Profile</a>
-                        <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Change Password</a>
-                        <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Notifications</a>
-                        <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Settings</a>
-                        <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Help</a>
-                        <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">About</a>
-                        <button id="logoutBtn"
-                            class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"><i
-                                class="fas fa-sign-out-alt mr-2"></i>Logout</button>
+                <!-- Logo and Brand -->
+                <a href="/" class="flex items-center space-x-3 flex-shrink-0">
+                    <div
+                        class="bg-gradient-to-r from-indigo-600 to-indigo-800 text-white p-2.5 rounded-lg shadow-sm hover:shadow transition-all duration-300">
+                        <i class="fas fa-leaf text-xl"></i>
                     </div>
+                    <div>
+                        <h1 class="text-2xl font-bold text-gray-900">Pestector </h1>
+                    </div>
+                </a>
+
+                <!-- Main Navigation - Desktop -->
+                <nav class="hidden lg:flex space-x-2">
+                    <a href="/"
+                        class="text-gray-600 hover:text-indigo-600 hover:bg-indigo-50 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">
+                        <i class="fas fa-home mr-2"></i>Home
+                    </a>
+
+                    <a href="/library"
+                        class="text-gray-600 hover:text-indigo-600 hover:bg-indigo-50 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">
+                        <i class="fas fa-book-medical mr-2"></i>Library
+                    </a>
+                    <a href="/about-us"
+                        class="text-gray-600 hover:text-indigo-600 hover:bg-indigo-50 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">
+                        <i class="fas fa-users mr-2"></i>About Us
+                    </a>
+                </nav>
+
+                <!-- Mobile Navigation Button -->
+                <button id="mobileMenuBtn" class="lg:hidden flex items-center text-gray-600 hover:text-indigo-600">
+                    <i class="fas fa-bars text-xl"></i>
+                </button>
+
+                <!-- User Profile / Login-register -->
+                <div class="relative ml-4">
+                    <!-- Logged-in user -->
+                    <div id="userLoggedIn" class="hidden">
+                        <button id="profileDropdownBtn"
+                            class="flex items-center text-sm font-medium text-gray-700 hover:text-indigo-600 transition-colors duration-200 bg-gray-50 hover:bg-indigo-50 rounded-full px-4 py-2">
+                            <i class="fas fa-user-circle mr-2 text-lg"></i>
+                            <span id="welcomeMessage">Welcome, User</span>
+                            <i class="fas fa-chevron-down ml-2 text-xs"></i>
+                        </button>
+                        <div id="profileDropdown"
+                            class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-2 hidden">
+                            <a href="/dashboard"
+                                class="block px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-600">
+                                <i class="fas fa-tachometer-alt mr-2 opacity-75"></i>Dashboard
+                            </a>
+                            <a href="/scan"
+                                class="block px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-600">
+                                <i class="fas fa-camera mr-2 opacity-75"></i>Scan
+                            </a>
+                            <a href="/history"
+                                class="block px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-600">
+                                <i class="fas fa-history mr-2 opacity-75"></i>History
+                            </a>
+                            <a href="/weather"
+                                class="block px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-600">
+                                <i class="fas fa-cloud-sun mr-2"></i>Weather
+                            </a>
+                            <a href="/plants"
+                                class="block px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-600">
+                                <i class="fas fa-seedling mr-2 opacity-75"></i>My Plants
+                            </a>
+                            <a href="/reminders"
+                                class="block px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-600">
+                                <i class="fas fa-bell mr-2 opacity-75"></i>Reminders
+                            </a>
+                            <a href="/treatment"
+                                class="block px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 bg-indigo-50 text-indigo-600 font-semibold">
+                                <i class="fas fa-medkit mr-2 opacity-75"></i>Treatment
+                            </a>
+                            <a href="/subscribe"
+                                class="block px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-600">
+                                <i class="fas fa-star mr-2 opacity-75"></i>Subscription
+                            </a>
+                            <a href="/profile"
+                                class="block px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-600">
+                                <i class="fas fa-user-edit mr-2"></i>Edit Profile
+                            </a>
+                            <div class="border-t border-gray-100 my-1"></div>
+                            <button id="logoutBtn"
+                                class="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50">
+                                <i class="fas fa-sign-out-alt mr-2"></i>Logout
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Not logged-in -->
+                    <div id="userNotLoggedIn" class="flex space-x-2">
+                        <a href="/login"
+                            class="text-gray-700 hover:text-indigo-600 bg-gray-50 hover:bg-indigo-50 px-4 py-2 rounded-full text-sm font-medium transition-colors duration-200">
+                            <i class="fas fa-sign-in-alt mr-2"></i>Login
+                        </a>
+                        <a href="/register"
+                            class="text-white bg-indigo-600 hover:bg-indigo-700 px-4 py-2 rounded-full text-sm font-medium transition-colors duration-200">
+                            <i class="fas fa-user-plus mr-2"></i>Sign Up
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Mobile Navigation Menu (Hidden by default) -->
+            <div id="mobileMenu" class="lg:hidden hidden pt-4 pb-3 border-t border-gray-200 mt-4">
+                <div class="space-y-1">
+                    <a href="/"
+                        class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-indigo-600 hover:bg-indigo-50">
+                        <i class="fas fa-home mr-2"></i>Home
+                    </a>
+                    <a href="/Library"
+                        class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-indigo-600 hover:bg-indigo-50">
+                        <i class="fas fa-book-medical mr-2"></i>Library
+                    </a>
+                    <a href="/about-us"
+                        class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-indigo-600 hover:bg-indigo-50">
+                        <i class="fas fa-users mr-2"></i>About Us
+                    </a>
                 </div>
             </div>
         </div>
@@ -272,418 +354,75 @@
         </div>
     </main>
 
-    <!-- Footer (unchanged) -->
     <footer class="bg-white border-t border-gray-200 mt-12">
-        <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-            <div class="flex flex-col md:flex-row justify-between items-center">
-                <div class="mb-4 md:mb-0">
-                    <p class="text-sm text-gray-500">© 2025 Pestector. All rights reserved.</p>
+        <div class="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+            <!-- Main Footer Content -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Company Info -->
+                <div class="flex flex-col">
+                    <h3 class="text-sm font-semibold text-gray-900 tracking-wider uppercase mb-3">Pestector</h3>
+                    <p class="text-sm text-gray-600 max-w-xs">Helping plant lovers keep their green friends healthy and
+                        thriving since 2024.</p>
+                    <div class="mt-4">
+                        <p class="text-sm text-gray-500">© 2025 Pestector. All rights reserved.</p>
+                    </div>
                 </div>
-                <div class="flex space-x-6">
-                    <a href="#" class="text-gray-400 hover:text-gray-500"><i class="fab fa-twitter"></i></a>
-                    <a href="#" class="text-gray-400 hover:text-gray-500"><i class="fab fa-facebook"></i></a>
-                    <a href="#" class="text-gray-400 hover:text-gray-500"><i class="fab fa-instagram"></i></a>
+
+                <!-- Quick Links -->
+                <div class="flex flex-col md:items-center">
+                    <h3 class="text-sm font-semibold text-gray-900 tracking-wider uppercase mb-3">Quick Links</h3>
+                    <ul class="space-y-2">
+                        <li><a href="/" class="text-sm text-gray-600 hover:text-indigo-600 transition-colors">Home</a>
+                        </li>
+                        <li><a href="/plants" class="text-sm text-gray-600 hover:text-indigo-600 transition-colors">My
+                                Plants</a></li>
+                        <li><a href="/library"
+                                class="text-sm text-gray-600 hover:text-indigo-600 transition-colors">Plant
+                                Database</a></li>
+                        <li><a href="/help" class="text-sm text-gray-600 hover:text-indigo-600 transition-colors">Help &
+                                Support</a></li>
+                    </ul>
                 </div>
+
+                <!-- Connect Section -->
+                <div class="flex flex-col md:items-end">
+                    <h3 class="text-sm font-semibold text-gray-900 tracking-wider uppercase mb-3">Connect With Us</h3>
+                    <div class="flex space-x-4">
+                        <a href="#soon-twitter" class="text-gray-400 hover:text-blue-400 transition-colors"><i
+                                class="fab fa-twitter h-6 w-6"></i></a>
+                        <a href="#soon-facebook" class="text-gray-400 hover:text-blue-600 transition-colors"><i
+                                class="fab fa-facebook h-6 w-6"></i></a>
+                        <a href="#soon-instagram" class="text-gray-400 hover:text-pink-600 transition-colors"><i
+                                class="fab fa-instagram h-6 w-6"></i></a>
+                        <a href="#soon-pinterest" class="text-gray-400 hover:text-red-600 transition-colors"><i
+                                class="fab fa-pinterest h-6 w-6"></i></a>
+                    </div>
+                    <div class="mt-6">
+                        <h4 class="text-xs font-semibold text-gray-900 uppercase mb-2">Subscribe for updates</h4>
+                        <div class="flex mt-1">
+                            <input type="email" placeholder="Your email"
+                                class="min-w-0 px-3 py-2 text-gray-900 placeholder-gray-500 border border-gray-300 rounded-l-md focus:outline-none focus:ring-1 focus:ring-green-500 focus:border-green-500 text-sm" />
+                            <button
+                                class="inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-r-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Subscribe</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bottom Bar -->
+            <div
+                class="pt-8 mt-8 border-t border-gray-200 flex flex-col md:flex-row justify-between items-center text-xs text-gray-500">
+                <div class="flex space-x-6 mb-4 md:mb-0">
+                    <a href="/privacy-policy" class="hover:text-gray-900 transition-colors">Privacy Policy</a>
+                    <a href="/terms" class="hover:text-gray-900 transition-colors">Terms of Service</a>
+                    <a href="/contact" class="hover:text-gray-900 transition-colors">Contact Us</a>
+                </div>
+                <p>Designed with ♥ for plant enthusiasts everywhere</p>
             </div>
         </div>
     </footer>
 
-    <script>
-        const apiBaseUrl = '/api';
-        let currentPage = 1;
-        const limit = 12;
-
-        // DOM Elements
-        const treatmentContainer = document.getElementById('treatmentContainer');
-        const paginationContainer = document.getElementById('paginationContainer');
-        const prevPageBtn = document.getElementById('prevPageBtn');
-        const nextPageBtn = document.getElementById('nextPageBtn');
-        const pageInfo = document.getElementById('pageInfo');
-        const noTreatmentMessage = document.getElementById('noTreatmentMessage');
-        const logoutBtn = document.getElementById('logoutBtn');
-        const searchInput = document.getElementById('searchInput');
-        const statusFilter = document.getElementById('statusFilter');
-        const profileDropdownBtn = document.getElementById('profileDropdownBtn');
-        const profileDropdown = document.getElementById('profileDropdown');
-        const saveAsPdfBtn = document.getElementById('saveAsPdfBtn');
-        const treatmentForm = document.getElementById('treatmentForm');
-        const diseaseStatsSection = document.getElementById('diseaseStatsSection');
-        const statsContainer = document.getElementById('statsContainer');
-        const noStatsMessage = document.getElementById('noStatsMessage');
-        const loadStatsBtn = document.getElementById('loadStatsBtn');
-        const hideStatsBtn = document.getElementById('hideStatsBtn');
-
-        // Show status message
-        function showMessage(message, isError = false) {
-            const statusMessageContainer = document.getElementById('statusMessageContainer');
-            const statusMessage = document.getElementById('statusMessage');
-            statusMessageContainer.classList.remove('slide-in-down', 'fade-out-up');
-            statusMessage.innerHTML = isError ? `<i class="fas fa-exclamation-circle mr-2"></i>${message}` : `<i class="fas fa-check-circle mr-2"></i>${message}`;
-            statusMessage.className = `py-3 px-4 rounded-md text-sm font-medium ${isError ? 'bg-red-100 text-red-700 border border-red-200' : 'bg-green-100 text-green-700 border border-green-200'}`;
-            statusMessageContainer.classList.remove('hidden');
-            statusMessageContainer.classList.add('slide-in-down');
-            setTimeout(() => {
-                statusMessageContainer.classList.remove('slide-in-down');
-                statusMessageContainer.classList.add('fade-out-up');
-                setTimeout(() => statusMessageContainer.classList.add('hidden'), 500);
-            }, 5000);
-        }
-
-        // Fetch and display treatment plans
-        async function fetchTreatmentPlans(page, filters = {}) {
-            try {
-                const token = localStorage.getItem('token') || getTokenFromCookies();
-                if (!token) { window.location.href = '/login.html'; return; }
-
-                let url = `${apiBaseUrl}/treatment?page=${page}&limit=${limit}`;
-                if (filters.search) url += `&search=${encodeURIComponent(filters.search)}`;
-                if (filters.status && filters.status !== 'all') url += `&status=${filters.status}`;
-
-                const response = await fetch(url, { headers: { 'Authorization': `Bearer ${token}` } });
-                const data = await response.json();
-
-                if (!response.ok) throw new Error(data.message || 'Failed to fetch treatment plans');
-
-                if (data.status === 'success' && data.treatmentPlans.length > 0) {
-                    renderTreatmentPlans(data.treatmentPlans);
-                    updatePagination(data.pagination);
-                } else {
-                    treatmentContainer.innerHTML = '';
-                    paginationContainer.classList.add('hidden');
-                    noTreatmentMessage.classList.remove('hidden');
-                }
-            } catch (error) {
-                showMessage(error.message || 'Error fetching treatment plans', true);
-                treatmentContainer.innerHTML = '';
-                paginationContainer.classList.add('hidden');
-                noTreatmentMessage.classList.remove('hidden');
-            }
-        }
-
-        // Get status class
-        function getStatusClass(status) {
-            switch (status?.toLowerCase()) {
-                case 'pending': return 'bg-yellow-100 text-yellow-800';
-                case 'in_progress': return 'bg-blue-100 text-blue-800';
-                case 'completed': return 'bg-green-100 text-green-800';
-                case 'failed': return 'bg-red-100 text-red-800';
-                default: return 'bg-gray-100 text-gray-800';
-            }
-        }
-
-        // Format date
-        function formatDate(dateString) {
-            const date = new Date(dateString);
-            const now = new Date();
-            const yesterday = new Date(now);
-            yesterday.setDate(yesterday.getDate() - 1);
-
-            if (date.toDateString() === now.toDateString()) {
-                return `Today at ${date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}`;
-            } else if (date.toDateString() === yesterday.toDateString()) {
-                return `Yesterday at ${date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}`;
-            } else {
-                return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' });
-            }
-        }
-
-        // Render treatment plans
-        function renderTreatmentPlans(plans) {
-            treatmentContainer.innerHTML = '';
-            noTreatmentMessage.classList.add('hidden');
-            paginationContainer.classList.remove('hidden');
-
-            plans.forEach((item, index) => {
-                const statusClass = getStatusClass(item.status);
-                const formattedCreatedAt = formatDate(item.createdAt);
-                const formattedUpdatedAt = formatDate(item.updatedAt);
-
-                const card = document.createElement('div');
-                card.className = `bg-white rounded-lg shadow overflow-hidden card-hover fade-in animate-delay-${index % 3 + 1}`;
-                card.innerHTML = `
-                    <div class="p-5">
-                        <div class="flex justify-between items-start mb-3">
-                            <h3 class="text-lg font-semibold text-gray-900 truncate">${item.plantName}</h3>
-                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${statusClass}">
-                                ${item.status}
-                            </span>
-                        </div>
-                        <p class="text-sm font-medium text-gray-700 mb-1">${item.disease}</p>
-                        <p class="text-xs text-gray-500 mb-3">Created: ${formattedCreatedAt}</p>
-                        <p class="text-xs text-gray-500 mb-3">Updated: ${formattedUpdatedAt}</p>
-                        <div class="text-sm text-gray-600 mb-3 line-clamp-2">${item.treatment}</div>
-                        <div class="mt-3 flex space-x-2">
-                            <button onclick="updateTreatmentStatus('${item._id}', 'completed')" class="flex-1 flex items-center justify-center px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600">
-                                <i class="fas fa-check mr-2"></i>Complete
-                            </button>
-                            <button onclick="removeTreatmentPlan('${item._id}')" class="flex-1 flex items-center justify-center px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600">
-                                <i class="fas fa-trash mr-2"></i>Remove
-                            </button>
-                        </div>
-                    </div>
-                `;
-                treatmentContainer.appendChild(card);
-            });
-        }
-
-        // Create treatment plan
-        async function createTreatmentPlan(event) {
-            event.preventDefault();
-
-            const token = localStorage.getItem('token') || getTokenFromCookies();
-            if (!token) { window.location.href = '/login.html'; return; }
-
-            const treatmentData = {
-                plantName: document.getElementById('plantName').value,
-                disease: document.getElementById('disease').value,
-                treatment: document.getElementById('treatment').value
-            };
-
-            if (!treatmentData.plantName || !treatmentData.disease || !treatmentData.treatment) {
-                showMessage('Please fill in all fields', true);
-                return;
-            }
-
-            try {
-                const response = await fetch(`${apiBaseUrl}/treatment`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-                    body: JSON.stringify(treatmentData)
-                });
-                const data = await response.json();
-
-                if (!response.ok) throw new Error(data.message || 'Failed to create treatment plan');
-
-                showMessage('Treatment plan created successfully');
-                treatmentForm.reset();
-                fetchTreatmentPlans(currentPage, getCurrentFilters());
-            } catch (error) {
-                showMessage(error.message || 'Error creating treatment plan', true);
-            }
-        }
-
-        // Update treatment status
-        async function updateTreatmentStatus(id, status) {
-            try {
-                const token = localStorage.getItem('token') || getTokenFromCookies();
-                if (!token) { window.location.href = '/login.html'; return; }
-
-                const response = await fetch(`${apiBaseUrl}/treatment/${id}`, {
-                    method: 'PUT',
-                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-                    body: JSON.stringify({ status })
-                });
-                const data = await response.json();
-
-                if (!response.ok) throw new Error(data.message || 'Failed to update treatment status');
-
-                showMessage('Treatment status updated successfully');
-                fetchTreatmentPlans(currentPage, getCurrentFilters());
-            } catch (error) {
-                showMessage(error.message || 'Error updating treatment status', true);
-            }
-        }
-
-        // Remove treatment plan
-        async function removeTreatmentPlan(id) {
-            try {
-                const token = localStorage.getItem('token') || getTokenFromCookies();
-                if (!token) { window.location.href = '/login.html'; return; }
-
-                const response = await fetch(`${apiBaseUrl}/treatment/${id}`, {
-                    method: 'DELETE',
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
-                const data = await response.json();
-
-                if (!response.ok) throw new Error(data.message || 'Failed to remove treatment plan');
-
-                showMessage('Treatment plan removed successfully');
-                fetchTreatmentPlans(currentPage, getCurrentFilters());
-            } catch (error) {
-                showMessage(error.message || 'Error removing treatment plan', true);
-            }
-        }
-
-        // Fetch and display disease statistics
-        async function fetchDiseaseStats() {
-            console.log('Fetching disease statistics from history...');
-            try {
-                const token = localStorage.getItem('token') || getTokenFromCookies();
-                if (!token) {
-                    console.log('No token found, redirecting to login');
-                    window.location.href = '/login.html';
-                    return;
-                }
-
-                const response = await fetch(`${apiBaseUrl}/analytics/user`, {
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
-                const data = await response.json();
-
-                console.log('Response status:', response.status);
-                console.log('Fetched data:', data);
-
-                if (!response.ok) throw new Error(data.message || 'Failed to fetch disease statistics');
-
-                if (data.status === 'success' && data.analytics.commonDiseases.length > 0) {
-                    renderDiseaseStats(data.analytics.commonDiseases);
-                    statsContainer.classList.remove('hidden');
-                    noStatsMessage.classList.add('hidden');
-                    hideStatsBtn.classList.remove('hidden');
-                    showMessage('Disease statistics loaded successfully');
-                } else {
-                    console.log('No disease stats returned');
-                    statsContainer.innerHTML = '';
-                    statsContainer.classList.add('hidden');
-                    noStatsMessage.classList.remove('hidden');
-                    hideStatsBtn.classList.add('hidden');
-                }
-            } catch (error) {
-                console.error('Error in fetchDiseaseStats:', error);
-                showMessage(error.message || 'Error fetching disease statistics', true);
-                statsContainer.innerHTML = '';
-                statsContainer.classList.add('hidden');
-                noStatsMessage.classList.remove('hidden');
-                hideStatsBtn.classList.add('hidden');
-            }
-        }
-
-        // Render disease statistics
-        function renderDiseaseStats(diseases) {
-            console.log('Rendering disease stats:', diseases);
-            statsContainer.innerHTML = '';
-            const maxCount = Math.max(...diseases.map(d => d.count)) || 1; // Avoid division by zero
-
-            diseases.forEach((disease, index) => {
-                const percentage = (disease.count / maxCount) * 100;
-                console.log(`Rendering ${disease._id}: ${disease.count} plans, ${percentage}%`);
-                const card = document.createElement('div');
-                card.className = `bg-white rounded-lg shadow overflow-hidden card-hover fade-in animate-delay-${index % 3 + 1}`;
-                card.innerHTML = `
-                    <div class="p-5">
-                        <div class="flex items-center justify-between mb-2">
-                            <h3 class="text-lg font-semibold text-gray-900">${disease._id}</h3>
-                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800">
-                                ${disease.count} Scans
-                            </span>
-                        </div>
-                        <div class="w-full bg-gray-200 rounded-full h-2.5">
-                            <div class="bg-indigo-600 h-2.5 rounded-full" style="width: ${percentage}%; transition: width 0.5s ease;"></div>
-                        </div>
-                    </div>
-                `;
-                statsContainer.appendChild(card);
-            });
-        }
-
-        // Hide stats section
-        function hideStatsSection() {
-            console.log('Hiding stats section');
-            statsContainer.classList.add('hidden');
-            noStatsMessage.classList.add('hidden');
-            hideStatsBtn.classList.add('hidden');
-        }
-
-        // Save treatment plans as PDF
-        saveAsPdfBtn.addEventListener('click', async () => {
-            try {
-                const { jsPDF } = window.jspdf;
-                const doc = new jsPDF();
-                doc.setFontSize(18);
-                doc.text('Treatment Plans', 10, 10);
-
-                let y = 20;
-                const treatmentItems = document.querySelectorAll('#treatmentContainer > div');
-                treatmentItems.forEach((item, index) => {
-                    const plantName = item.querySelector('h3').textContent;
-                    const disease = item.querySelector('p.text-sm').textContent;
-                    const treatment = item.querySelector('div.text-sm').textContent;
-                    const status = item.querySelector('span').textContent;
-
-                    doc.setFontSize(12);
-                    doc.text(`${index + 1}. ${plantName} - ${disease}`, 10, y);
-                    doc.text(`Status: ${status}`, 10, y + 5);
-                    doc.text(`Treatment: ${treatment}`, 10, y + 10);
-                    y += 20;
-
-                    if (y > 280) { doc.addPage(); y = 10; }
-                });
-
-                doc.save('treatment_plans.pdf');
-                showMessage('Treatment plans saved as PDF successfully');
-            } catch (error) {
-                showMessage('Error generating PDF', true);
-            }
-        });
-
-        // Update pagination
-        function updatePagination(pagination) {
-            currentPage = pagination.page;
-            document.getElementById('startPage').textContent = pagination.start;
-            document.getElementById('endPage').textContent = pagination.end;
-            document.getElementById('totalResults').textContent = pagination.total;
-            prevPageBtn.disabled = pagination.page === 1;
-            nextPageBtn.disabled = pagination.page === pagination.pages;
-        }
-
-        // Get current filters
-        function getCurrentFilters() {
-            return {
-                search: searchInput.value.trim(),
-                status: statusFilter.value
-            };
-        }
-
-        // Event listeners
-        prevPageBtn.addEventListener('click', () => { if (currentPage > 1) fetchTreatmentPlans(currentPage - 1, getCurrentFilters()); });
-        nextPageBtn.addEventListener('click', () => { fetchTreatmentPlans(currentPage + 1, getCurrentFilters()); });
-        searchInput.addEventListener('input', debounce(() => fetchTreatmentPlans(1, getCurrentFilters()), 500));
-        statusFilter.addEventListener('change', () => fetchTreatmentPlans(1, getCurrentFilters()));
-        treatmentForm.addEventListener('submit', createTreatmentPlan);
-        profileDropdownBtn.addEventListener('click', () => profileDropdown.classList.toggle('hidden'));
-        document.addEventListener('click', (event) => {
-            if (!profileDropdownBtn.contains(event.target) && !profileDropdown.contains(event.target)) {
-                profileDropdown.classList.add('hidden');
-            }
-        });
-        logoutBtn.addEventListener('click', () => {
-            localStorage.removeItem('token');
-            document.cookie = 'token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
-            window.location.href = '/login.html';
-        });
-        loadStatsBtn.addEventListener('click', fetchDiseaseStats);
-        hideStatsBtn.addEventListener('click', hideStatsSection);
-
-        // Debounce function
-        function debounce(func, wait) {
-            let timeout;
-            return function executedFunction(...args) {
-                const later = () => { clearTimeout(timeout); func(...args); };
-                clearTimeout(timeout);
-                timeout = setTimeout(later, wait);
-            };
-        }
-
-        // Get token from cookies
-        function getTokenFromCookies() {
-            const cookie = document.cookie.split('; ').find(row => row.startsWith('token='));
-            return cookie ? cookie.split('=')[1] : null;
-        }
-
-        // Check authentication and load treatment plans
-        function checkAuth() {
-            const token = localStorage.getItem('token') || getTokenFromCookies();
-            if (!token) {
-                window.location.href = '/login.html';
-            } else {
-                fetchTreatmentPlans(currentPage);
-            }
-        }
-
-        // Initial check
-        checkAuth();
-    </script>
+    <script src="/scripts/treatment.js"></script>
 </body>
 
 </html>

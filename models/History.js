@@ -13,13 +13,19 @@ const historySchema = new mongoose.Schema({
     required: false,
     index: true, // Indexing to improve performance when searching for guests
   },
+  plantId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Plant",
+    required: false,
+    index: true,
+  },
   imageUrl: { type: String, required: true },
   filename: { type: String, required: true },
   relativePath: { type: String, required: false },
   originalFilename: { type: String, required: false },
   classification: { type: mongoose.Schema.Types.Mixed, required: true },
   timestamp: { type: Date, default: Date.now },
-  notes: { type: String, maxlength: 500 }, // Maximum note length
+  notes: { type: String, maxlength: 500 },
 });
 
 // ✅ Check that the record contains a userId or guestId

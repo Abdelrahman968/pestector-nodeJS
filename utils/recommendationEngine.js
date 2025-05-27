@@ -1,314 +1,896 @@
 const History = require("../models/History");
 const Recommendation = require("../models/Recommendation");
+const mongoose = require("mongoose");
 
-/**
- * Recommendation engine to generate personalized image suggestions
- * for both registered users and guest users
- */
-const recommendationEngine = {
-  /**
-   * Generate recommendations for a user or guest
-   * @param {Object} options - Options for generating recommendations
-   * @param {string} [options.userId] - User ID for registered users
-   * @param {string} [options.guestId] - Guest ID for non-registered users
-   * @param {number} [options.limit=5] - Maximum number of recommendations to return
-   * @returns {Promise<Array>} - Array of recommendation objects
-   */
-  async generateRecommendations({ userId, guestId, limit = 5 }) {
-    // Validate that either userId or guestId is provided
-    if (!userId && !guestId) {
-      throw new Error("Either userId or guestId must be provided");
-    }
+class EnhancedRecommendationEngine {
+  constructor() {
+    this.CLASSIFICATION_WEIGHTS = {
+      plant_type: 0.4, // 40% weight for plant type matching
+      plant_condition: 0.25, // 25% weight for condition matching
+      confidence_boost: 0.15, // 15% boost for high-confidence classifications
+      recency_boost: 0.1, // 10% boost for recent items
+      popularity_boost: 0.1, // 10% boost for popular items
+    };
 
-    // Get the user's or guest's history
-    const userHistory = await History.find(userId ? { userId } : { guestId })
-      .sort({ timestamp: -1 })
-      .limit(10);
+    this.SCORE_THRESHOLDS = {
+      excellent: 80,
+      good: 60,
+      fair: 40,
+      minimum: 20,
+    };
 
-    if (userHistory.length === 0) {
-      // New user with no history, return popular images
-      return this.getPopularRecommendations({ userId, guestId, limit });
-    }
+    this.CACHE_DURATION = 30 * 60 * 1000; // 30 minutes
+    this.popularityCache = new Map();
+    this.userPatternCache = new Map();
+  }
 
-    // Extract classification patterns from user history
-    const classificationPatterns =
-      this.extractClassificationPatterns(userHistory);
-
-    // Find similar images based on classification patterns
-    const similarImages = await this.findSimilarImages({
-      userId,
-      guestId,
-      classificationPatterns,
-      limit,
-      excludeIds: userHistory.map((h) => h._id),
-    });
-
-    // Create recommendation records
-    const recommendations = similarImages.map((image) => ({
-      userId,
-      guestId,
-      recommendedImageId: image._id,
-      recommendedImageUrl: image.imageUrl,
-      relevanceScore: image.similarityScore,
-      reason: "similar-classification",
-    }));
-
-    // Save recommendations to database
-    await Recommendation.insertMany(recommendations);
-
-    return recommendations;
-  },
-
-  /**
-   * Extract classification patterns from user history
-   * @param {Array} history - User's image history
-   * @returns {Object} - Classification patterns object
-   */
+  // Enhanced pattern extraction with confidence scoring
   extractClassificationPatterns(history) {
-    const patterns = {};
+    const patterns = {
+      plant_types: new Map(),
+      plant_conditions: new Map(),
+      recent_preferences: new Map(),
+      confidence_levels: [],
+      total_scans: history.length,
+    };
 
-    // Analyze classifications from history
-    history.forEach((item) => {
-      if (item.classification) {
-        // Handle different classification structures:
-        // Classification could be array, object, or string depending on your app
-        if (typeof item.classification === "object") {
-          // If it's an object with categories/labels
-          Object.entries(item.classification).forEach(([key, value]) => {
-            patterns[key] = patterns[key] || { count: 0, values: {} };
-            patterns[key].count += 1;
+    // Time decay factor for recent preferences (last 7 days get more weight)
+    const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
 
-            if (typeof value === "string") {
-              patterns[key].values[value] =
-                (patterns[key].values[value] || 0) + 1;
-            }
-          });
-        } else if (typeof item.classification === "string") {
-          // If it's a simple string label
-          patterns[item.classification] =
-            (patterns[item.classification] || 0) + 1;
+    history.forEach((item, index) => {
+      const isRecent = new Date(item.timestamp) > sevenDaysAgo;
+      const recencyWeight = isRecent ? 1.5 : 1.0;
+      const positionWeight = Math.max(0.5, 1 - (index / history.length) * 0.5); // Recent items get higher weight
+
+      if (item.classification?.overall_best_prediction) {
+        const prediction = item.classification.overall_best_prediction;
+        const confidence = prediction.confidence || prediction.score || 0.5;
+
+        patterns.confidence_levels.push(confidence);
+
+        // Extract plant type with weighted scoring
+        if (prediction.plant?.trim()) {
+          const plantKey = prediction.plant.toLowerCase().trim();
+          const currentWeight = patterns.plant_types.get(plantKey) || 0;
+          patterns.plant_types.set(
+            plantKey,
+            currentWeight + recencyWeight * positionWeight * confidence
+          );
+
+          if (isRecent) {
+            patterns.recent_preferences.set(
+              plantKey,
+              (patterns.recent_preferences.get(plantKey) || 0) + 1
+            );
+          }
+        }
+
+        // Extract condition with weighted scoring
+        if (prediction.condition?.trim()) {
+          const conditionKey = prediction.condition.toLowerCase().trim();
+          const currentWeight =
+            patterns.plant_conditions.get(conditionKey) || 0;
+          patterns.plant_conditions.set(
+            conditionKey,
+            currentWeight + recencyWeight * positionWeight * confidence
+          );
         }
       }
     });
 
-    return patterns;
-  },
+    // Calculate average confidence and normalize patterns
+    patterns.avg_confidence =
+      patterns.confidence_levels.length > 0
+        ? patterns.confidence_levels.reduce((a, b) => a + b) /
+          patterns.confidence_levels.length
+        : 0.5;
 
-  /**
-   * Find images similar to user's preferences
-   * @param {Object} options - Search options
-   * @returns {Promise<Array>} - Similar images with similarity scores
-   */
+    return patterns;
+  }
+
+  // Build more sophisticated similarity query with multiple strategies
+  buildAdvancedSimilarityQuery(
+    patterns,
+    contentType = null,
+    strategy = "balanced"
+  ) {
+    const queries = [];
+
+    // Strategy 1: Exact matches for high-confidence patterns
+    if (patterns.plant_types.size > 0) {
+      const topPlants = Array.from(patterns.plant_types.entries())
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 3)
+        .map(([plant]) => plant);
+
+      if (contentType) {
+        // If contentType is specified, prioritize it but also include user preferences
+        const contentTypeQuery = {
+          "classification.overall_best_prediction.plant": new RegExp(
+            `^${contentType}$`,
+            "i"
+          ),
+        };
+
+        const userPreferenceQuery = {
+          "classification.overall_best_prediction.plant": {
+            $in: topPlants.map((plant) => new RegExp(`^${plant}$`, "i")),
+          },
+        };
+
+        queries.push(contentTypeQuery);
+        if (strategy === "balanced") {
+          queries.push(userPreferenceQuery);
+        }
+      } else {
+        queries.push({
+          "classification.overall_best_prediction.plant": {
+            $in: topPlants.map((plant) => new RegExp(`^${plant}$`, "i")),
+          },
+        });
+      }
+    }
+
+    // Strategy 2: Condition-based matching
+    if (patterns.plant_conditions.size > 0 && strategy !== "plant_only") {
+      const topConditions = Array.from(patterns.plant_conditions.entries())
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 2)
+        .map(([condition]) => condition);
+
+      queries.push({
+        "classification.overall_best_prediction.condition": {
+          $in: topConditions.map(
+            (condition) => new RegExp(`^${condition}$`, "i")
+          ),
+        },
+      });
+    }
+
+    // Strategy 3: Recent preferences boost
+    if (patterns.recent_preferences.size > 0 && strategy === "recent_focused") {
+      const recentPlants = Array.from(patterns.recent_preferences.keys());
+      queries.push({
+        "classification.overall_best_prediction.plant": {
+          $in: recentPlants.map((plant) => new RegExp(`^${plant}$`, "i")),
+        },
+      });
+    }
+
+    return queries.length > 0 ? { $or: queries } : {};
+  }
+
+  // Enhanced similarity scoring with multiple factors
+  calculateAdvancedSimilarityScore(
+    imageClassification,
+    userPatterns,
+    imageMetadata = {}
+  ) {
+    let score = 0;
+    let maxPossibleScore = 100;
+    const factors = {};
+
+    const prediction = imageClassification?.overall_best_prediction;
+    if (!prediction) return Math.floor(Math.random() * 15) + 10;
+
+    // Factor 1: Plant type similarity
+    if (prediction.plant && userPatterns.plant_types.size > 0) {
+      const plantKey = prediction.plant.toLowerCase().trim();
+      const plantWeight = userPatterns.plant_types.get(plantKey) || 0;
+      const maxPlantWeight = Math.max(...userPatterns.plant_types.values());
+
+      if (maxPlantWeight > 0) {
+        const plantScore =
+          (plantWeight / maxPlantWeight) *
+          this.CLASSIFICATION_WEIGHTS.plant_type *
+          100;
+        score += plantScore;
+        factors.plant_match = plantScore;
+      }
+    }
+
+    // Factor 2: Condition similarity
+    if (prediction.condition && userPatterns.plant_conditions.size > 0) {
+      const conditionKey = prediction.condition.toLowerCase().trim();
+      const conditionWeight =
+        userPatterns.plant_conditions.get(conditionKey) || 0;
+      const maxConditionWeight = Math.max(
+        ...userPatterns.plant_conditions.values()
+      );
+
+      if (maxConditionWeight > 0) {
+        const conditionScore =
+          (conditionWeight / maxConditionWeight) *
+          this.CLASSIFICATION_WEIGHTS.plant_condition *
+          100;
+        score += conditionScore;
+        factors.condition_match = conditionScore;
+      }
+    }
+
+    // Factor 3: Confidence boost
+    const imageConfidence = prediction.confidence || prediction.score || 0.5;
+    const confidenceBoost =
+      imageConfidence * this.CLASSIFICATION_WEIGHTS.confidence_boost * 100;
+    score += confidenceBoost;
+    factors.confidence_boost = confidenceBoost;
+
+    // Factor 4: Recency boost (if image is recent)
+    if (imageMetadata.timestamp) {
+      const daysSinceCreation =
+        (Date.now() - new Date(imageMetadata.timestamp)) /
+        (1000 * 60 * 60 * 24);
+      if (daysSinceCreation <= 30) {
+        // Boost recent images
+        const recencyBoost =
+          Math.max(0, (30 - daysSinceCreation) / 30) *
+          this.CLASSIFICATION_WEIGHTS.recency_boost *
+          100;
+        score += recencyBoost;
+        factors.recency_boost = recencyBoost;
+      }
+    }
+
+    // Factor 5: Popularity boost (cached)
+    if (imageMetadata.popularityScore) {
+      const popularityBoost =
+        imageMetadata.popularityScore *
+        this.CLASSIFICATION_WEIGHTS.popularity_boost *
+        100;
+      score += popularityBoost;
+      factors.popularity_boost = popularityBoost;
+    }
+
+    const finalScore = Math.min(100, Math.max(10, Math.round(score)));
+
+    // Add some randomization to prevent always showing the same recommendations
+    const randomVariation = (Math.random() - 0.5) * 5; // ±2.5 points
+    return Math.min(
+      100,
+      Math.max(10, Math.round(finalScore + randomVariation))
+    );
+  }
+
+  // Cached popularity calculation
+  async getPopularityScores(timeRangeHours = 24 * 7) {
+    // Default: last week
+    const cacheKey = `popularity_${timeRangeHours}`;
+    const cached = this.popularityCache.get(cacheKey);
+
+    if (cached && Date.now() - cached.timestamp < this.CACHE_DURATION) {
+      return cached.data;
+    }
+
+    const timeThreshold = new Date(
+      Date.now() - timeRangeHours * 60 * 60 * 1000
+    );
+
+    const popularityData = await History.aggregate([
+      {
+        $match: {
+          timestamp: { $gte: timeThreshold },
+          imageUrl: { $ne: null, $ne: "" },
+        },
+      },
+      {
+        $group: {
+          _id: "$imageUrl",
+          count: { $sum: 1 },
+          avgConfidence: {
+            $avg: {
+              $ifNull: [
+                "$classification.overall_best_prediction.confidence",
+                0.5,
+              ],
+            },
+          },
+          latestTimestamp: { $max: "$timestamp" },
+          originalDocId: { $first: "$_id" },
+        },
+      },
+      {
+        $addFields: {
+          popularityScore: {
+            $multiply: [
+              { $log: [{ $add: ["$count", 1] }, 10] },
+              "$avgConfidence",
+            ],
+          },
+        },
+      },
+      { $sort: { popularityScore: -1 } },
+    ]);
+
+    const scoreMap = new Map();
+    const maxScore =
+      popularityData.length > 0 ? popularityData[0].popularityScore : 1;
+
+    popularityData.forEach((item) => {
+      scoreMap.set(item._id, {
+        score: item.popularityScore / maxScore, // Normalize 0-1
+        count: item.count,
+        avgConfidence: item.avgConfidence,
+        originalDocId: item.originalDocId,
+      });
+    });
+
+    this.popularityCache.set(cacheKey, {
+      data: scoreMap,
+      timestamp: Date.now(),
+    });
+
+    return scoreMap;
+  }
+
+  // Enhanced similarity search with multiple strategies and batching
   async findSimilarImages({
     userId,
     guestId,
     classificationPatterns,
     limit,
     excludeIds = [],
+    contentType = null,
+    strategy = "balanced",
   }) {
-    // Convert classification patterns to a query
-    const query = this.buildSimilarityQuery(classificationPatterns);
+    const popularityScores = await this.getPopularityScores();
 
-    // Exclude images the user has already seen
-    if (excludeIds.length) {
-      query._id = { $nin: excludeIds };
+    // Build query with the specified strategy
+    const baseQuery = this.buildAdvancedSimilarityQuery(
+      classificationPatterns,
+      contentType,
+      strategy
+    );
+
+    // Add exclusions
+    if (excludeIds.length > 0) {
+      baseQuery._id = { $nin: excludeIds.filter((id) => id) };
     }
 
-    // Exclude the user's own images if userId is provided
+    // Exclude user's own images
     if (userId) {
-      query.userId = { $ne: userId };
+      baseQuery.userId = { $ne: userId };
     }
 
-    // Find potential matches
-    const potentialMatches = await History.find(query).limit(100);
+    // console.log(
+    //   `Finding similar images with strategy: ${strategy}, query:`,
+    //   JSON.stringify(baseQuery, null, 2)
+    // );
 
-    // Score each potential match based on similarity to the user's patterns
-    const scoredMatches = potentialMatches.map((match) => {
-      const similarityScore = this.calculateSimilarityScore(
-        match.classification,
-        classificationPatterns
-      );
+    // Fetch more candidates for better scoring
+    const fetchLimit = Math.min(500, limit * 20);
+    const potentialMatches = await History.find(baseQuery)
+      .sort({ timestamp: -1 })
+      .limit(fetchLimit)
+      .lean();
 
-      // Convert to plain object and ensure imageUrl is included
-      const matchObj = match.toObject();
+    // Score and rank all matches
+    const scoredMatches = potentialMatches
+      .map((match) => {
+        const popularityData = popularityScores.get(match.imageUrl);
+        const metadata = {
+          timestamp: match.timestamp,
+          popularityScore: popularityData?.score || 0,
+        };
 
-      return {
-        ...matchObj,
-        similarityScore,
-        imageUrl: match.imageUrl, // Use the direct property from the document
-      };
-    });
+        return {
+          ...match,
+          similarityScore: this.calculateAdvancedSimilarityScore(
+            match.classification,
+            classificationPatterns,
+            metadata
+          ),
+          popularityData,
+        };
+      })
+      .filter(
+        (match) =>
+          match.imageUrl &&
+          match._id &&
+          match.similarityScore >= this.SCORE_THRESHOLDS.minimum
+      )
+      .sort((a, b) => b.similarityScore - a.similarityScore);
 
-    // Filter out any matches that don't have an imageUrl
-    const validMatches = scoredMatches.filter((match) => match.imageUrl);
+    // Diversification: ensure we don't recommend too many of the same plant type
+    const diversifiedMatches = this.diversifyRecommendations(
+      scoredMatches,
+      limit
+    );
 
-    // Sort by similarity score and take the top 'limit' matches
-    return validMatches
-      .sort((a, b) => b.similarityScore - a.similarityScore)
-      .slice(0, limit);
-  },
+    return diversifiedMatches.slice(0, limit);
+  }
 
-  /**
-   * Build a MongoDB query from classification patterns
-   * @param {Object} patterns - Classification patterns
-   * @returns {Object} - MongoDB query object
-   */
-  buildSimilarityQuery(patterns) {
-    const query = {};
+  // Add diversity to prevent recommending too many similar items
+  diversifyRecommendations(scoredMatches, limit) {
+    const plantTypeCount = new Map();
+    const diversified = [];
+    const maxPerType = Math.max(1, Math.floor(limit / 3)); // Max 1/3 of recommendations per plant type
 
-    // Build query conditions based on top patterns
-    Object.entries(patterns).forEach(([key, value]) => {
-      if (typeof value === "object" && value.values) {
-        // Get the top 3 most frequent values for this category
-        const topValues = Object.entries(value.values)
-          .sort((a, b) => b[1] - a[1])
-          .slice(0, 3)
-          .map((entry) => entry[0]);
+    // First pass: high-scoring diverse recommendations
+    for (const match of scoredMatches) {
+      if (diversified.length >= limit) break;
 
-        if (topValues.length) {
-          query[`classification.${key}`] = { $in: topValues };
-        }
+      const plantType =
+        match.classification?.overall_best_prediction?.plant?.toLowerCase() ||
+        "unknown";
+      const currentCount = plantTypeCount.get(plantType) || 0;
+
+      if (
+        currentCount < maxPerType ||
+        match.similarityScore >= this.SCORE_THRESHOLDS.excellent
+      ) {
+        diversified.push(match);
+        plantTypeCount.set(plantType, currentCount + 1);
       }
-    });
+    }
 
-    return query;
-  },
+    // Second pass: fill remaining slots if needed
+    if (diversified.length < limit) {
+      const remaining = scoredMatches.filter(
+        (match) => !diversified.includes(match)
+      );
+      diversified.push(...remaining.slice(0, limit - diversified.length));
+    }
 
-  /**
-   * Calculate similarity score between an image and user patterns
-   * @param {Object} classification - Image classification
-   * @param {Object} patterns - User classification patterns
-   * @returns {number} - Similarity score (0-100)
-   */
-  calculateSimilarityScore(classification, patterns) {
-    let matchScore = 0;
-    let totalPossibleScore = 0;
+    return diversified;
+  }
 
-    // Calculate score based on matching classification elements
-    if (typeof classification === "object") {
-      Object.entries(classification).forEach(([key, value]) => {
-        if (patterns[key]) {
-          totalPossibleScore += 10;
+  // Enhanced recommendation generation with multiple strategies
+  async generateRecommendations({
+    userId,
+    guestId,
+    limit = 5,
+    contentType = null,
+    strategy = "balanced", // 'balanced', 'recent_focused', 'plant_only'
+  }) {
+    if (!userId && !guestId) {
+      throw new Error("User/Guest ID missing for generateRecommendations.");
+    }
 
-          if (typeof patterns[key] === "object" && patterns[key].values) {
-            if (patterns[key].values[value]) {
-              // Weight by how often this value appears in user history
-              matchScore +=
-                10 * (patterns[key].values[value] / patterns[key].count);
-            }
-          } else if (key === value) {
-            matchScore += 10;
+    // Get user history with more context
+    const userHistory = await History.find(userId ? { userId } : { guestId })
+      .sort({ timestamp: -1 })
+      .limit(50) // Increased for better pattern analysis
+      .lean();
+
+    // Get existing recommendations to avoid duplicates
+    const existingRecs = await Recommendation.find({
+      ...(userId ? { userId } : { guestId }),
+    })
+      .select("recommendedImageId")
+      .lean();
+
+    const excludeImageIds = [
+      ...existingRecs.map((r) => r.recommendedImageId).filter((id) => id),
+      ...userHistory.map((h) => h._id).filter((id) => id),
+    ];
+
+    let recommendations = [];
+
+    if (userHistory.length > 0) {
+      // Extract patterns with enhanced analysis
+      const patterns = this.extractClassificationPatterns(userHistory);
+
+      // Try multiple strategies and combine results
+      const strategies =
+        strategy === "balanced"
+          ? ["balanced", "recent_focused", "plant_only"]
+          : [strategy];
+
+      for (const currentStrategy of strategies) {
+        const strategyLimit = Math.ceil(limit / strategies.length);
+        const similarImages = await this.findSimilarImages({
+          userId,
+          guestId,
+          classificationPatterns: patterns,
+          limit: strategyLimit,
+          excludeIds: excludeImageIds,
+          contentType,
+          strategy: currentStrategy,
+        });
+
+        recommendations.push(
+          ...similarImages.map((img) => ({
+            userId,
+            guestId,
+            recommendedImageId: img._id,
+            recommendedImageUrl: img.imageUrl,
+            relevanceScore: img.similarityScore,
+            reason: contentType
+              ? "similar-content-type"
+              : "similar-classification",
+            sourceContentType: contentType || undefined,
+            metadata: {
+              strategy: currentStrategy,
+              popularityData: img.popularityData,
+            },
+          }))
+        );
+
+        // Update exclude list to prevent duplicates across strategies
+        recommendations.forEach((rec) => {
+          if (
+            !excludeImageIds.some(
+              (id) => id.equals && id.equals(rec.recommendedImageId)
+            )
+          ) {
+            excludeImageIds.push(rec.recommendedImageId);
+          }
+        });
+      }
+    }
+
+    // Fill remaining slots with popular items if needed
+    if (recommendations.length < limit) {
+      const popularRecommendations = await this.getPopularRecommendationsData({
+        userId,
+        guestId,
+        limit: limit - recommendations.length,
+        contentType,
+        excludeIds: excludeImageIds,
+      });
+      recommendations.push(...popularRecommendations);
+    }
+
+    // Remove duplicates and sort by relevance
+    const uniqueRecommendations = Array.from(
+      new Map(
+        recommendations.map((rec) => [rec.recommendedImageId.toString(), rec])
+      ).values()
+    )
+      .sort((a, b) => b.relevanceScore - a.relevanceScore)
+      .slice(0, limit);
+
+    // Save recommendations to database
+    return this.saveRecommendations(uniqueRecommendations);
+  }
+
+  // Enhanced popular recommendations with better scoring
+  async getPopularRecommendationsData({
+    userId,
+    guestId,
+    limit = 5,
+    contentType = null,
+    excludeIds = [],
+  }) {
+    const popularityScores = await this.getPopularityScores();
+
+    // Convert popularity scores to recommendation format
+    const popularRecommendations = Array.from(popularityScores.entries())
+      .filter(([imageUrl, data]) => {
+        // Exclude user's images and already recommended images
+        return !excludeIds.some(
+          (id) => id.equals && id.equals(data.originalDocId)
+        );
+      })
+      .slice(0, limit * 2) // Get more candidates for filtering
+      .map(([imageUrl, data]) => ({
+        userId,
+        guestId,
+        recommendedImageId: data.originalDocId,
+        recommendedImageUrl: imageUrl,
+        relevanceScore: Math.round(40 + data.score * 40), // Scale to 40-80 range
+        reason: contentType ? "popular-content-type" : "popular-general",
+        sourceContentType: contentType || undefined,
+      }));
+
+    // If contentType is specified, filter by it
+    if (contentType) {
+      // We'd need to fetch the actual documents to check classification
+      // This is a simplified version - in production, you might want to cache this data
+      const filteredRecommendations = [];
+      for (const rec of popularRecommendations) {
+        if (filteredRecommendations.length >= limit) break;
+
+        const historyItem = await History.findById(
+          rec.recommendedImageId
+        ).lean();
+        if (historyItem?.classification?.overall_best_prediction?.plant) {
+          const plantType =
+            historyItem.classification.overall_best_prediction.plant.toLowerCase();
+          if (plantType.includes(contentType.toLowerCase())) {
+            filteredRecommendations.push(rec);
           }
         }
+      }
+      return filteredRecommendations;
+    }
+
+    return popularRecommendations.slice(0, limit);
+  }
+
+  // Optimized recommendation saving with batch operations
+  async saveRecommendations(recommendationData) {
+    if (!recommendationData.length) return [];
+
+    const savedRecommendations = [];
+
+    // Use bulk operations for better performance
+    const bulkOps = [];
+
+    for (const recData of recommendationData) {
+      const filter = {
+        ...(recData.userId
+          ? { userId: recData.userId }
+          : { guestId: recData.guestId }),
+        recommendedImageId: recData.recommendedImageId,
+      };
+
+      const update = {
+        $set: {
+          ...recData,
+          relevanceScore: Math.max(
+            15,
+            Math.min(99, Math.round(recData.relevanceScore))
+          ),
+          wasViewed: false,
+          updatedAt: new Date(),
+        },
+        $setOnInsert: {
+          createdAt: new Date(),
+        },
+      };
+
+      bulkOps.push({
+        updateOne: {
+          filter,
+          update,
+          upsert: true,
+        },
       });
     }
 
-    // Prevent division by zero
-    if (totalPossibleScore === 0) return 0;
+    try {
+      if (bulkOps.length > 0) {
+        await Recommendation.bulkWrite(bulkOps);
 
-    // Return normalized score (0-100)
-    return Math.round((matchScore / totalPossibleScore) * 100);
-  },
+        // Fetch the saved recommendations
+        const filters = recommendationData.map((rec) => ({
+          ...(rec.userId ? { userId: rec.userId } : { guestId: rec.guestId }),
+          recommendedImageId: rec.recommendedImageId,
+        }));
 
-  /**
-   * Get popular image recommendations when user has no history
-   * @param {Object} options - Options for recommendations
-   * @returns {Promise<Array>} - Array of popular recommendations
-   */
-  async getPopularRecommendations({ userId, guestId, limit = 5 }) {
-    // Find the most viewed images in the last 30 days
-    const thirtyDaysAgo = new Date();
-    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+        const saved = await Recommendation.find({ $or: filters })
+          .sort({ relevanceScore: -1, createdAt: -1 })
+          .limit(recommendationData.length);
 
-    // Aggregate to find popular images
-    const popularImages = await History.aggregate([
-      { $match: { timestamp: { $gte: thirtyDaysAgo } } },
-      {
-        $group: {
-          _id: "$imageUrl",
-          count: { $sum: 1 },
-          imageId: { $first: "$_id" },
-          imageUrl: { $first: "$imageUrl" },
-          classification: { $first: "$classification" },
-        },
-      },
-      { $sort: { count: -1 } },
-      { $limit: limit },
-    ]);
-
-    // Filter out any images that don't have an imageUrl
-    const validPopularImages = popularImages.filter((image) => image.imageUrl);
-
-    // Create recommendation records
-    const recommendations = validPopularImages.map((image) => ({
-      userId,
-      guestId,
-      recommendedImageId: image.imageId,
-      recommendedImageUrl: image.imageUrl,
-      relevanceScore: 50 + Math.min(50, image.count), // Base score of 50, plus bonus for popularity
-      reason: "popular",
-    }));
-
-    // Save recommendations to database
-    if (recommendations.length > 0) {
-      await Recommendation.insertMany(recommendations);
+        savedRecommendations.push(...saved);
+      }
+    } catch (error) {
+      console.error("Error in bulk save recommendations:", error);
+      // Fallback to individual saves
+      for (const recData of recommendationData) {
+        try {
+          const saved = await Recommendation.findOneAndUpdate(
+            {
+              ...(recData.userId
+                ? { userId: recData.userId }
+                : { guestId: recData.guestId }),
+              recommendedImageId: recData.recommendedImageId,
+            },
+            {
+              ...recData,
+              relevanceScore: Math.max(
+                15,
+                Math.min(99, Math.round(recData.relevanceScore))
+              ),
+              wasViewed: false,
+              updatedAt: new Date(),
+            },
+            { upsert: true, new: true }
+          );
+          savedRecommendations.push(saved);
+        } catch (individualError) {
+          console.error(
+            "Error saving individual recommendation:",
+            individualError
+          );
+        }
+      }
     }
 
-    return recommendations;
-  },
+    return savedRecommendations;
+  }
 
-  /**
-   * Mark a recommendation as viewed
-   * @param {string} recommendationId - The recommendation ID
-   * @returns {Promise<Object>} - Updated recommendation
-   */
-  async markAsViewed(recommendationId) {
-    return Recommendation.findByIdAndUpdate(
+  // Enhanced getRecommendations with better caching and fallback strategies
+  async getRecommendations({
+    userId,
+    guestId,
+    limit = 5,
+    refreshAge = 24,
+    contentType = null,
+    fetchViewed = false,
+    strategy = "balanced",
+  }) {
+    if (!userId && !guestId) {
+      throw new Error("User/Guest ID missing for getRecommendations.");
+    }
+
+    const ageThreshold = new Date();
+    ageThreshold.setHours(
+      ageThreshold.getHours() - (fetchViewed ? 720 : refreshAge)
+    );
+
+    let query = {
+      ...(userId ? { userId } : { guestId }),
+      wasViewed: fetchViewed,
+    };
+
+    if (!fetchViewed || (fetchViewed && refreshAge < 720)) {
+      query.createdAt = { $gte: ageThreshold };
+    }
+    if (contentType) {
+      query.sourceContentType = contentType;
+    }
+
+    // Get existing recommendations
+    let recommendations = await Recommendation.find(query)
+      .populate("recommendedImageId", "classification imageUrl timestamp")
+      .sort(
+        fetchViewed ? { updatedAt: -1 } : { relevanceScore: -1, createdAt: -1 }
+      )
+      .limit(limit)
+      .exec();
+
+    // If we don't have enough unviewed recommendations, generate new ones
+    if (!fetchViewed && recommendations.length < limit) {
+      const needed = limit - recommendations.length;
+
+      try {
+        const newRecommendations = await this.generateRecommendations({
+          userId,
+          guestId,
+          limit: needed,
+          contentType,
+          strategy,
+        });
+
+        // Merge with existing and deduplicate
+        const existingIds = new Set(
+          recommendations
+            .map((r) => r.recommendedImageId?._id?.toString())
+            .filter(Boolean)
+        );
+
+        const newUniqueRecs = newRecommendations.filter(
+          (newRec) => !existingIds.has(newRec.recommendedImageId?.toString())
+        );
+
+        recommendations.push(...newUniqueRecs);
+
+        // Re-sort the combined results
+        recommendations.sort(
+          (a, b) =>
+            b.relevanceScore - a.relevanceScore ||
+            new Date(b.createdAt) - new Date(a.createdAt)
+        );
+      } catch (error) {
+        console.error("Error generating new recommendations:", error);
+        // Continue with existing recommendations even if generation fails
+      }
+    }
+
+    return recommendations.slice(0, limit);
+  }
+
+  // Enhanced markAsViewed with analytics tracking
+  async markAsViewed(recommendationId, userId = null, guestId = null) {
+    if (
+      !recommendationId ||
+      typeof recommendationId !== "string" ||
+      recommendationId.length !== 24
+    ) {
+      throw new Error("Invalid recommendationId format for markAsViewed.");
+    }
+
+    const updateData = {
+      wasViewed: true,
+      updatedAt: new Date(),
+      viewedAt: new Date(),
+    };
+
+    // Add user context if provided (for analytics)
+    if (userId) updateData.viewedByUserId = userId;
+    if (guestId) updateData.viewedByGuestId = guestId;
+
+    const updated = await Recommendation.findByIdAndUpdate(
       recommendationId,
-      { wasViewed: true },
+      updateData,
       { new: true }
     );
-  },
 
-  /**
-   * Get existing recommendations for a user or guest
-   * @param {Object} options - Options for fetching recommendations
-   * @returns {Promise<Array>} - Array of recommendations
-   */
-  async getRecommendations({ userId, guestId, limit = 5, refreshAge = 24 }) {
-    // Validate that either userId or guestId is provided
-    if (!userId && !guestId) {
-      throw new Error("Either userId or guestId must be provided");
+    // Optional: Track view analytics here
+    if (updated) {
+      this.trackRecommendationView(updated);
     }
 
-    // Calculate the age threshold for recommendations
-    const refreshThreshold = new Date();
-    refreshThreshold.setHours(refreshThreshold.getHours() - refreshAge);
+    return updated;
+  }
 
-    // Find existing recommendations that aren't too old
-    const existingRecommendations = await Recommendation.find({
-      ...(userId ? { userId } : { guestId }),
-      createdAt: { $gte: refreshThreshold },
-      wasViewed: false,
-    })
-      .sort({ relevanceScore: -1 })
-      .limit(limit);
+  // Analytics tracking for recommendation views
+  trackRecommendationView(recommendation) {
+    // This is where you could integrate with analytics services
+    // or update internal metrics about recommendation performance
+    // console.log(
+    //   `Recommendation viewed - ID: ${recommendation._id}, Score: ${recommendation.relevanceScore}, Reason: ${recommendation.reason}`
+    // );
+  }
 
-    // If we have enough recent recommendations, return them
-    if (existingRecommendations.length >= limit) {
-      return existingRecommendations;
+  // Clear caches (useful for testing or manual cache invalidation)
+  clearCaches() {
+    this.popularityCache.clear();
+    this.userPatternCache.clear();
+  }
+
+  // Get recommendation statistics (useful for debugging and monitoring)
+  async getRecommendationStats(userId, guestId) {
+    const filter = userId
+      ? { userId: new mongoose.Types.ObjectId(userId) }
+      : { guestId }; // Ensure userId is ObjectId
+    // console.log(`[Stats Engine] Getting stats with filter:`, filter); // Log the filter being used
+
+    try {
+      // Added try-catch block for aggregation
+      const stats = await Recommendation.aggregate([
+        { $match: filter },
+        {
+          $group: {
+            _id: null,
+            totalRecommendations: { $sum: 1 },
+            viewedRecommendations: { $sum: { $cond: ["$wasViewed", 1, 0] } },
+            avgRelevanceScore: { $avg: "$relevanceScore" },
+            reasonBreakdown: {
+              $push: "$reason",
+            },
+          },
+        },
+      ]);
+
+      // console.log(`[Stats Engine] Aggregation result:`, JSON.stringify(stats)); // Log the raw aggregation result
+
+      if (stats.length === 0) {
+        // console.log(`[Stats Engine] No recommendations found for filter.`);
+        return {
+          totalRecommendations: 0,
+          viewedRecommendations: 0,
+          viewRate: 0,
+          avgRelevanceScore: 0,
+          reasonBreakdown: {},
+        };
+      }
+
+      const stat = stats[0];
+      const reasonCounts = stat.reasonBreakdown.reduce((acc, reason) => {
+        acc[reason] = (acc[reason] || 0) + 1;
+        return acc;
+      }, {});
+
+      const result = {
+        totalRecommendations: stat.totalRecommendations,
+        viewedRecommendations: stat.viewedRecommendations,
+        unviewedRecommendations:
+          stat.totalRecommendations - stat.viewedRecommendations, // Calculate unviewed
+        viewRate:
+          stat.totalRecommendations > 0
+            ? (stat.viewedRecommendations / stat.totalRecommendations) * 100
+            : 0,
+        avgRelevanceScore: Math.round(stat.avgRelevanceScore || 0),
+        reasonBreakdown: reasonCounts,
+      };
+      // console.log(`[Stats Engine] Calculated stats:`, result);
+      return result;
+    } catch (error) {
+      console.error(`[Stats Engine] Error during aggregation:`, error);
+      return {
+        // Return zero stats on error
+        totalRecommendations: 0,
+        viewedRecommendations: 0,
+        viewRate: 0,
+        avgRelevanceScore: 0,
+        reasonBreakdown: {},
+      };
     }
+  }
+}
 
-    // Otherwise, generate new recommendations
-    const newRecommendations = await this.generateRecommendations({
-      userId,
-      guestId,
-      limit: limit - existingRecommendations.length,
-    });
-
-    // Combine existing and new recommendations
-    return [...existingRecommendations, ...newRecommendations];
-  },
-};
-
-module.exports = recommendationEngine;
+// Export singleton instance
+module.exports = new EnhancedRecommendationEngine();

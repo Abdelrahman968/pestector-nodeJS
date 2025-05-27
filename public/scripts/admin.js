@@ -394,7 +394,7 @@ async function addUser(event) {
   event.preventDefault();
   const token = localStorage.getItem("token") || getTokenFromCookies();
   if (!token) {
-    window.location.href = "/login.html";
+    window.location.href = "/login";
     return;
   }
 
@@ -427,7 +427,7 @@ async function sendNotification(event) {
   event.preventDefault();
   const token = localStorage.getItem("token") || getTokenFromCookies();
   if (!token) {
-    window.location.href = "/login.html";
+    window.location.href = "/login";
     return;
   }
 
@@ -494,7 +494,7 @@ function getTokenFromCookies() {
 document.addEventListener("DOMContentLoaded", () => {
   const token = localStorage.getItem("token") || getTokenFromCookies();
   if (!token) {
-    window.location.href = "/login.html";
+    window.location.href = "/login";
     return;
   }
 
@@ -543,7 +543,7 @@ document.addEventListener("DOMContentLoaded", () => {
   logoutBtn.addEventListener("click", () => {
     localStorage.removeItem("token");
     document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-    window.location.href = "/login.html";
+    window.location.href = "/login";
   });
 
   // Add User Modal

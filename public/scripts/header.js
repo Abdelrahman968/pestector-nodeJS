@@ -71,7 +71,7 @@ async function checkUserProfile() {
           "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
         userLoggedIn.classList.add("hidden");
         userNotLoggedIn.classList.remove("hidden");
-        window.location.href = "/login.html";
+        window.location.href = "/login";
       }
     } catch (error) {
       console.error("Error fetching profile:", error);
@@ -81,7 +81,7 @@ async function checkUserProfile() {
       localStorage.removeItem("token");
       document.cookie =
         "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-      window.location.href = "/login.html";
+      window.location.href = "/login";
     }
   } else {
     userLoggedIn.classList.add("hidden");
@@ -141,7 +141,7 @@ async function logoutUser() {
           "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
         showMessage("Logout successful!", false);
         setTimeout(() => {
-          window.location.href = "/login.html";
+          window.location.href = "/login";
         }, 2000);
       } else {
         showMessage("Error logging out. Please try again.", true);

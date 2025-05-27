@@ -5,13 +5,11 @@ const treatmentPlanSchema = new mongoose.Schema({
   userId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
-    required: true,
+    required: false, // Make userId optional
   },
   guestId: {
     type: String,
-    required: function () {
-      return !this.userId;
-    }, // Ensures that either guestId or userId is provided
+    required: false, // Make guestId optional
   },
   plantName: {
     type: String,
@@ -38,6 +36,14 @@ const treatmentPlanSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
+});
+
+// Custom validator to ensure either userId or guestId is provided
+treatmentPlanSchema.pre("validate", function (next) {
+  if (!this.userId && !this.guestId) {
+    return next(new Error("Either userId or guestId must be provided"));
+  }
+  next();
 });
 
 // Middleware to update `updatedAt` on save

@@ -1,6 +1,12 @@
 const express = require("express");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const crypto = require("crypto");
+const {
+  sendPasswordResetEmail,
+  sendPasswordChangeConfirmation,
+} = require("../utils/mailer");
+const rateLimit = require("express-rate-limit"); // For rate limiting
 const axios = require("axios");
 const speakeasy = require("speakeasy");
 const qrcode = require("qrcode");
@@ -19,6 +25,16 @@ const path = require("path");
 const fs = require("fs");
 
 const router = express.Router();
+
+// --- Rate Limiter for Password Reset ---
+const passwordResetLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000, // 1 hour
+  max: 5, // Limit each IP to 5 reset requests per hour
+  message:
+    "Too many password reset requests from this IP, please try again after an hour",
+  standardHeaders: true,
+  legacyHeaders: false,
+});
 
 // Localized database of country codes
 const countryCallingCodes = {
@@ -74,7 +90,6 @@ const countryCallingCodes = {
   LB: "+961",
   SY: "+963",
   YE: "+967",
-  // Add more country codes as needed...
 };
 
 // Function to get user's location (Geolocation API or IP-based)
@@ -735,5 +750,301 @@ router.delete("/account", authenticateToken, async (req, res) => {
     res.status(500).json({ message: "Failed to delete account" });
   }
 });
+
+// ======== V7 Reset Password ========
+
+//  Forgot Password Route
+router.post("/forgot-password", passwordResetLimiter, async (req, res) => {
+  try {
+    const { email } = req.body;
+    if (!email) {
+      return res.status(400).json({ message: "Email address is required" });
+    }
+
+    const user = await User.findOne({ email });
+
+    // !! Important: Always return a generic success message even if user not found
+    // This prevents attackers from figuring out which emails are registered.
+    if (!user) {
+      console.log(`Password reset attempt for non-existent email: ${email}`);
+      return res.json({
+        message:
+          "If your email address is registered, you will receive a password reset link.",
+      });
+    }
+
+    // Generate Token
+    const resetToken = crypto.randomBytes(32).toString("hex");
+
+    // Hash token before saving to DB
+    user.passwordResetToken = crypto
+      .createHash("sha256")
+      .update(resetToken)
+      .digest("hex"); // Store SHA256 hash
+    user.passwordResetExpires = Date.now() + 3600000; // Token expires in 1 hour
+
+    await user.save(); // Validate before saving if needed
+
+    // Send Email (with the UNHASHED token)
+    // Construct the reset URL for your frontend application
+    const resetUrl = `${process.env.FRONTEND_URL}/reset-password?token=${resetToken}`;
+
+    try {
+      await sendPasswordResetEmail(user.email, user.username, resetUrl);
+      res.json({
+        message:
+          "If your email address is registered, you will receive a password reset link.",
+      });
+    } catch (emailError) {
+      console.error("Error sending password reset email:", emailError);
+      // Clear the token if email fails to prevent unusable tokens
+      user.passwordResetToken = undefined;
+      user.passwordResetExpires = undefined;
+      await user.save();
+      // Still send a generic success message to the user
+      res.json({
+        message:
+          "If your email address is registered, you will receive a password reset link.",
+      });
+      // Log the internal error
+    }
+  } catch (error) {
+    console.error("Forgot password error:", error);
+    res
+      .status(500)
+      .json({ message: "An error occurred. Please try again later." });
+  }
+});
+
+// --- Reset Password Route ---
+router.post("/reset-password", async (req, res) => {
+  try {
+    const { token, newPassword } = req.body;
+
+    // Validate input
+    if (!token || !newPassword) {
+      return res.status(400).json({
+        success: false,
+        message: "Token and new password are required",
+      });
+    }
+
+    // Validate password strength
+    if (newPassword.length < 8) {
+      return res.status(400).json({
+        success: false,
+        message: "Password must be at least 8 characters long",
+      });
+    }
+
+    const passwordRegex =
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]/;
+    if (!passwordRegex.test(newPassword)) {
+      return res.status(400).json({
+        success: false,
+        message:
+          "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character",
+      });
+    }
+
+    // Hash the token from the URL/request to search in database
+    const hashedToken = crypto.createHash("sha256").update(token).digest("hex");
+
+    console.log(
+      `🔍 Attempting password reset with token hash: ${hashedToken.substring(
+        0,
+        10
+      )}...`
+    );
+
+    // Find user by hashed token and check if token hasn't expired
+    const user = await User.findOne({
+      passwordResetToken: hashedToken,
+      passwordResetExpires: { $gt: Date.now() },
+    }).select("+passwordResetToken +passwordResetExpires");
+
+    if (!user) {
+      const expiredUser = await User.findOne({
+        passwordResetToken: hashedToken,
+        passwordResetExpires: { $lt: Date.now() },
+      });
+
+      if (expiredUser) {
+        console.log(
+          `⏰ Password reset token expired for user: ${expiredUser.email}`
+        );
+        return res.status(400).json({
+          success: false,
+          message:
+            "Password reset token has expired. Please request a new password reset.",
+        });
+      }
+
+      console.log(`❌ Invalid password reset token attempt`);
+      return res.status(400).json({
+        success: false,
+        message: "Password reset token is invalid or has expired.",
+      });
+    }
+
+    console.log(`✅ Valid token found for user: ${user.email}`);
+
+    // Hash the new password
+    const saltRounds = 12;
+    const hashedPassword = await bcrypt.hash(newPassword, saltRounds);
+
+    // Check if new password is the same as old password
+    const isSamePassword = await bcrypt.compare(newPassword, user.password);
+    if (isSamePassword) {
+      return res.status(400).json({
+        success: false,
+        message: "New password must be different from your current password.",
+      });
+    }
+
+    // Update user password and clear reset token fields
+    user.password = hashedPassword;
+    user.passwordResetToken = undefined;
+    user.passwordResetExpires = undefined;
+    user.passwordChangedAt = new Date();
+
+    await user.save();
+
+    console.log(`🔒 Password successfully reset for user: ${user.email}`);
+
+    // Send password change confirmation email
+    let emailStatus = { sent: false, message: "Email sending not attempted" };
+    try {
+      await sendPasswordChangeConfirmation(
+        user.email,
+        user.username || user.name || user.email.split("@")[0],
+        new Date()
+      );
+      console.log(
+        `📧 Password change confirmation email sent to: ${user.email}`
+      );
+      emailStatus = {
+        sent: true,
+        message: "Confirmation email sent successfully",
+      };
+    } catch (emailError) {
+      console.error(
+        `📧 Failed to send confirmation email to ${user.email}:`,
+        emailError
+      );
+      emailStatus = {
+        sent: false,
+        message: `Failed to send confirmation email: ${emailError.message}`,
+      };
+    }
+
+    console.log(
+      `🛡️ Security Event: Password reset completed for ${
+        user.email
+      } at ${new Date().toISOString()}`
+    );
+
+    res.json({
+      success: true,
+      message: "Password has been reset successfully.",
+      emailStatus: emailStatus,
+      timestamp: new Date().toISOString(),
+    });
+  } catch (error) {
+    console.error("❌ Reset password error:", error);
+    if (process.env.NODE_ENV === "development") {
+      console.error("Error details:", error.stack);
+    }
+    res.status(500).json({
+      success: false,
+      message:
+        "An error occurred while resetting your password. Please try again later.",
+      ...(process.env.NODE_ENV === "development" && { error: error.message }),
+    });
+  }
+});
+
+// Optional: Add a route to validate reset token before showing reset form
+router.get("/validate-reset-token/:token", async (req, res) => {
+  try {
+    const { token } = req.params;
+
+    if (!token) {
+      return res.status(400).json({
+        success: false,
+        message: "Token is required",
+      });
+    }
+
+    // Hash the token to search in database
+    const hashedToken = crypto.createHash("sha256").update(token).digest("hex");
+
+    // Find user by token and check expiry
+    const user = await User.findOne({
+      passwordResetToken: hashedToken,
+      passwordResetExpires: { $gt: Date.now() },
+    });
+
+    if (!user) {
+      return res.status(400).json({
+        success: false,
+        message: "Password reset token is invalid or has expired.",
+      });
+    }
+
+    // Calculate time remaining
+    const timeRemaining = Math.ceil(
+      (user.passwordResetExpires - Date.now()) / (1000 * 60)
+    ); // minutes
+
+    res.json({
+      success: true,
+      message: "Token is valid",
+      timeRemaining: timeRemaining,
+      email: user.email.replace(/(.{2})(.*)(@.*)/, "$1***$3"), // Partially mask email
+    });
+  } catch (error) {
+    console.error("Validate token error:", error);
+    res.status(500).json({
+      success: false,
+      message: "An error occurred while validating the token.",
+    });
+  }
+});
+
+// Optional: Rate limiting for password reset attempts
+const resetAttempts = new Map(); // In production, use Redis or database
+
+const checkResetRateLimit = (req, res, next) => {
+  const clientIP = req.ip || req.connection.remoteAddress;
+  const now = Date.now();
+  const windowMs = 15 * 60 * 1000; // 15 minutes
+  const maxAttempts = 5;
+
+  if (!resetAttempts.has(clientIP)) {
+    resetAttempts.set(clientIP, { count: 1, resetTime: now + windowMs });
+    return next();
+  }
+
+  const attempts = resetAttempts.get(clientIP);
+
+  if (now > attempts.resetTime) {
+    // Reset the counter
+    attempts.count = 1;
+    attempts.resetTime = now + windowMs;
+    return next();
+  }
+
+  if (attempts.count >= maxAttempts) {
+    return res.status(429).json({
+      success: false,
+      message:
+        "Too many password reset attempts. Please try again in 15 minutes.",
+    });
+  }
+
+  attempts.count++;
+  next();
+};
 
 module.exports = router;

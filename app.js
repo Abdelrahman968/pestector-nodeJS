@@ -17,14 +17,23 @@ const logStream = fs.createWriteStream(path.join(__dirname, "log.txt"), {
   flags: "a",
 });
 
+// Setup middleware
+app.use(cors());
+app.use(express.json());
+app.use(cookieParser());
+
+// Mount API routes
+app.use("/api", routes);
+
 mongoose
   .connect(MONGODB_URI)
   .then(() => console.log("Connected to MongoDB"))
   .catch((err) => console.error("MongoDB connection error:", err));
 
-app.use(cors());
-app.use(express.json());
-app.use(cookieParser());
+// Health check endpoint
+app.get("/api/health-check", (req, res) => {
+  res.json({ message: "Backend server is healthy!" });
+});
 
 if (process.env.NODE_ENV === "development") {
   app.use(morgan("combined", { stream: logStream }));
@@ -36,9 +45,11 @@ if (process.env.NODE_ENV === "development") {
 const rateLimit = require("express-rate-limit");
 
 const apiLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // limit each IP to 100 requests per windowMs
+  windowMs: 15 * 60 * 1000,
+  max: 100,
   message: "Too many requests from this IP, please try again after 15 minutes",
+  standardHeaders: true,
+  legacyHeaders: false,
 });
 
 if (process.env.NODE_ENV === "development") {
@@ -50,26 +61,11 @@ if (process.env.NODE_ENV === "development") {
   app.use("/api/", apiLimiter);
 }
 
-// app.use("/api/", apiLimiter);
-
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 app.use(express.static(path.join(__dirname, "public")));
 
-app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "public", "login.html"));
-});
-
-app.get("/register", (req, res) => {
-  res.sendFile(path.join(__dirname, "public", "register.html"));
-});
-
-app.get("/history", (req, res) => {
-  res.sendFile(path.join(__dirname, "public", "history.html"));
-});
-
-app.get("/dashboard", (req, res) => {
-  res.sendFile(path.join(__dirname, "public", "dashboard.html"));
-});
+const staticPages = require("./staticRoutes");
+app.use("/", staticPages);
 
 app.use((req, res, next) => {
   const start = Date.now();

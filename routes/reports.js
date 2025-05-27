@@ -91,7 +91,7 @@ const addWrappedText = (doc, text, maxLines = 2, options = {}) => {
   const textHeight = lines.length * lineHeight;
 
   doc
-    .font("Helvetica-Bold")
+    .font("Helvetica")
     .fontSize(14)
     .text(truncatedText, mergedOptions.x, doc.y, {
       width: mergedOptions.width,
@@ -103,7 +103,7 @@ const addWrappedText = (doc, text, maxLines = 2, options = {}) => {
 
 // Endpoint to generate a single-page styled report
 router.get(
-  "/generate/:historyId", // Updated path
+  "/generate/:historyId",
   authenticateToken,
   checkReportAccess,
   async (req, res) => {
@@ -194,7 +194,7 @@ router.get(
       yPos = 80;
       doc
         .fillColor("#4a5568")
-        .font("Helvetica-Bold")
+        .font("Helvetica")
         .fontSize(12)
         .text(`Generated: ${new Date().toLocaleString()}`, 50, yPos, {
           align: "center",
@@ -249,6 +249,11 @@ router.get(
 
       yPos += 30;
 
+      // Safely access classification data
+      const classification = historyItem.classification || {};
+      const prediction = classification.overall_best_prediction || {};
+      const diseaseInfo = prediction.disease_info || {};
+
       if (imageBuffer) {
         doc
           .fillColor("#1a202c")
@@ -270,36 +275,21 @@ router.get(
           .fillColor("#4a5568")
           .font("Helvetica")
           .fontSize(14)
-          .text(
-            `Plant: ${historyItem.classification.prediction.plant}`,
-            300,
-            yPos,
-            { continued: true }
-          )
+          .text(`Plant: ${prediction.plant || "Unknown"}`, 300, yPos, {
+            continued: true,
+          })
           .fillColor("#2b6cb0")
-          .text(
-            ` (${Math.round(
-              historyItem.classification.prediction.confidence
-            )}%)`
-          );
+          .text(` (${Math.round(prediction.confidence_percent || 0)}%)`);
 
         yPos += 20;
         doc
           .fillColor("#4a5568")
           .font("Helvetica")
           .fontSize(14)
-          .text(
-            `Condition: ${historyItem.classification.prediction.condition}`,
-            300,
-            yPos
-          );
+          .text(`Condition: ${prediction.condition || "Unknown"}`, 300, yPos);
 
         yPos += 20;
-        doc.text(
-          `Severity: ${historyItem.classification.prediction.disease_info.severity}`,
-          300,
-          yPos
-        );
+        doc.text(`Severity: ${diseaseInfo.severity || "N/A"}`, 300, yPos);
 
         yPos += 80;
       } else {
@@ -314,36 +304,21 @@ router.get(
           .fillColor("#4a5568")
           .font("Helvetica")
           .fontSize(14)
-          .text(
-            `Plant: ${historyItem.classification.prediction.plant}`,
-            50,
-            yPos,
-            { continued: true }
-          )
+          .text(`Plant: ${prediction.plant || "Unknown"}`, 50, yPos, {
+            continued: true,
+          })
           .fillColor("#2b6cb0")
-          .text(
-            ` (${Math.round(
-              historyItem.classification.prediction.confidence
-            )}%)`
-          );
+          .text(` (${Math.round(prediction.confidence_percent || 0)}%)`);
 
         yPos += 20;
         doc
           .fillColor("#4a5568")
           .font("Helvetica")
           .fontSize(14)
-          .text(
-            `Condition: ${historyItem.classification.prediction.condition}`,
-            50,
-            yPos
-          );
+          .text(`Condition: ${prediction.condition || "Unknown"}`, 50, yPos);
 
         yPos += 20;
-        doc.text(
-          `Severity: ${historyItem.classification.prediction.disease_info.severity}`,
-          50,
-          yPos
-        );
+        doc.text(`Severity: ${diseaseInfo.severity || "N/A"}`, 50, yPos);
 
         yPos += 30;
       }
@@ -367,24 +342,8 @@ router.get(
 
       yPos += 25;
       const description =
-        historyItem.classification.prediction.disease_info.descriptions[0] ||
-        "No description available";
-
-      const descriptionLines = description.split("\n");
-      let truncatedDescription = descriptionLines
-        .slice(0, maxDescriptionLines)
-        .join("\n");
-      if (descriptionLines.length > maxDescriptionLines) {
-        truncatedDescription += "...";
-      }
-
-      doc
-        .fillColor("#4a5568")
-        .font("Helvetica")
-        .fontSize(14)
-        .text(truncatedDescription, 50, yPos, { width: doc.page.width - 100 });
-
-      yPos = doc.y + 20;
+        diseaseInfo.descriptions?.[0] || "No description available";
+      yPos = addWrappedText(doc, description, maxDescriptionLines);
 
       doc
         .fillColor("#1a202c")
@@ -394,22 +353,8 @@ router.get(
 
       yPos += 25;
       const treatment =
-        historyItem.classification.prediction.treatment_recommendations ||
-        "No recommendations available";
-
-      const treatmentLines = treatment.split("\n");
-      let truncatedTreatment = treatmentLines
-        .slice(0, maxTreatmentLines)
-        .join("\n");
-      if (treatmentLines.length > maxTreatmentLines) {
-        truncatedTreatment += "...";
-      }
-
-      doc
-        .fillColor("#4a5568")
-        .font("Helvetica")
-        .fontSize(14)
-        .text(truncatedTreatment, 50, yPos, { width: doc.page.width - 100 });
+        prediction.treatment_recommendations || "No recommendations available";
+      yPos = addWrappedText(doc, treatment, maxTreatmentLines);
 
       doc.end();
     } catch (error) {

@@ -31,6 +31,14 @@ const userSchema = new mongoose.Schema(
     password: { type: String, required: true },
     createdAt: { type: Date, default: Date.now },
     lastLogin: { type: Date },
+    passwordResetToken: {
+      type: String,
+      select: false, // Don't send this field in regular user queries
+    },
+    passwordResetExpires: {
+      type: Date,
+      select: false,
+    },
     role: { type: String, enum: ["user", "admin"], default: "user" },
     linkedGuestId: { type: String },
     location: {
@@ -69,10 +77,9 @@ const userSchema = new mongoose.Schema(
       },
       expiresAt: { type: Date },
     },
-    // New fields
-    scanCount: { type: Number, default: 0 }, // Track the number of scans the user has performed
+    scanCount: { type: Number, default: 0 },
   },
-  { timestamps: true } // Automatically adds createdAt and updatedAt fields
+  { timestamps: true }
 );
 
 // Pre-save hook to update location timestamp
@@ -84,11 +91,13 @@ userSchema.pre("save", function (next) {
 });
 
 // Indexes to improve query performance for common fields
+userSchema.index({ passwordResetToken: 1, passwordResetExpires: 1 });
+userSchema.index({ "subscription.subscriptionId": 1 });
+userSchema.index({ "subscription.expiresAt": 1 });
+
 // userSchema.index({ username: 1 });
 // userSchema.index({ email: 1 });
 // userSchema.index({ phoneNumber: 1 });
-userSchema.index({ "subscription.subscriptionId": 1 });
-userSchema.index({ "subscription.expiresAt": 1 });
 
 // Virtual to check if subscription is active
 userSchema.virtual("hasActiveSubscription").get(function () {

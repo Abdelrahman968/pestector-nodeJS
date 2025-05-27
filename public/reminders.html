@@ -48,51 +48,230 @@
 
 <body class="bg-gray-50 min-h-screen flex flex-col">
     <!-- Header -->
-    <header class="bg-white shadow-sm sticky top-0 z-10">
+    <header class="bg-white shadow-md sticky top-0 z-20 transition-all duration-300">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
             <div class="flex justify-between items-center">
-                <div class="flex items-center space-x-3">
-                    <div class="bg-indigo-600 text-white p-2 rounded-lg">
+                <!-- Logo and Brand -->
+                <a href="/" class="flex items-center space-x-3 flex-shrink-0">
+                    <div
+                        class="bg-gradient-to-r from-indigo-600 to-indigo-800 text-white p-2.5 rounded-lg shadow-sm hover:shadow transition-all duration-300">
                         <i class="fas fa-leaf text-xl"></i>
                     </div>
-                    <h1 class="text-2xl font-bold text-gray-900">Pestector</h1>
-                </div>
-                <nav class="hidden md:flex space-x-6">
-                    <a href="index.html"
-                        class="text-gray-500 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">
+                    <div>
+                        <h1 class="text-2xl font-bold text-gray-900">Pestector </h1>
+                    </div>
+                </a>
+
+                <!-- Main Navigation - Desktop -->
+                <nav class="hidden lg:flex space-x-2">
+                    <a href="/"
+                        class="text-gray-600 hover:text-indigo-600 hover:bg-indigo-50 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">
                         <i class="fas fa-home mr-2"></i>Home
                     </a>
-                    <a href="history.html"
-                        class="text-gray-500 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">
-                        <i class="fas fa-history mr-2"></i>History
+
+                    <a href="/library"
+                        class="text-gray-600 hover:text-indigo-600 hover:bg-indigo-50 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">
+                        <i class="fas fa-book-medical mr-2"></i>Library
                     </a>
-                    <a href="settings.html"
-                        class="text-gray-500 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">
-                        <i class="fas fa-cog mr-2"></i>Settings
+                    <a href="/about-us"
+                        class="text-gray-600 hover:text-indigo-600 hover:bg-indigo-50 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">
+                        <i class="fas fa-users mr-2"></i>About Us
                     </a>
                 </nav>
-                <!-- Profile Dropdown -->
-                <div class="relative">
-                    <button id="profileDropdownBtn"
-                        class="flex items-center text-sm font-medium text-indigo-600 transition-colors duration-200">
-                        <i class="fas fa-user-circle mr-2"></i>Profile
-                        <i class="fas fa-chevron-down ml-1 text-xs"></i>
-                    </button>
-                    <div id="profileDropdown"
-                        class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-2 hidden">
-                        <a href="profile.html" class="block px-4 py-2 text-sm text-indigo-600 bg-gray-100">Edit
-                            Profile</a>
-                        <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Change Password</a>
-                        <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Notifications</a>
-                        <button id="logoutBtn"
-                            class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                            <i class="fas fa-sign-out-alt mr-2"></i>Logout
+
+                <!-- Mobile Navigation Button -->
+                <button id="mobileMenuBtn" class="lg:hidden flex items-center text-gray-600 hover:text-indigo-600">
+                    <i class="fas fa-bars text-xl"></i>
+                </button>
+
+                <!-- User Profile / Login-register -->
+                <div class="relative ml-4">
+                    <!-- Logged-in user -->
+                    <div id="userLoggedIn" class="hidden">
+                        <button id="profileDropdownBtn"
+                            class="flex items-center text-sm font-medium text-gray-700 hover:text-indigo-600 transition-colors duration-200 bg-gray-50 hover:bg-indigo-50 rounded-full px-4 py-2">
+                            <i class="fas fa-user-circle mr-2 text-lg"></i>
+                            <span id="welcomeMessage">Welcome, User</span>
+                            <i class="fas fa-chevron-down ml-2 text-xs"></i>
                         </button>
+                        <div id="profileDropdown"
+                            class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-2 hidden">
+                            <a href="/dashboard"
+                                class="block px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-600">
+                                <i class="fas fa-tachometer-alt mr-2 opacity-75"></i>Dashboard
+                            </a>
+                            <a href="/scan"
+                                class="block px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-600">
+                                <i class="fas fa-camera mr-2 opacity-75"></i>Scan
+                            </a>
+                            <a href="/history"
+                                class="block px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-600">
+                                <i class="fas fa-history mr-2 opacity-75"></i>History
+                            </a>
+                            <a href="/weather"
+                                class="block px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-600">
+                                <i class="fas fa-cloud-sun mr-2"></i>Weather
+                            </a>
+                            <a href="/plants"
+                                class="block px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-600">
+                                <i class="fas fa-seedling mr-2 opacity-75"></i>My Plants
+                            </a>
+                            <a href="/reminders"
+                                class="block px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 bg-indigo-50 text-indigo-600 font-semibold">
+                                <i class="fas fa-bell mr-2 opacity-75"></i>Reminders
+                            </a>
+                            <a href="/treatment"
+                                class="block px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-600">
+                                <i class="fas fa-medkit mr-2 opacity-75"></i>Treatment
+                            </a>
+                            <a href="/subscribe"
+                                class="block px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-600">
+                                <i class="fas fa-star mr-2 opacity-75"></i>Subscription
+                            </a>
+                            <a href="/profile"
+                                class="block px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-600">
+                                <i class="fas fa-user-edit mr-2"></i>Edit Profile
+                            </a>
+                            <div class="border-t border-gray-100 my-1"></div>
+                            <button id="logoutBtn"
+                                class="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50">
+                                <i class="fas fa-sign-out-alt mr-2"></i>Logout
+                            </button>
+                        </div>
                     </div>
+
+                    <!-- Not logged-in -->
+                    <div id="userNotLoggedIn" class="flex space-x-2">
+                        <a href="/login"
+                            class="text-gray-700 hover:text-indigo-600 bg-gray-50 hover:bg-indigo-50 px-4 py-2 rounded-full text-sm font-medium transition-colors duration-200">
+                            <i class="fas fa-sign-in-alt mr-2"></i>Login
+                        </a>
+                        <a href="/register"
+                            class="text-white bg-indigo-600 hover:bg-indigo-700 px-4 py-2 rounded-full text-sm font-medium transition-colors duration-200">
+                            <i class="fas fa-user-plus mr-2"></i>Sign Up
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Mobile Navigation Menu (Hidden by default) -->
+            <div id="mobileMenu" class="lg:hidden hidden pt-4 pb-3 border-t border-gray-200 mt-4">
+                <div class="space-y-1">
+                    <a href="/"
+                        class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-indigo-600 hover:bg-indigo-50">
+                        <i class="fas fa-home mr-2"></i>Home
+                    </a>
+                    <a href="/Library"
+                        class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-indigo-600 hover:bg-indigo-50">
+                        <i class="fas fa-book-medical mr-2"></i>Library
+                    </a>
+                    <a href="/about-us"
+                        class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-indigo-600 hover:bg-indigo-50">
+                        <i class="fas fa-users mr-2"></i>About Us
+                    </a>
                 </div>
             </div>
         </div>
     </header>
+    <div class="bg-gradient-to-r from-indigo-50 to-purple-50 border-t border-b border-indigo-100">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2">
+            <!-- Desktop View -->
+            <div class="hidden md:flex items-center">
+                <div class="flex items-center px-3 py-1.5 bg-white rounded-full shadow-sm border border-indigo-100">
+                    <span class="text-lg font-medium text-indigo-700"><i class="fas fa-compass mr-2"></i>More</span>
+                    <div class="h-4 mx-3 border-r border-indigo-200"></div>
+                    <span class="text-xs text-indigo-500">Quick Links</span>
+                </div>
+
+                <div class="ml-auto flex items-center">
+                    <div class="flex space-x-1 overflow-x-auto pb-1 scrollbar-hide">
+                        <a href="/help"
+                            class="text-gray-600 hover:text-white hover:bg-indigo-600 px-3 py-1.5 rounded-full text-sm font-medium transition-all duration-200 flex items-center whitespace-nowrap">
+                            <i class="fas fa-question-circle mr-1.5"></i>Help
+                        </a>
+                        <a href="/terms"
+                            class="text-gray-600 hover:text-white hover:bg-indigo-600 px-3 py-1.5 rounded-full text-sm font-medium transition-all duration-200 flex items-center whitespace-nowrap">
+                            <i class="fas fa-file-contract mr-1.5"></i>Terms
+                        </a>
+                        <a href="/official-rules"
+                            class="text-gray-600 hover:text-white hover:bg-indigo-600 px-3 py-1.5 rounded-full text-sm font-medium transition-all duration-200 flex items-center whitespace-nowrap">
+                            <i class="fas fa-gavel mr-1.5"></i>Rules
+                        </a>
+                        <a href="/donate"
+                            class="text-gray-600 hover:text-white hover:bg-indigo-600 px-3 py-1.5 rounded-full text-sm font-medium transition-all duration-200 flex items-center whitespace-nowrap">
+                            <i class="fas fa-gift mr-1.5"></i>Donate
+                        </a>
+                        <a href="/advertisement"
+                            class="text-gray-600 hover:text-white hover:bg-indigo-600 px-3 py-1.5 rounded-full text-sm font-medium transition-all duration-200 flex items-center whitespace-nowrap">
+                            <i class="fas fa-ad mr-1.5"></i>Ads
+                        </a>
+                        <a href="/dmca"
+                            class="text-gray-600 hover:text-white hover:bg-indigo-600 px-3 py-1.5 rounded-full text-sm font-medium transition-all duration-200 flex items-center whitespace-nowrap">
+                            <i class="fas fa-lock mr-1.5"></i>DMCA
+                        </a>
+                        <a href="/adding-files"
+                            class="text-gray-600 hover:text-white hover:bg-indigo-600 px-3 py-1.5 rounded-full text-sm font-medium transition-all duration-200 flex items-center whitespace-nowrap">
+                            <i class="fas fa-file-upload mr-1.5"></i>Files
+                        </a>
+                        <a href="/privacy-policy"
+                            class="text-gray-600 hover:text-white hover:bg-indigo-600 px-3 py-1.5 rounded-full text-sm font-medium transition-all duration-200 flex items-center whitespace-nowrap">
+                            <i class="fas fa-shield-alt mr-1.5"></i>Privacy
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Mobile View -->
+            <div class="md:hidden">
+                <div class="flex items-center justify-between mb-2">
+                    <div class="flex items-center px-3 py-1.5 bg-white rounded-full shadow-sm border border-indigo-100">
+                        <span class="text-lg font-medium text-indigo-700"><i class="fas fa-compass mr-2"></i>More</span>
+                    </div>
+                    <button id="moreMenuToggle" class="px-2 py-1 text-indigo-600 hover:text-indigo-800">
+                        <i class="fas fa-chevron-down text-xs"></i>
+                    </button>
+                </div>
+                <div id="moreMenuMobile" class="grid grid-cols-2 gap-2 mt-2 hidden">
+                    <a href="/help"
+                        class="text-gray-600 bg-white hover:bg-indigo-600 hover:text-white px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 flex items-center shadow-sm border border-indigo-100">
+                        <i class="fas fa-question-circle mr-2"></i>Help
+                    </a>
+                    <a href="/terms"
+                        class="text-gray-600 bg-white hover:bg-indigo-600 hover:text-white px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 flex items-center shadow-sm border border-indigo-100">
+                        <i class="fas fa-file-contract mr-2"></i>Terms
+                    </a>
+                    <a href="/official-rules"
+                        class="text-gray-600 bg-white hover:bg-indigo-600 hover:text-white px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 flex items-center shadow-sm border border-indigo-100">
+                        <i class="fas fa-gavel mr-2"></i>Rules
+                    </a>
+                    <a href="/donate"
+                        class="text-gray-600 bg-white hover:bg-indigo-600 hover:text-white px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 flex items-center shadow-sm border border-indigo-100">
+                        <i class="fas fa-gift mr-2"></i>Donate
+                    </a>
+                    <a href="/advertisement"
+                        class="text-gray-600 bg-white hover:bg-indigo-600 hover:text-white px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 flex items-center shadow-sm border border-indigo-100">
+                        <i class="fas fa-ad mr-2"></i>Advertisements
+                    </a>
+                    <a href="/dmca"
+                        class="text-gray-600 bg-white hover:bg-indigo-600 hover:text-white px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 flex items-center shadow-sm border border-indigo-100">
+                        <i class="fas fa-lock mr-2"></i>DMCA
+                    </a>
+                    <a href="/adding-files"
+                        class="text-gray-600 bg-white hover:bg-indigo-600 hover:text-white px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 flex items-center shadow-sm border border-indigo-100">
+                        <i class="fas fa-file-upload mr-2"></i>Adding Files
+                    </a>
+                    <a href="/privacy-policy"
+                        class="text-gray-600 bg-white hover:bg-indigo-600 hover:text-white px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 flex items-center shadow-sm border border-indigo-100">
+                        <i class="fas fa-shield-alt mr-2"></i>Privacy Policy
+                    </a>
+                    <a href="/library"
+                        class="text-gray-600 bg-white hover:bg-indigo-600 hover:text-white px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 flex items-center shadow-sm border border-indigo-100">
+                        <i class="fas fa-book-medical mr-2"></i>Disease Library
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- Main Content -->
     <main class="flex-grow py-8">
@@ -160,243 +339,76 @@
 
     <!-- Footer -->
     <footer class="bg-white border-t border-gray-200 mt-12">
-        <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-            <div class="flex flex-col md:flex-row justify-between items-center">
-                <div class="mb-4 md:mb-0">
-                    <p class="text-sm text-gray-500">&copy; 2025 Pestector. All rights reserved.</p>
+        <div class="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+            <!-- Main Footer Content -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Company Info -->
+                <div class="flex flex-col">
+                    <h3 class="text-sm font-semibold text-gray-900 tracking-wider uppercase mb-3">Pestector</h3>
+                    <p class="text-sm text-gray-600 max-w-xs">Helping plant lovers keep their green friends healthy and
+                        thriving since 2024.</p>
+                    <div class="mt-4">
+                        <p class="text-sm text-gray-500">© 2025 Pestector. All rights reserved.</p>
+                    </div>
                 </div>
-                <div class="flex space-x-6">
-                    <a href="#" class="text-gray-400 hover:text-gray-500"><i class="fab fa-twitter"></i></a>
-                    <a href="#" class="text-gray-400 hover:text-gray-500"><i class="fab fa-facebook"></i></a>
-                    <a href="#" class="text-gray-400 hover:text-gray-500"><i class="fab fa-instagram"></i></a>
+
+                <!-- Quick Links -->
+                <div class="flex flex-col md:items-center">
+                    <h3 class="text-sm font-semibold text-gray-900 tracking-wider uppercase mb-3">Quick Links</h3>
+                    <ul class="space-y-2">
+                        <li><a href="/" class="text-sm text-gray-600 hover:text-indigo-600 transition-colors">Home</a>
+                        </li>
+                        <li><a href="/plants" class="text-sm text-gray-600 hover:text-indigo-600 transition-colors">My
+                                Plants</a></li>
+                        <li><a href="/library"
+                                class="text-sm text-gray-600 hover:text-indigo-600 transition-colors">Plant
+                                Database</a></li>
+                        <li><a href="/help" class="text-sm text-gray-600 hover:text-indigo-600 transition-colors">Help &
+                                Support</a></li>
+                    </ul>
                 </div>
+
+                <!-- Connect Section -->
+                <div class="flex flex-col md:items-end">
+                    <h3 class="text-sm font-semibold text-gray-900 tracking-wider uppercase mb-3">Connect With Us</h3>
+                    <div class="flex space-x-4">
+                        <a href="#soon-twitter" class="text-gray-400 hover:text-blue-400 transition-colors"><i
+                                class="fab fa-twitter h-6 w-6"></i></a>
+                        <a href="#soon-facebook" class="text-gray-400 hover:text-blue-600 transition-colors"><i
+                                class="fab fa-facebook h-6 w-6"></i></a>
+                        <a href="#soon-instagram" class="text-gray-400 hover:text-pink-600 transition-colors"><i
+                                class="fab fa-instagram h-6 w-6"></i></a>
+                        <a href="#soon-pinterest" class="text-gray-400 hover:text-red-600 transition-colors"><i
+                                class="fab fa-pinterest h-6 w-6"></i></a>
+                    </div>
+                    <div class="mt-6">
+                        <h4 class="text-xs font-semibold text-gray-900 uppercase mb-2">Subscribe for updates</h4>
+                        <div class="flex mt-1">
+                            <input type="email" placeholder="Your email"
+                                class="min-w-0 px-3 py-2 text-gray-900 placeholder-gray-500 border border-gray-300 rounded-l-md focus:outline-none focus:ring-1 focus:ring-green-500 focus:border-green-500 text-sm" />
+                            <button
+                                class="inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-r-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Subscribe</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bottom Bar -->
+            <div
+                class="pt-8 mt-8 border-t border-gray-200 flex flex-col md:flex-row justify-between items-center text-xs text-gray-500">
+                <div class="flex space-x-6 mb-4 md:mb-0">
+                    <a href="/privacy-policy" class="hover:text-gray-900 transition-colors">Privacy Policy</a>
+                    <a href="/terms" class="hover:text-gray-900 transition-colors">Terms of Service</a>
+                    <a href="/contact" class="hover:text-gray-900 transition-colors">Contact Us</a>
+                </div>
+                <p>Designed with ♥ for plant enthusiasts everywhere</p>
             </div>
         </div>
     </footer>
 
     <!-- JavaScript -->
-    <script>
-        const apiBaseUrl = '/api';
-
-        // DOM Elements
-        const reminderForm = document.getElementById('reminderForm');
-        const remindersList = document.getElementById('remindersList');
-        const logoutBtn = document.getElementById('logoutBtn');
-        const profileDropdownBtn = document.getElementById('profileDropdownBtn');
-        const profileDropdown = document.getElementById('profileDropdown');
-
-        // Icons for care types
-        const careTypeIcons = {
-            water: 'fas fa-tint', // Water drop icon
-            fertilize: 'fas fa-seedling', // Seedling icon
-            prune: 'fas fa-cut', // Scissors icon
-            repot: 'fas fa-archive', // Box icon
-            inspect: 'fas fa-search', // Magnifying glass icon
-        };
-
-        // Function to show a toast notification
-        function showToast(message, type = 'success') {
-            const toast = document.createElement('div');
-            const bgColor = type === 'success' ? 'bg-green-500' : type === 'error' ? 'bg-red-500' : 'bg-blue-500';
-            toast.className = `flex items-center ${bgColor} text-white text-sm font-medium px-4 py-2 rounded-md shadow-lg fade-in max-w-sm`;
-            toast.innerHTML = `
-        <i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-info-circle'} mr-2"></i>
-        ${message}
-    `;
-            document.getElementById('toastContainer').appendChild(toast);
-
-            // Remove toast after 3 seconds
-            setTimeout(() => {
-                toast.classList.remove('fade-in');
-                toast.classList.add('opacity-0');
-                setTimeout(() => toast.remove(), 400); // Match fade-out duration
-            }, 3000);
-        }
-
-        // Fetch and display reminders
-        async function fetchReminders() {
-            try {
-                const token = localStorage.getItem('token') || getTokenFromCookies();
-                if (!token) {
-                    window.location.href = '/login.html';
-                    return;
-                }
-
-                const response = await fetch(`${apiBaseUrl}/reminders`, {
-                    method: 'GET',
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
-
-                const data = await response.json();
-                if (!response.ok) throw new Error(data.message || 'Failed to fetch reminders');
-
-                // Clear existing reminders
-                remindersList.innerHTML = '';
-
-                // Group reminders by frequency
-                const remindersByFrequency = data.reminders.reduce((groups, reminder) => {
-                    const frequency = reminder.frequency;
-                    if (!groups[frequency]) {
-                        groups[frequency] = [];
-                    }
-                    groups[frequency].push(reminder);
-                    return groups;
-                }, {});
-
-                // Populate reminders by frequency
-                for (const frequency in remindersByFrequency) {
-                    const frequencyGroup = document.createElement('div');
-                    frequencyGroup.className = 'mb-6';
-                    frequencyGroup.innerHTML = `
-                        <h4 class="text-md font-medium text-gray-900 mb-2">Frequency: Every ${frequency} days</h4>
-                        <div class="space-y-4">
-                            ${remindersByFrequency[frequency].map(reminder => `
-                                <div class="bg-gray-50 p-4 rounded-lg border border-gray-200 card-hover">
-                                    <div class="flex justify-between items-center">
-                                        <div>
-                                            <div class="flex items-center space-x-2">
-                                                <i class="${careTypeIcons[reminder.careType]} text-indigo-600"></i>
-                                                <h4 class="text-sm font-medium text-gray-900">${reminder.plantName}</h4>
-                                            </div>
-                                            <p class="text-sm text-gray-500">Next Due: ${new Date(reminder.nextDue).toLocaleDateString("en")}</p>
-                                            ${reminder.notes ? `<p class="text-sm text-gray-500 mt-2">Notes: ${reminder.notes}</p>` : ''}
-                                            <p class="text-sm text-gray-500">Completed: ${reminder.completedCount} times</p>
-                                        </div>
-                                        <div class="flex space-x-2">
-                                            ${!reminder.lastCompleted || new Date(reminder.nextDue) <= new Date() ? `
-                                                <button onclick="markAsCompleted('${reminder._id}')"
-                                                    class="px-2 py-1 text-sm text-white bg-green-600 rounded hover:bg-green-700">
-                                                    <i class="fas fa-check"></i>
-                                                </button>
-                                            ` : ''}
-                                            <button onclick="deleteReminder('${reminder._id}')"
-                                                class="px-2 py-1 text-sm text-white bg-red-600 rounded hover:bg-red-700">
-                                                <i class="fas fa-trash"></i>
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                            `).join('')}
-                        </div>
-                    `;
-                    remindersList.appendChild(frequencyGroup);
-                }
-            } catch (error) {
-                console.error('Error fetching reminders:', error);
-            }
-        }
-
-        // Create a reminder
-        async function createReminder(event) {
-            event.preventDefault();
-            try {
-                const token = localStorage.getItem('token') || getTokenFromCookies();
-                if (!token) {
-                    window.location.href = '/login.html';
-                    return;
-                }
-
-                const formData = {
-                    plantName: document.getElementById('plantName').value,
-                    careType: document.getElementById('careType').value,
-                    frequency: parseInt(document.getElementById('frequency').value),
-                    notes: document.getElementById('notes').value
-                };
-
-                const response = await fetch(`${apiBaseUrl}/reminders`, {
-                    method: 'POST',
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(formData)
-                });
-
-                const data = await response.json();
-                if (!response.ok) throw new Error(data.message || 'Failed to create reminder');
-
-                showToast('Reminder created successfully', 'success'); // Updated
-                reminderForm.reset();
-                fetchReminders(); // Refresh the reminders list
-            } catch (error) {
-                console.error('Error creating reminder:', error);
-                showToast('Failed to create reminder', 'error'); // Updated
-            }
-        }
-
-        // Mark a reminder as completed
-        async function markAsCompleted(reminderId) {
-            try {
-                const token = localStorage.getItem('token') || getTokenFromCookies();
-                if (!token) {
-                    window.location.href = '/login.html';
-                    return;
-                }
-
-                const response = await fetch(`${apiBaseUrl}/reminders/${reminderId}/complete`, {
-                    method: 'PUT',
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
-
-                const data = await response.json();
-                if (!response.ok) throw new Error(data.message || 'Failed to mark reminder as completed');
-
-                showToast('Reminder marked as completed', 'success'); // Updated
-                fetchReminders(); // Refresh the reminders list
-            } catch (error) {
-                console.error('Error marking reminder as completed:', error);
-                showToast('Failed to mark reminder as completed', 'error'); // Updated
-            }
-        }
-
-        // Delete a reminder
-        async function deleteReminder(reminderId) {
-            try {
-                const token = localStorage.getItem('token') || getTokenFromCookies();
-                if (!token) {
-                    window.location.href = '/login.html';
-                    return;
-                }
-
-                const response = await fetch(`${apiBaseUrl}/reminders/${reminderId}`, {
-                    method: 'DELETE',
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
-
-                const data = await response.json();
-                if (!response.ok) throw new Error(data.message || 'Failed to delete reminder');
-
-                showToast('Reminder deleted successfully', 'success'); // Updated
-                fetchReminders(); // Refresh the reminders list
-            } catch (error) {
-                console.error('Error deleting reminder:', error);
-                showToast('Failed to delete reminder', 'error'); // Updated
-            }
-        }
-
-        // Logout function
-        function logout() {
-            localStorage.removeItem('token');
-            document.cookie = 'token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
-            window.location.href = '/login.html';
-        }
-
-        // Event Listeners
-        reminderForm.addEventListener('submit', createReminder);
-        logoutBtn.addEventListener('click', logout);
-        profileDropdownBtn.addEventListener('click', () => {
-            profileDropdown.classList.toggle('hidden');
-        });
-
-        document.addEventListener('click', (event) => {
-            if (!profileDropdownBtn.contains(event.target) && !profileDropdown.contains(event.target)) {
-                profileDropdown.classList.add('hidden');
-            }
-        });
-
-        // Initial fetch
-        fetchReminders();
-    </script>
+    <script src="scripts/header.js"></script>
+    <script src="scripts/reminders.js"></script>
 </body>
 
 </html>

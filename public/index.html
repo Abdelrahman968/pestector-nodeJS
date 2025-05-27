@@ -118,33 +118,30 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
             <div class="flex justify-between items-center">
                 <!-- Logo and Brand -->
-                <div class="flex items-center space-x-3">
+                <a href="/" class="flex items-center space-x-3 flex-shrink-0">
                     <div
                         class="bg-gradient-to-r from-indigo-600 to-indigo-800 text-white p-2.5 rounded-lg shadow-sm hover:shadow transition-all duration-300">
                         <i class="fas fa-leaf text-xl"></i>
                     </div>
                     <div>
-                        <h1 class="text-2xl font-bold text-gray-900">Pestector <sup>V6</sup></h1>
+                        <h1 class="text-2xl font-bold text-gray-900">Pestector </h1>
                     </div>
-                </div>
+                </a>
 
                 <!-- Main Navigation - Desktop -->
                 <nav class="hidden lg:flex space-x-2">
-                    <a href="index.html"
+                    <a href="/"
                         class="text-white bg-indigo-600 px-3 py-1.5 rounded-full text-sm font-medium transition-all duration-200 flex items-center whitespace-nowrap">
                         <i class="fas fa-home mr-2"></i>Home
                     </a>
-                    <a href="history.html"
-                        class="text-gray-600 hover:text-indigo-600 hover:bg-indigo-50 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">
-                        <i class="fas fa-history mr-2"></i>History
-                    </a>
-                    <a href="/disease-library"
+
+                    <a href="/library"
                         class="text-gray-600 hover:text-indigo-600 hover:bg-indigo-50 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">
                         <i class="fas fa-book-medical mr-2"></i>Library
                     </a>
-                    <a href="/#"
+                    <a href="/about-us"
                         class="text-gray-600 hover:text-indigo-600 hover:bg-indigo-50 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">
-                        <i class="fas fa-book-medical mr-2"></i>Our Team
+                        <i class="fas fa-users mr-2"></i>About Us
                     </a>
                 </nav>
 
@@ -153,7 +150,7 @@
                     <i class="fas fa-bars text-xl"></i>
                 </button>
 
-                <!-- User Profile / Login-Signup -->
+                <!-- User Profile / Login-register -->
                 <div class="relative ml-4">
                     <!-- Logged-in user -->
                     <div id="userLoggedIn" class="hidden">
@@ -165,21 +162,41 @@
                         </button>
                         <div id="profileDropdown"
                             class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-2 hidden">
-                            <a href="#"
+                            <a href="/dashboard"
+                                class="block px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-600">
+                                <i class="fas fa-tachometer-alt mr-2 opacity-75"></i>Dashboard
+                            </a>
+                            <a href="/scan"
+                                class="block px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-600">
+                                <i class="fas fa-camera mr-2 opacity-75"></i>Scan
+                            </a>
+                            <a href="/history"
+                                class="block px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-600">
+                                <i class="fas fa-history mr-2 opacity-75"></i>History
+                            </a>
+                            <a href="/weather"
+                                class="block px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-600">
+                                <i class="fas fa-cloud-sun mr-2"></i>Weather
+                            </a>
+                            <a href="/plants"
+                                class="block px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-600">
+                                <i class="fas fa-seedling mr-2 opacity-75"></i>My Plants
+                            </a>
+                            <a href="/reminders"
+                                class="block px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-600">
+                                <i class="fas fa-bell mr-2 opacity-75"></i>Reminders
+                            </a>
+                            <a href="/treatment"
+                                class="block px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-600">
+                                <i class="fas fa-medkit mr-2 opacity-75"></i>Treatment
+                            </a>
+                            <a href="/subscribe"
+                                class="block px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-600">
+                                <i class="fas fa-star mr-2 opacity-75"></i>Subscription
+                            </a>
+                            <a href="/profile"
                                 class="block px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-600">
                                 <i class="fas fa-user-edit mr-2"></i>Edit Profile
-                            </a>
-                            <a href="#"
-                                class="block px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-600">
-                                <i class="fas fa-key mr-2"></i>Change Password
-                            </a>
-                            <a href="#"
-                                class="block px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-600">
-                                <i class="fas fa-bell mr-2"></i>Notifications
-                            </a>
-                            <a href="#"
-                                class="block px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-600">
-                                <i class="fas fa-cog mr-2"></i>Settings
                             </a>
                             <div class="border-t border-gray-100 my-1"></div>
                             <button id="logoutBtn"
@@ -191,11 +208,11 @@
 
                     <!-- Not logged-in -->
                     <div id="userNotLoggedIn" class="flex space-x-2">
-                        <a href="/login.html"
+                        <a href="/login"
                             class="text-gray-700 hover:text-indigo-600 bg-gray-50 hover:bg-indigo-50 px-4 py-2 rounded-full text-sm font-medium transition-colors duration-200">
                             <i class="fas fa-sign-in-alt mr-2"></i>Login
                         </a>
-                        <a href="/signup.html"
+                        <a href="/register"
                             class="text-white bg-indigo-600 hover:bg-indigo-700 px-4 py-2 rounded-full text-sm font-medium transition-colors duration-200">
                             <i class="fas fa-user-plus mr-2"></i>Sign Up
                         </a>
@@ -206,51 +223,18 @@
             <!-- Mobile Navigation Menu (Hidden by default) -->
             <div id="mobileMenu" class="lg:hidden hidden pt-4 pb-3 border-t border-gray-200 mt-4">
                 <div class="space-y-1">
-                    <a href="index.html"
+                    <a href="/"
                         class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-indigo-600 hover:bg-indigo-50">
                         <i class="fas fa-home mr-2"></i>Home
                     </a>
-                    <a href="history.html"
+                    <a href="/Library"
                         class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-indigo-600 hover:bg-indigo-50">
-                        <i class="fas fa-history mr-2"></i>History
+                        <i class="fas fa-book-medical mr-2"></i>Library
                     </a>
-                    <a href="settings.html"
+                    <a href="/about-us"
                         class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-indigo-600 hover:bg-indigo-50">
-                        <i class="fas fa-cog mr-2"></i>Settings
+                        <i class="fas fa-users mr-2"></i>About Us
                     </a>
-                    <a href="help.html"
-                        class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-indigo-600 hover:bg-indigo-50">
-                        <i class="fas fa-question-circle mr-2"></i>Help
-                    </a>
-                    <a href="terms.html"
-                        class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-indigo-600 hover:bg-indigo-50">
-                        <i class="fas fa-file-contract mr-2"></i>Terms
-                    </a>
-                    <a href="official-rules.html"
-                        class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-indigo-600 hover:bg-indigo-50">
-                        <i class="fas fa-gavel mr-2"></i>Official Rules
-                    </a>
-                    <a href="donate.html"
-                        class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-indigo-600 hover:bg-indigo-50">
-                        <i class="fas fa-gift mr-2"></i>Donate
-                    </a>
-                    <a href="advertisement.html"
-                        class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-indigo-600 hover:bg-indigo-50">
-                        <i class="fas fa-ad mr-2"></i>Advertisement
-                    </a>
-                    <a href="dmca.html"
-                        class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-indigo-600 hover:bg-indigo-50">
-                        <i class="fas fa-lock mr-2"></i>DMCA
-                    </a>
-                    <a href="adding-files.html"
-                        class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-indigo-600 hover:bg-indigo-50">
-                        <i class="fas fa-file-upload mr-2"></i>Adding Files
-                    </a>
-                    <a href="privacy-policy.html"
-                        class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-indigo-600 hover:bg-indigo-50">
-                        <i class="fas fa-shield-alt mr-2"></i>Privacy Policy
-                    </a>
-
                 </div>
             </div>
         </div>
@@ -269,35 +253,35 @@
 
                 <div class="ml-auto flex items-center">
                     <div class="flex space-x-1 overflow-x-auto pb-1 scrollbar-hide">
-                        <a href="help.html"
+                        <a href="/help"
                             class="text-gray-600 hover:text-white hover:bg-indigo-600 px-3 py-1.5 rounded-full text-sm font-medium transition-all duration-200 flex items-center whitespace-nowrap">
                             <i class="fas fa-question-circle mr-1.5"></i>Help
                         </a>
-                        <a href="terms.html"
+                        <a href="/terms"
                             class="text-gray-600 hover:text-white hover:bg-indigo-600 px-3 py-1.5 rounded-full text-sm font-medium transition-all duration-200 flex items-center whitespace-nowrap">
                             <i class="fas fa-file-contract mr-1.5"></i>Terms
                         </a>
-                        <a href="official-rules.html"
+                        <a href="/official-rules"
                             class="text-gray-600 hover:text-white hover:bg-indigo-600 px-3 py-1.5 rounded-full text-sm font-medium transition-all duration-200 flex items-center whitespace-nowrap">
                             <i class="fas fa-gavel mr-1.5"></i>Rules
                         </a>
-                        <a href="donate.html"
+                        <a href="/donate"
                             class="text-gray-600 hover:text-white hover:bg-indigo-600 px-3 py-1.5 rounded-full text-sm font-medium transition-all duration-200 flex items-center whitespace-nowrap">
                             <i class="fas fa-gift mr-1.5"></i>Donate
                         </a>
-                        <a href="advertisement.html"
+                        <a href="/advertisement"
                             class="text-gray-600 hover:text-white hover:bg-indigo-600 px-3 py-1.5 rounded-full text-sm font-medium transition-all duration-200 flex items-center whitespace-nowrap">
                             <i class="fas fa-ad mr-1.5"></i>Ads
                         </a>
-                        <a href="dmca.html"
+                        <a href="/dmca"
                             class="text-gray-600 hover:text-white hover:bg-indigo-600 px-3 py-1.5 rounded-full text-sm font-medium transition-all duration-200 flex items-center whitespace-nowrap">
                             <i class="fas fa-lock mr-1.5"></i>DMCA
                         </a>
-                        <a href="adding-files.html"
+                        <a href="/adding-files"
                             class="text-gray-600 hover:text-white hover:bg-indigo-600 px-3 py-1.5 rounded-full text-sm font-medium transition-all duration-200 flex items-center whitespace-nowrap">
                             <i class="fas fa-file-upload mr-1.5"></i>Files
                         </a>
-                        <a href="privacy-policy.html"
+                        <a href="/privacy-policy"
                             class="text-gray-600 hover:text-white hover:bg-indigo-600 px-3 py-1.5 rounded-full text-sm font-medium transition-all duration-200 flex items-center whitespace-nowrap">
                             <i class="fas fa-shield-alt mr-1.5"></i>Privacy
                         </a>
@@ -316,39 +300,39 @@
                     </button>
                 </div>
                 <div id="moreMenuMobile" class="grid grid-cols-2 gap-2 mt-2 hidden">
-                    <a href="help.html"
+                    <a href="/help"
                         class="text-gray-600 bg-white hover:bg-indigo-600 hover:text-white px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 flex items-center shadow-sm border border-indigo-100">
                         <i class="fas fa-question-circle mr-2"></i>Help
                     </a>
-                    <a href="terms.html"
+                    <a href="/terms"
                         class="text-gray-600 bg-white hover:bg-indigo-600 hover:text-white px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 flex items-center shadow-sm border border-indigo-100">
                         <i class="fas fa-file-contract mr-2"></i>Terms
                     </a>
-                    <a href="official-rules.html"
+                    <a href="/official-rules"
                         class="text-gray-600 bg-white hover:bg-indigo-600 hover:text-white px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 flex items-center shadow-sm border border-indigo-100">
                         <i class="fas fa-gavel mr-2"></i>Rules
                     </a>
-                    <a href="donate.html"
+                    <a href="/donate"
                         class="text-gray-600 bg-white hover:bg-indigo-600 hover:text-white px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 flex items-center shadow-sm border border-indigo-100">
                         <i class="fas fa-gift mr-2"></i>Donate
                     </a>
-                    <a href="advertisement.html"
+                    <a href="/advertisement"
                         class="text-gray-600 bg-white hover:bg-indigo-600 hover:text-white px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 flex items-center shadow-sm border border-indigo-100">
                         <i class="fas fa-ad mr-2"></i>Advertisements
                     </a>
-                    <a href="dmca.html"
+                    <a href="/dmca"
                         class="text-gray-600 bg-white hover:bg-indigo-600 hover:text-white px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 flex items-center shadow-sm border border-indigo-100">
                         <i class="fas fa-lock mr-2"></i>DMCA
                     </a>
-                    <a href="adding-files.html"
+                    <a href="/adding-files"
                         class="text-gray-600 bg-white hover:bg-indigo-600 hover:text-white px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 flex items-center shadow-sm border border-indigo-100">
                         <i class="fas fa-file-upload mr-2"></i>Adding Files
                     </a>
-                    <a href="privacy-policy.html"
+                    <a href="/privacy-policy"
                         class="text-gray-600 bg-white hover:bg-indigo-600 hover:text-white px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 flex items-center shadow-sm border border-indigo-100">
                         <i class="fas fa-shield-alt mr-2"></i>Privacy Policy
                     </a>
-                    <a href="disease-library.html"
+                    <a href="/library"
                         class="text-gray-600 bg-white hover:bg-indigo-600 hover:text-white px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 flex items-center shadow-sm border border-indigo-100">
                         <i class="fas fa-book-medical mr-2"></i>Disease Library
                     </a>
@@ -369,7 +353,7 @@
                             V6</h1>
                         <p class="text-lg text-gray-600 mb-6">Harness the power of AI to detect plant diseases early,
                             get actionable insights, and keep your crops healthy—all in one user-friendly platform.</p>
-                        <a href="/signup.html"
+                        <a href="/register"
                             class="inline-block bg-indigo-600 text-white px-6 py-3 rounded-full font-medium hover:bg-indigo-700 transition-colors duration-200">
                             Get Started <i class="fas fa-arrow-right ml-2"></i>
                         </a>
@@ -433,214 +417,276 @@
         </section>
 
         <!-- How It Works Section -->
-        <section class="bg-gray-100 py-12">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <h2 class="text-3xl font-bold text-gray-900 text-center mb-4 fade-in">How It Works</h2>
-                <p class="text-center text-gray-600 mb-12 fade-in animate-delay-1">Three simple steps to healthier
-                    plants with Pestector V6.</p>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                    <!-- Step 1 -->
-                    <div class="text-center fade-in animate-delay-2">
-                        <div
-                            class="bg-indigo-600 text-white w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4">
-                            <span class="text-xl font-semibold">1</span>
-                        </div>
-                        <h3 class="text-lg font-semibold text-gray-900 mb-2">Upload a Photo</h3>
-                        <p class="text-gray-600">Take a picture of your plant and upload it to Pestector using our
-                            easy-to-use interface.</p>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-12">
+            <h2 class="text-2xl font-bold text-gray-900 mb-6 text-center">How It Works</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="bg-white rounded-lg shadow p-6 card-hover fade-in">
+                    <div class="flex items-center justify-center w-12 h-12 bg-indigo-100 rounded-full mb-4">
+                        <i class="fas fa-upload text-indigo-600 text-xl"></i>
                     </div>
-
-                    <!-- Step 2 -->
-                    <div class="text-center fade-in animate-delay-3">
-                        <div
-                            class="bg-indigo-600 text-white w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4">
-                            <span class="text-xl font-semibold">2</span>
-                        </div>
-                        <h3 class="text-lg font-semibold text-gray-900 mb-2">AI Analysis</h3>
-                        <p class="text-gray-600">Our AI analyzes the image to detect any signs of disease, providing you
-                            with a detailed report.</p>
+                    <h3 class="text-lg font-semibold text-gray-900 mb-2">1. Upload Image</h3>
+                    <p class="text-sm text-gray-600">Upload a clear image of your plant's leaves or stems.</p>
+                </div>
+                <div class="bg-white rounded-lg shadow p-6 card-hover fade-in">
+                    <div class="flex items-center justify-center w-12 h-12 bg-indigo-100 rounded-full mb-4">
+                        <i class="fas fa-search text-indigo-600 text-xl"></i>
                     </div>
+                    <h3 class="text-lg font-semibold text-gray-900 mb-2">2. Analyze</h3>
+                    <p class="text-sm text-gray-600">Our AI analyzes the image to detect diseases.</p>
+                </div>
+                <div class="bg-white rounded-lg shadow p-6 card-hover fade-in">
+                    <div class="flex items-center justify-center w-12 h-12 bg-indigo-100 rounded-full mb-4">
+                        <i class="fas fa-lightbulb text-indigo-600 text-xl"></i>
+                    </div>
+                    <h3 class="text-lg font-semibold text-gray-900 mb-2">3. Get Results</h3>
+                    <p class="text-sm text-gray-600">Receive detailed results and treatment recommendations.</p>
+                </div>
+            </div>
+        </div>
 
-                    <!-- Step 3 -->
-                    <div class="text-center fade-in animate-delay-4">
-                        <div
-                            class="bg-indigo-600 text-white w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4">
-                            <span class="text-xl font-semibold">3</span>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-12">
+            <div class="bg-indigo-600 rounded-lg p-8 text-center">
+                <h2 class="text-2xl font-bold text-white mb-4">Ready to Diagnose Your Plants?</h2>
+                <p class="text-lg text-indigo-100 mb-6">Upload an image now and get instant results.</p>
+                <button id="ctaUploadBtn"
+                    class="flex items-center px-6 py-3 bg-white text-indigo-600 rounded-lg hover:bg-indigo-50 mx-auto">
+                    <a href="/scan"><i class="fas fa-upload mr-2"></i>Upload Image</a>
+                </button>
+            </div>
+
+
+            <!-- Popular Plants Section -->
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-12">
+                <h2 class="text-2xl font-bold text-gray-900 mb-6 text-center">Popular Plants We Can Diagnose</h2>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+                    <div class="bg-white rounded-lg shadow p-4 text-center card-hover fade-in">
+                        <div class="h-32 bg-indigo-50 rounded-lg mb-3 flex items-center justify-center">
+                            <i class="fas fa-seedling text-indigo-600 text-4xl"></i>
                         </div>
-                        <h3 class="text-lg font-semibold text-gray-900 mb-2">Take Action</h3>
-                        <p class="text-gray-600">Follow the recommended treatment plan to address the issue and keep
-                            your plants thriving.</p>
+                        <h3 class="text-md font-semibold text-gray-900">Tomatoes</h3>
+                        <p class="text-xs text-gray-500 mt-1">Detect blight, spots and more</p>
+                    </div>
+                    <div class="bg-white rounded-lg shadow p-4 text-center card-hover fade-in">
+                        <div class="h-32 bg-indigo-50 rounded-lg mb-3 flex items-center justify-center">
+                            <i class="fas fa-leaf text-indigo-600 text-4xl"></i>
+                        </div>
+                        <h3 class="text-md font-semibold text-gray-900">Potatoes</h3>
+                        <p class="text-xs text-gray-500 mt-1">Identify common diseases</p>
+                    </div>
+                    <div class="bg-white rounded-lg shadow p-4 text-center card-hover fade-in">
+                        <div class="h-32 bg-indigo-50 rounded-lg mb-3 flex items-center justify-center">
+                            <i class="fas fa-spa text-indigo-600 text-4xl"></i>
+                        </div>
+                        <h3 class="text-md font-semibold text-gray-900">Roses</h3>
+                        <p class="text-xs text-gray-500 mt-1">Treat black spot &amp; rust</p>
+                    </div>
+                    <div class="bg-white rounded-lg shadow p-4 text-center card-hover fade-in">
+                        <div class="h-32 bg-indigo-50 rounded-lg mb-3 flex items-center justify-center">
+                            <i class="fas fa-tree text-indigo-600 text-4xl"></i>
+                        </div>
+                        <h3 class="text-md font-semibold text-gray-900">Citrus</h3>
+                        <p class="text-xs text-gray-500 mt-1">Check for citrus greening</p>
                     </div>
                 </div>
             </div>
-        </section>
 
-        <!-- Guest User Limit Section -->
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-12">
-            <div class="bg-yellow-50 border border-yellow-100 rounded-lg p-6">
-                <div class="flex flex-col md:flex-row items-center">
-                    <div
-                        class="flex items-center justify-center w-16 h-16 bg-yellow-100 rounded-full mb-4 md:mb-0 md:mr-6 flex-shrink-0">
-                        <i class="fas fa-exclamation-circle text-yellow-500 text-2xl"></i>
-                    </div>
-                    <div class="text-center md:text-left">
-                        <h3 class="text-lg font-semibold text-gray-900 mb-2">Guest User Limitation</h3>
-                        <p class="text-sm text-gray-600 mb-4">You are currently using Pestector as a guest. Guest
-                            users are
-                            limited to <span class="font-bold">3 scans</span> only. Log in or create an account to
-                            get unlimited
-                            scans and access to your scan history.</p>
-                        <div
-                            class="flex flex-col sm:flex-row justify-center md:justify-start space-y-2 sm:space-y-0 sm:space-x-4">
-                            <a href="login.html"
-                                class="inline-flex items-center justify-center px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700">
-                                <i class="fas fa-sign-in-alt mr-2"></i>Log In
-                            </a>
-                            <a href="signup.html"
-                                class="inline-flex items-center justify-center px-4 py-2 bg-white border border-indigo-600 text-indigo-600 rounded-lg hover:bg-indigo-50">
-                                <i class="fas fa-user-plus mr-2"></i>Sign Up
-                            </a>
+            <!-- Recent Success Stories Section -->
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-12">
+                <h2 class="text-2xl font-bold text-gray-900 mb-6 text-center">Recent Success Stories</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="bg-white rounded-lg shadow overflow-hidden card-hover fade-in">
+                        <div class="h-48 bg-indigo-50 flex items-center justify-center">
+                            <img src="img/new/Early-Blight-Disease-Treatment-Control-2048x1152.webp" alt=""
+                                class="w-full h-full object-cover rounded-t-lg">
+                        </div>
+                        <div class="p-6">
+                            <span
+                                class="inline-block bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full mb-2">Tomato
+                                Plants</span>
+                            <h3 class="text-lg font-semibold text-gray-900 mb-2">Early Blight Detection Saved Crop</h3>
+                            <p class="text-sm text-gray-600">A community garden in Portland detected early blight before
+                                it spad
+                                throughout their tomato plants, saving 95% of their crop.</p>
+                            <a href="https://envirevoagritech.com/early-blight-disease-treatment/"
+                                class="mt-4 inline-block text-indigo-600 hover:text-indigo-800 text-sm font-medium">Read
+                                full story <i class="fas fa-arrow-right ml-1"></i></a>
                         </div>
                     </div>
-                    <div class="hidden md:block ml-auto pl-6">
-                        <div class="flex items-center bg-white rounded-lg p-2 shadow-sm">
-                            <div class="text-center px-3 py-1">
-                                <p class="text-xs text-gray-500">Scans Left</p>
-                                <p class="text-2xl font-bold text-indigo-600">3</p>
+                    <div class="bg-white rounded-lg shadow overflow-hidden card-hover fade-in">
+                        <div class="h-48 bg-indigo-50 flex items-center justify-center">
+                            <img src="img/new/test.png" alt="" class="w-full h-full object-cover rounded-t-lg">
+                        </div>
+                        <div class="p-6">
+                            <span
+                                class="inline-block bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full mb-2">Roses</span>
+                            <h3 class="text-lg font-semibold text-gray-900 mb-2">Prize-Winning Roses Nursery</h3>
+                            <p class="text-sm text-gray-600">Local nursery used Pestector to identify and treat black
+                                spot disease
+                                early, resulting in their best rose showing in 15 years.</p>
+                            <a href="https://www.davidaustinroses.com/collections/award-winning"
+                                class="mt-4 inline-block text-indigo-600 hover:text-indigo-800 text-sm font-medium">Read
+                                full story <i class="fas fa-arrow-right ml-1"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Guest User Limit Section -->
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-12">
+                <div class="bg-yellow-50 border border-yellow-100 rounded-lg p-6">
+                    <div class="flex flex-col md:flex-row items-center">
+                        <div
+                            class="flex items-center justify-center w-16 h-16 bg-yellow-100 rounded-full mb-4 md:mb-0 md:mr-6 flex-shrink-0">
+                            <i class="fas fa-exclamation-circle text-yellow-500 text-2xl"></i>
+                        </div>
+                        <div class="text-center md:text-left">
+                            <h3 class="text-lg font-semibold text-gray-900 mb-2">Guest User Limitation</h3>
+                            <p class="text-sm text-gray-600 mb-4">You are currently using Pestector as a guest. Guest
+                                users are
+                                limited to <span class="font-bold">3 scans</span> only. Log in or create an account to
+                                get unlimited
+                                scans and access to your scan history.</p>
+                            <div
+                                class="flex flex-col sm:flex-row justify-center md:justify-start space-y-2 sm:space-y-0 sm:space-x-4">
+                                <a href="/login"
+                                    class="inline-flex items-center justify-center px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700">
+                                    <i class="fas fa-sign-in-alt mr-2"></i>Log In
+                                </a>
+                                <a href="/register"
+                                    class="inline-flex items-center justify-center px-4 py-2 bg-white border border-indigo-600 text-indigo-600 rounded-lg hover:bg-indigo-50">
+                                    <i class="fas fa-user-plus mr-2"></i>Sign Up
+                                </a>
                             </div>
-                            <div class="h-12 w-px bg-gray-200 mx-2"></div>
-                            <div class="flex flex-col items-center justify-center p-2">
-                                <div class="w-16 h-3 bg-gray-200 rounded-full overflow-hidden">
-                                    <div class="w-full h-full bg-indigo-600"></div>
+                        </div>
+                        <div class="hidden md:block ml-auto pl-6">
+                            <div class="flex items-center bg-white rounded-lg p-2 shadow-sm">
+                                <div class="text-center px-3 py-1">
+                                    <p class="text-xs text-gray-500">Scans Left</p>
+                                    <p class="text-2xl font-bold text-indigo-600">3</p>
                                 </div>
-                                <p class="text-xs text-gray-500 mt-1">100% Remaining</p>
+                                <div class="h-12 w-px bg-gray-200 mx-2"></div>
+                                <div class="flex flex-col items-center justify-center p-2">
+                                    <div class="w-16 h-3 bg-gray-200 rounded-full overflow-hidden">
+                                        <div class="w-full h-full bg-indigo-600"></div>
+                                    </div>
+                                    <p class="text-xs text-gray-500 mt-1">100% Remaining</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Statistics Section -->
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-12">
+                <div class="bg-white rounded-lg shadow p-8">
+                    <h2 class="text-2xl font-bold text-gray-900 mb-6 text-center">Pestector Impact</h2>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
+                        <div class="p-4">
+                            <p class="text-4xl font-bold text-indigo-600 mb-2">50K+</p>
+                            <p class="text-sm text-gray-500">Plants Diagnosed</p>
+                        </div>
+                        <div class="p-4">
+                            <p class="text-4xl font-bold text-indigo-600 mb-2">95%</p>
+                            <p class="text-sm text-gray-500">Accuracy Rate</p>
+                        </div>
+                        <div class="p-4">
+                            <p class="text-4xl font-bold text-indigo-600 mb-2">5K+</p>
+                            <p class="text-sm text-gray-500">Happy Users</p>
+                        </div>
+                        <div class="p-4">
+                            <p class="text-4xl font-bold text-indigo-600 mb-2">100+</p>
+                            <p class="text-sm text-gray-500">Plant Varieties</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <!-- Testimonials Section -->
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-12">
+                <h2 class="text-2xl font-bold text-gray-900 mb-6 text-center">What Our Users Say</h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="bg-white rounded-lg shadow p-6 card-hover fade-in">
+                        <p class="text-sm text-gray-600 mb-4">"This tool saved my tomato plants from blight! Highly
+                            recommend it to all gardeners."</p>
+                        <div class="flex items-center">
+                            <div class="w-10 h-10 bg-gray-200 rounded-full mr-3"><img src="img/user1.png"></div>
+                            <div>
+                                <p class="text-sm font-semibold text-gray-900">John Doe</p>
+                                <p class="text-xs text-gray-500">Gardener</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-lg shadow p-6 card-hover fade-in">
+                        <p class="text-sm text-gray-600 mb-4">"The AI is incredibly accurate, and the treatment
+                            recommendations are spot on."</p>
+                        <div class="flex items-center">
+                            <div class="w-10 h-10 bg-gray-200 rounded-full mr-3"><img src="img/user1.png"></div>
+                            <div>
+                                <p class="text-sm font-semibold text-gray-900">Jane Smith</p>
+                                <p class="text-xs text-gray-500">Farmer</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-lg shadow p-6 card-hover fade-in">
+                        <p class="text-sm text-gray-600 mb-4">"Easy to use and very effective. My plants are healthier
+                            than
+                            ever!"</p>
+                        <div class="flex items-center">
+                            <div class="w-10 h-10 bg-gray-200 rounded-full mr-3"><img src="img/user1.png"></div>
+                            <div>
+                                <p class="text-sm font-semibold text-gray-900">Mike Johnson</p>
+                                <p class="text-xs text-gray-500">Home Gardener</p>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-
-        <!-- Call to Action Section -->
-        <section class="py-12">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-                <h2 class="text-3xl font-bold text-gray-900 mb-4 fade-in">Ready to Protect Your Plants?</h2>
-                <p class="text-gray-600 mb-8 fade-in animate-delay-1">Join thousands of farmers and gardeners using
-                    Pestector V6 to ensure their plants stay healthy and productive.</p>
-                <a href="/signup.html"
-                    class="inline-block bg-indigo-600 text-white px-8 py-3 rounded-full font-medium hover:bg-indigo-700 transition-colors duration-200 fade-in animate-delay-2">
-                    Start Now <i class="fas fa-arrow-right ml-2"></i>
-                </a>
-            </div>
-        </section>
-
-        <!-- Testimonials Section -->
-        <section class="bg-white py-16">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <h2 class="text-3xl font-bold text-gray-900 text-center mb-8 fade-in">What Our Users Say</h2>
-                <div class="grid md:grid-cols-3 gap-8">
-                    <div class="bg-gray-50 p-6 rounded-lg shadow-lg fade-in animate-delay-2">
-                        <p class="text-gray-700 mb-4">"Pestector V6 has revolutionized how I monitor my crops. The AI
-                            detection
-                            is fast and accurate!"</p>
-                        <div class="flex items-center">
-                            <img src="https://i.pravatar.cc/60?img=1" alt="User 1" class="w-12 h-12 rounded-full mr-3">
-                            <div>
-                                <p class="font-semibold text-gray-900">John Doe</p>
-                                <p class="text-sm text-gray-500">Farmer</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="bg-gray-50 p-6 rounded-lg shadow-lg fade-in animate-delay-3">
-                        <p class="text-gray-700 mb-4">"The disease library is incredibly informative and has saved my
-                            garden
-                            countless times."</p>
-                        <div class="flex items-center">
-                            <img src="https://i.pravatar.cc/60?img=2" alt="User 2" class="w-12 h-12 rounded-full mr-3">
-                            <div>
-                                <p class="font-semibold text-gray-900">Sarah Lee</p>
-                                <p class="text-sm text-gray-500">Gardener</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="bg-gray-50 p-6 rounded-lg shadow-lg fade-in animate-delay-4">
-                        <p class="text-gray-700 mb-4">"A must-have tool for any plant enthusiast. The insights are
-                            spot-on!"</p>
-                        <div class="flex items-center">
-                            <img src="https://i.pravatar.cc/60?img=3" alt="User 3" class="w-12 h-12 rounded-full mr-3">
-                            <div>
-                                <p class="font-semibold text-gray-900">Ahmed Karim</p>
-                                <p class="text-sm text-gray-500">Agricultural Specialist</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Mobile App Section -->
-        <section class="bg-gradient-to-r from-indigo-50 to-purple-50 py-16">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center">
-                <div class="md:w-1/2 fade-in">
-                    <h2 class="text-4xl font-bold mb-4 text-gray-900">Download Pestector App</h2>
-                    <p class="text-gray-600 mb-6">Stay connected on-the-go. Scan, detect, and manage your plants
-                        directly from
-                        your mobile device.</p>
-                    <div class="flex space-x-4">
-                        <a href="#"><img src="img/app-store.png" alt="App Store" class="h-12"></a>
-                        <a href="#"><img src="img/google-play.png" alt="Google Play" class="h-12"></a>
-                    </div>
-                </div>
-                <div class="md:w-1/2 mt-8 md:mt-0 zoom-in">
-                    <img src="img/mobile-app.png" alt="Mobile App">
-                </div>
-            </div>
-        </section>
-
-
-        <!-- Partners Section -->
-        <section class="bg-gray-100 py-12">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-                <h2 class="text-3xl font-bold text-gray-900 mb-8 fade-in">Trusted by Leading Organizations</h2>
-                <div class="flex flex-wrap justify-center items-center space-x-6">
-                    <img src="img/partner1.png" alt="Partner 1"
-                        class="h-12 grayscale hover:grayscale-0 transition duration-300 mb-4">
-                    <img src="img/partner2.png" alt="Partner 2"
-                        class="h-12 grayscale hover:grayscale-0 transition duration-300 mb-4">
-                    <img src="img/partner3.png" alt="Partner 3"
-                        class="h-12 grayscale hover:grayscale-0 transition duration-300 mb-4">
-                    <img src="img/partner4.png" alt="Partner 4"
-                        class="h-12 grayscale hover:grayscale-0 transition duration-300 mb-4">
-                </div>
-            </div>
-        </section>
-
         <!-- Blog Section -->
-        <section class="bg-white py-16">
+        <section class="bg-white mt-5 py-16">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <h2 class="text-3xl font-bold text-gray-900 text-center mb-12 fade-in">Latest Articles</h2>
                 <div class="grid md:grid-cols-3 gap-8">
                     <div class="bg-gray-50 p-6 rounded-lg shadow-lg card-hover fade-in animate-delay-2">
-                        <img src="img/article1.jpg" alt="Article 1" class="rounded-lg mb-4">
-                        <h3 class="text-lg font-semibold text-gray-900 mb-2">Top 5 Tips to Prevent Plant Diseases</h3>
-                        <p class="text-gray-600 mb-4">Learn effective techniques to minimize the risk of diseases in
-                            your
-                            garden.</p>
-                        <a href="#" class="text-indigo-600 font-medium hover:underline">Read More →</a>
+                        <img src="img/articles/artic1.webp" alt="Article 1" class="rounded-lg mb-4">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-2">10 Easy Steps to Prevent Common
+                            Garden
+                            Diseases</h3>
+                        <p class="text-gray-600 mb-4">Start with a clean planting site, free of last year’s crop
+                            debris.
+                            Debris from the previous season’s crops may harbor
+                            diseases, weeds and insects.</p>
+                        <a href="https://extension.unh.edu/resource/10-easy-steps-prevent-common-garden-diseases-fact-sheet"
+                            class="text-indigo-600 font-medium hover:underline">Read More →</a>
                     </div>
                     <div class="bg-gray-50 p-6 rounded-lg shadow-lg card-hover fade-in animate-delay-3">
-                        <img src="img/article2.jpg" alt="Article 2" class="rounded-lg mb-4">
-                        <h3 class="text-lg font-semibold text-gray-900 mb-2">Understanding AI in Agriculture</h3>
-                        <p class="text-gray-600 mb-4">A deep dive into how AI is transforming plant health management.
+                        <img src="img/articles/artic2.jpg" alt="Article 2" class="rounded-lg mb-4">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-2">AI in Agriculture — The Future of
+                            Farming
+                        </h3>
+                        <p class="text-gray-600 mb-4">The growth of the global population, which is projected to
+                            reach
+                            10 billion by 2050, is placing significant pressure on
+                            the agricultural sector to increase crop production and maximize yields.
                         </p>
-                        <a href="#" class="text-indigo-600 font-medium hover:underline">Read More →</a>
+                        <br>
+                        <a href="https://intellias.com/artificial-intelligence-in-agriculture/"
+                            class="text-indigo-600 font-medium hover:underline">Read More
+                            →</a>
                     </div>
                     <div class="bg-gray-50 p-6 rounded-lg shadow-lg card-hover fade-in animate-delay-4">
-                        <img src="img/article3.jpg" alt="Article 3" class="rounded-lg mb-4">
+                        <img src="img/articles/artic3.webp" alt="Article 3" class="rounded-lg mb-4">
                         <h3 class="text-lg font-semibold text-gray-900 mb-2">Choosing the Right Fertilizer</h3>
-                        <p class="text-gray-600 mb-4">A guide to selecting fertilizers that promote healthy plant
+                        <p class="text-gray-600 mb-4">A guide to selecting fertilizers that promote healthy
+                            plant
                             growth.</p>
-                        <a href="#" class="text-indigo-600 font-medium hover:underline">Read More →</a>
+                        <br>
+                        <br>
+                        <br>
+                        <a href="https://www.rainpointonline.com/blogs/lawn-garden/how-to-choose-the-right-fertilizer-for-your-garden"
+                            class="text-indigo-600 font-medium hover:underline">Read More →</a>
                     </div>
                 </div>
             </div>
@@ -648,95 +694,57 @@
 
 
         <!-- FAQ Section -->
-        <section class="bg-white py-16">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <h2 class="text-3xl font-bold text-gray-900 text-center mb-10 fade-in">Frequently Asked Questions</h2>
-                <div class="space-y-6 max-w-3xl mx-auto">
-                    <!-- Question 1 -->
-                    <div class="border rounded-lg p-4 shadow-sm fade-in animate-delay-2">
-                        <button
-                            class="flex justify-between items-center w-full text-left text-lg font-medium text-gray-800">
-                            How accurate is Pestector's disease detection?
-                            <i class="fas fa-chevron-down"></i>
-                        </button>
-                        <div class="mt-2 text-gray-600">
-                            Our AI models are trained on thousands of plant images and achieve over 92% accuracy in
-                            disease
-                            detection.
-                        </div>
-                    </div>
-                    <!-- Question 2 -->
-                    <div class="border rounded-lg p-4 shadow-sm fade-in animate-delay-3">
-                        <button
-                            class="flex justify-between items-center w-full text-left text-lg font-medium text-gray-800">
-                            Is Pestector free to use?
-                            <i class="fas fa-chevron-down"></i>
-                        </button>
-                        <div class="mt-2 text-gray-600">
-                            Yes! You can use it as a guest with limited scans. For unlimited scans and history, sign up
-                            for
-                            free.
-                        </div>
-                    </div>
-                    <!-- Question 3 -->
-                    <div class="border rounded-lg p-4 shadow-sm fade-in animate-delay-4">
-                        <button
-                            class="flex justify-between items-center w-full text-left text-lg font-medium text-gray-800">
-                            Can I use Pestector offline?
-                            <i class="fas fa-chevron-down"></i>
-                        </button>
-                        <div class="mt-2 text-gray-600">
-                            Currently, Pestector requires an internet connection for real-time AI analysis and database
-                            access.
-                        </div>
-                    </div>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-12">
+            <h2 class="text-2xl font-bold text-gray-900 mb-6 text-center">Frequently Asked Questions</h2>
+            <div class="space-y-4">
+                <div class="bg-white rounded-lg shadow p-6 card-hover fade-in">
+                    <h3 class="text-lg font-semibold text-gray-900">How accurate is the AI?</h3>
+                    <p class="text-sm text-gray-600">Our AI has an accuracy rate of over 95% for most common plant
+                        diseases.</p>
+                </div>
+                <div class="bg-white rounded-lg shadow p-6 card-hover fade-in">
+                    <h3 class="text-lg font-semibold text-gray-900">What types of plants are supported?</h3>
+                    <p class="text-sm text-gray-600">We support a wide range of plants, including tomatoes, potatoes,
+                        and more.</p>
+                </div>
+                <div class="bg-white rounded-lg shadow p-6 card-hover fade-in">
+                    <h3 class="text-lg font-semibold text-gray-900">Is my data secure?</h3>
+                    <p class="text-sm text-gray-600">Yes, we take data privacy seriously and ensure all your information
+                        is secure.</p>
                 </div>
             </div>
-        </section>
+        </div>
 
         <!-- Contact Section -->
-        <section class="bg-gray-100 py-16">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <h2 class="text-3xl font-bold text-gray-900 text-center mb-8 fade-in">Contact Us</h2>
-                <div class="max-w-3xl mx-auto bg-white p-8 rounded-lg shadow-lg">
-                    <form>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                            <input type="text" placeholder="Your Name"
-                                class="border border-gray-300 p-3 rounded-lg focus:outline-none">
-                            <input type="email" placeholder="Your Email"
-                                class="border border-gray-300 p-3 rounded-lg focus:outline-none">
-                        </div>
-                        <textarea rows="5" placeholder="Your Message"
-                            class="w-full border border-gray-300 p-3 rounded-lg mb-6 focus:outline-none"></textarea>
-                        <button type="submit"
-                            class="bg-indigo-600 text-white px-6 py-3 rounded-full hover:bg-indigo-700 transition">Send
-                            Message</button>
-                    </form>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-12">
+            <div class="bg-white rounded-lg shadow p-8">
+                <div class="flex flex-col md:flex-row items-center justify-between">
+                    <div class="mb-6 md:mb-0 md:w-1/2">
+                        <h3 class="text-xl font-bold text-gray-900 mb-2">Stay Updated with Plant Care Tips</h3>
+                        <p class="text-sm text-gray-600">Join our newsletter to receive seasonal gardening advice,
+                            disease
+                            pvention tips, and exclusive offers.</p>
+                    </div>
+                    <div class="w-full md:w-1/2 md:pl-6">
+                        <form class="flex flex-col sm:flex-row gap-3">
+                            <input type="email" placeholder="Your email address"
+                                class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
+                            <button type="submit"
+                                class="px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700">Subscribe</button>
+                        </form>
+                        <p class="text-xs text-gray-500 mt-2">We respect your privacy. Unsubscribe at any time.</p>
+                    </div>
                 </div>
             </div>
-        </section>
+        </div>
 
 
-        <!-- Newsletter Section -->
-        <section class="bg-indigo-600 py-12">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-white">
-                <h2 class="text-3xl font-bold mb-4 fade-in">Stay Updated with Pestector</h2>
-                <p class="mb-6 fade-in animate-delay-1">Subscribe to our newsletter and receive the latest plant care
-                    tips &
-                    product updates.</p>
-                <form class="max-w-md mx-auto flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
-                    <input type="email" placeholder="Your Email"
-                        class="w-full px-4 py-2 rounded-full text-gray-700 focus:outline-none">
-                    <button type="submit"
-                        class="bg-white text-indigo-600 px-6 py-2 rounded-full font-medium hover:bg-gray-100 transition-colors duration-300">Subscribe</button>
-                </form>
-            </div>
-        </section>
+
 
 
     </main>
 
-    <!-- Enhanced Footer -->
+    <!-- Footer -->
     <footer class="bg-white border-t border-gray-200 mt-12">
         <div class="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
             <!-- Main Footer Content -->
@@ -745,7 +753,7 @@
                 <div class="flex flex-col">
                     <h3 class="text-sm font-semibold text-gray-900 tracking-wider uppercase mb-3">Pestector</h3>
                     <p class="text-sm text-gray-600 max-w-xs">Helping plant lovers keep their green friends healthy and
-                        thriving since 2023.</p>
+                        thriving since 2024.</p>
                     <div class="mt-4">
                         <p class="text-sm text-gray-500">© 2025 Pestector. All rights reserved.</p>
                     </div>
@@ -755,13 +763,14 @@
                 <div class="flex flex-col md:items-center">
                     <h3 class="text-sm font-semibold text-gray-900 tracking-wider uppercase mb-3">Quick Links</h3>
                     <ul class="space-y-2">
-                        <li><a href="#" class="text-sm text-gray-600 hover:text-green-600 transition-colors">Home</a>
+                        <li><a href="/" class="text-sm text-gray-600 hover:text-indigo-600 transition-colors">Home</a>
                         </li>
-                        <li><a href="#" class="text-sm text-gray-600 hover:text-green-600 transition-colors">My
+                        <li><a href="/plants" class="text-sm text-gray-600 hover:text-indigo-600 transition-colors">My
                                 Plants</a></li>
-                        <li><a href="#" class="text-sm text-gray-600 hover:text-green-600 transition-colors">Plant
+                        <li><a href="/library"
+                                class="text-sm text-gray-600 hover:text-indigo-600 transition-colors">Plant
                                 Database</a></li>
-                        <li><a href="#" class="text-sm text-gray-600 hover:text-green-600 transition-colors">Help &
+                        <li><a href="/help" class="text-sm text-gray-600 hover:text-indigo-600 transition-colors">Help &
                                 Support</a></li>
                     </ul>
                 </div>
@@ -770,13 +779,13 @@
                 <div class="flex flex-col md:items-end">
                     <h3 class="text-sm font-semibold text-gray-900 tracking-wider uppercase mb-3">Connect With Us</h3>
                     <div class="flex space-x-4">
-                        <a href="#" class="text-gray-400 hover:text-blue-400 transition-colors"><i
+                        <a href="#soon-twitter" class="text-gray-400 hover:text-blue-400 transition-colors"><i
                                 class="fab fa-twitter h-6 w-6"></i></a>
-                        <a href="#" class="text-gray-400 hover:text-blue-600 transition-colors"><i
+                        <a href="#soon-facebook" class="text-gray-400 hover:text-blue-600 transition-colors"><i
                                 class="fab fa-facebook h-6 w-6"></i></a>
-                        <a href="#" class="text-gray-400 hover:text-pink-600 transition-colors"><i
+                        <a href="#soon-instagram" class="text-gray-400 hover:text-pink-600 transition-colors"><i
                                 class="fab fa-instagram h-6 w-6"></i></a>
-                        <a href="#" class="text-gray-400 hover:text-red-600 transition-colors"><i
+                        <a href="#soon-pinterest" class="text-gray-400 hover:text-red-600 transition-colors"><i
                                 class="fab fa-pinterest h-6 w-6"></i></a>
                     </div>
                     <div class="mt-6">
@@ -785,7 +794,7 @@
                             <input type="email" placeholder="Your email"
                                 class="min-w-0 px-3 py-2 text-gray-900 placeholder-gray-500 border border-gray-300 rounded-l-md focus:outline-none focus:ring-1 focus:ring-green-500 focus:border-green-500 text-sm" />
                             <button
-                                class="inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-r-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">Subscribe</button>
+                                class="inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-r-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Subscribe</button>
                         </div>
                     </div>
                 </div>
@@ -795,16 +804,17 @@
             <div
                 class="pt-8 mt-8 border-t border-gray-200 flex flex-col md:flex-row justify-between items-center text-xs text-gray-500">
                 <div class="flex space-x-6 mb-4 md:mb-0">
-                    <a href="#" class="hover:text-gray-900 transition-colors">Privacy Policy</a>
-                    <a href="#" class="hover:text-gray-900 transition-colors">Terms of Service</a>
-                    <a href="#" class="hover:text-gray-900 transition-colors">Contact Us</a>
+                    <a href="/privacy-policy" class="hover:text-gray-900 transition-colors">Privacy Policy</a>
+                    <a href="/terms" class="hover:text-gray-900 transition-colors">Terms of Service</a>
+                    <a href="/contact" class="hover:text-gray-900 transition-colors">Contact Us</a>
                 </div>
                 <p>Designed with ♥ for plant enthusiasts everywhere</p>
             </div>
         </div>
     </footer>
 
-    <script src="scripts/header.js"></script>
+
+    <script src="scripts/weather.js"></script>
 </body>
 
 </html>

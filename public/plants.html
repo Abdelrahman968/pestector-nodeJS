@@ -119,48 +119,232 @@
 
 <body class="bg-gray-50 min-h-screen flex flex-col">
     <!-- Header -->
-    <header class="bg-white shadow-sm sticky top-0 z-10">
+    <header class="bg-white shadow-md sticky top-0 z-20 transition-all duration-300">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
             <div class="flex justify-between items-center">
-                <div class="flex items-center space-x-3">
-                    <div class="bg-indigo-600 text-white p-2 rounded-lg"><i class="fas fa-leaf text-xl"></i></div>
-                    <h1 class="text-2xl font-bold text-gray-900">Pestector</h1>
-                </div>
-                <nav class="hidden md:flex space-x-6">
-                    <a href="index.html"
-                        class="text-gray-500 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium"><i
-                            class="fas fa-home mr-2"></i>Home</a>
-                    <a href="history.html"
-                        class="text-gray-500 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium"><i
-                            class="fas fa-history mr-2"></i>History</a>
-                    <a href="plantsCollection.html"
-                        class="text-indigo-600 border-b-2 border-indigo-600 px-3 py-2 text-sm font-medium"><i
-                            class="fas fa-seedling mr-2"></i>My Plants</a>
-                    <a href="settings.html"
-                        class="text-gray-500 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium"><i
-                            class="fas fa-cog mr-2"></i>Settings</a>
-                </nav>
-                <div class="relative">
-                    <button id="profileDropdownBtn"
-                        class="flex items-center text-sm font-medium text-gray-700 hover:text-indigo-600 transition-colors duration-200">
-                        <i class="fas fa-user-circle mr-2"></i>Profile<i class="fas fa-chevron-down ml-1 text-xs"></i>
-                    </button>
-                    <div id="profileDropdown"
-                        class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-2 hidden">
-                        <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Edit Profile</a>
-                        <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Change Password</a>
-                        <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Notifications</a>
-                        <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Settings</a>
-                        <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Help</a>
-                        <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">About</a>
-                        <button id="logoutBtn"
-                            class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"><i
-                                class="fas fa-sign-out-alt mr-2"></i>Logout</button>
+                <!-- Logo and Brand -->
+                <a href="/" class="flex items-center space-x-3 flex-shrink-0">
+                    <div
+                        class="bg-gradient-to-r from-indigo-600 to-indigo-800 text-white p-2.5 rounded-lg shadow-sm hover:shadow transition-all duration-300">
+                        <i class="fas fa-leaf text-xl"></i>
                     </div>
+                    <div>
+                        <h1 class="text-2xl font-bold text-gray-900">Pestector </h1>
+                    </div>
+                </a>
+
+                <!-- Main Navigation - Desktop -->
+                <nav class="hidden lg:flex space-x-2">
+                    <a href="/"
+                        class="text-gray-600 hover:text-indigo-600 hover:bg-indigo-50 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">
+                        <i class="fas fa-home mr-2"></i>Home
+                    </a>
+
+                    <a href="/library"
+                        class="text-gray-600 hover:text-indigo-600 hover:bg-indigo-50 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">
+                        <i class="fas fa-book-medical mr-2"></i>Library
+                    </a>
+                    <a href="/about-us"
+                        class="text-gray-600 hover:text-indigo-600 hover:bg-indigo-50 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">
+                        <i class="fas fa-users mr-2"></i>About Us
+                    </a>
+                </nav>
+
+                <!-- Mobile Navigation Button -->
+                <button id="mobileMenuBtn" class="lg:hidden flex items-center text-gray-600 hover:text-indigo-600">
+                    <i class="fas fa-bars text-xl"></i>
+                </button>
+
+                <!-- User Profile / Login-register -->
+                <div class="relative ml-4">
+                    <!-- Logged-in user -->
+                    <div id="userLoggedIn" class="hidden">
+                        <button id="profileDropdownBtn"
+                            class="flex items-center text-sm font-medium text-gray-700 hover:text-indigo-600 transition-colors duration-200 bg-gray-50 hover:bg-indigo-50 rounded-full px-4 py-2">
+                            <i class="fas fa-user-circle mr-2 text-lg"></i>
+                            <span id="welcomeMessage">Welcome, User</span>
+                            <i class="fas fa-chevron-down ml-2 text-xs"></i>
+                        </button>
+                        <div id="profileDropdown"
+                            class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-2 hidden">
+                            <a href="/dashboard"
+                                class="block px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-600">
+                                <i class="fas fa-tachometer-alt mr-2 opacity-75"></i>Dashboard
+                            </a>
+                            <a href="/scan"
+                                class="block px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-600">
+                                <i class="fas fa-camera mr-2 opacity-75"></i>Scan
+                            </a>
+                            <a href="/history"
+                                class="block px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-600">
+                                <i class="fas fa-history mr-2 opacity-75"></i>History
+                            </a>
+                            <a href="/weather"
+                                class="block px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-600">
+                                <i class="fas fa-cloud-sun mr-2"></i>Weather
+                            </a>
+                            <a href="/plants"
+                                class="block px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 bg-indigo-50 text-indigo-600 font-semibold">
+                                <i class="fas fa-seedling mr-2 opacity-75"></i>My Plants
+                            </a>
+                            <a href="/reminders"
+                                class="block px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-600">
+                                <i class="fas fa-bell mr-2 opacity-75"></i>Reminders
+                            </a>
+                            <a href="/treatment"
+                                class="block px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-600">
+                                <i class="fas fa-medkit mr-2 opacity-75"></i>Treatment
+                            </a>
+                            <a href="/subscribe"
+                                class="block px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-600">
+                                <i class="fas fa-star mr-2 opacity-75"></i>Subscription
+                            </a>
+                            <a href="/profile"
+                                class="block px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-600">
+                                <i class="fas fa-user-edit mr-2"></i>Edit Profile
+                            </a>
+                            <div class="border-t border-gray-100 my-1"></div>
+                            <button id="logoutBtn"
+                                class="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50">
+                                <i class="fas fa-sign-out-alt mr-2"></i>Logout
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Not logged-in -->
+                    <div id="userNotLoggedIn" class="flex space-x-2">
+                        <a href="/login"
+                            class="text-gray-700 hover:text-indigo-600 bg-gray-50 hover:bg-indigo-50 px-4 py-2 rounded-full text-sm font-medium transition-colors duration-200">
+                            <i class="fas fa-sign-in-alt mr-2"></i>Login
+                        </a>
+                        <a href="/register"
+                            class="text-white bg-indigo-600 hover:bg-indigo-700 px-4 py-2 rounded-full text-sm font-medium transition-colors duration-200">
+                            <i class="fas fa-user-plus mr-2"></i>Sign Up
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Mobile Navigation Menu (Hidden by default) -->
+            <div id="mobileMenu" class="lg:hidden hidden pt-4 pb-3 border-t border-gray-200 mt-4">
+                <div class="space-y-1">
+                    <a href="/"
+                        class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-indigo-600 hover:bg-indigo-50">
+                        <i class="fas fa-home mr-2"></i>Home
+                    </a>
+                    <a href="/Library"
+                        class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-indigo-600 hover:bg-indigo-50">
+                        <i class="fas fa-book-medical mr-2"></i>Library
+                    </a>
+                    <a href="/about-us"
+                        class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-indigo-600 hover:bg-indigo-50">
+                        <i class="fas fa-users mr-2"></i>About Us
+                    </a>
                 </div>
             </div>
         </div>
     </header>
+
+    <!-- Enhanced More Header Section -->
+    <div class="bg-gradient-to-r from-indigo-50 to-purple-50 border-t border-b border-indigo-100">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2">
+            <!-- Desktop View -->
+            <div class="hidden md:flex items-center">
+                <div class="flex items-center px-3 py-1.5 bg-white rounded-full shadow-sm border border-indigo-100">
+                    <span class="text-lg font-medium text-indigo-700"><i class="fas fa-compass mr-2"></i>More</span>
+                    <div class="h-4 mx-3 border-r border-indigo-200"></div>
+                    <span class="text-xs text-indigo-500">Quick Links</span>
+                </div>
+
+                <div class="ml-auto flex items-center">
+                    <div class="flex space-x-1 overflow-x-auto pb-1 scrollbar-hide">
+                        <a href="/help"
+                            class="text-gray-600 hover:text-white hover:bg-indigo-600 px-3 py-1.5 rounded-full text-sm font-medium transition-all duration-200 flex items-center whitespace-nowrap">
+                            <i class="fas fa-question-circle mr-1.5"></i>Help
+                        </a>
+                        <a href="/terms"
+                            class="text-gray-600 hover:text-white hover:bg-indigo-600 px-3 py-1.5 rounded-full text-sm font-medium transition-all duration-200 flex items-center whitespace-nowrap">
+                            <i class="fas fa-file-contract mr-1.5"></i>Terms
+                        </a>
+                        <a href="/official-rules"
+                            class="text-gray-600 hover:text-white hover:bg-indigo-600 px-3 py-1.5 rounded-full text-sm font-medium transition-all duration-200 flex items-center whitespace-nowrap">
+                            <i class="fas fa-gavel mr-1.5"></i>Rules
+                        </a>
+                        <a href="/donate"
+                            class="text-gray-600 hover:text-white hover:bg-indigo-600 px-3 py-1.5 rounded-full text-sm font-medium transition-all duration-200 flex items-center whitespace-nowrap">
+                            <i class="fas fa-gift mr-1.5"></i>Donate
+                        </a>
+                        <a href="/advertisement"
+                            class="text-gray-600 hover:text-white hover:bg-indigo-600 px-3 py-1.5 rounded-full text-sm font-medium transition-all duration-200 flex items-center whitespace-nowrap">
+                            <i class="fas fa-ad mr-1.5"></i>Ads
+                        </a>
+                        <a href="/dmca"
+                            class="text-gray-600 hover:text-white hover:bg-indigo-600 px-3 py-1.5 rounded-full text-sm font-medium transition-all duration-200 flex items-center whitespace-nowrap">
+                            <i class="fas fa-lock mr-1.5"></i>DMCA
+                        </a>
+                        <a href="/adding-files"
+                            class="text-gray-600 hover:text-white hover:bg-indigo-600 px-3 py-1.5 rounded-full text-sm font-medium transition-all duration-200 flex items-center whitespace-nowrap">
+                            <i class="fas fa-file-upload mr-1.5"></i>Files
+                        </a>
+                        <a href="/privacy-policy"
+                            class="text-gray-600 hover:text-white hover:bg-indigo-600 px-3 py-1.5 rounded-full text-sm font-medium transition-all duration-200 flex items-center whitespace-nowrap">
+                            <i class="fas fa-shield-alt mr-1.5"></i>Privacy
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Mobile View -->
+            <div class="md:hidden">
+                <div class="flex items-center justify-between mb-2">
+                    <div class="flex items-center px-3 py-1.5 bg-white rounded-full shadow-sm border border-indigo-100">
+                        <span class="text-lg font-medium text-indigo-700"><i class="fas fa-compass mr-2"></i>More</span>
+                    </div>
+                    <button id="moreMenuToggle" class="px-2 py-1 text-indigo-600 hover:text-indigo-800">
+                        <i class="fas fa-chevron-down text-xs"></i>
+                    </button>
+                </div>
+                <div id="moreMenuMobile" class="grid grid-cols-2 gap-2 mt-2 hidden">
+                    <a href="/help"
+                        class="text-gray-600 bg-white hover:bg-indigo-600 hover:text-white px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 flex items-center shadow-sm border border-indigo-100">
+                        <i class="fas fa-question-circle mr-2"></i>Help
+                    </a>
+                    <a href="/terms"
+                        class="text-gray-600 bg-white hover:bg-indigo-600 hover:text-white px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 flex items-center shadow-sm border border-indigo-100">
+                        <i class="fas fa-file-contract mr-2"></i>Terms
+                    </a>
+                    <a href="/official-rules"
+                        class="text-gray-600 bg-white hover:bg-indigo-600 hover:text-white px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 flex items-center shadow-sm border border-indigo-100">
+                        <i class="fas fa-gavel mr-2"></i>Rules
+                    </a>
+                    <a href="/donate"
+                        class="text-gray-600 bg-white hover:bg-indigo-600 hover:text-white px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 flex items-center shadow-sm border border-indigo-100">
+                        <i class="fas fa-gift mr-2"></i>Donate
+                    </a>
+                    <a href="/advertisement"
+                        class="text-gray-600 bg-white hover:bg-indigo-600 hover:text-white px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 flex items-center shadow-sm border border-indigo-100">
+                        <i class="fas fa-ad mr-2"></i>Advertisements
+                    </a>
+                    <a href="/dmca"
+                        class="text-gray-600 bg-white hover:bg-indigo-600 hover:text-white px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 flex items-center shadow-sm border border-indigo-100">
+                        <i class="fas fa-lock mr-2"></i>DMCA
+                    </a>
+                    <a href="/adding-files"
+                        class="text-gray-600 bg-white hover:bg-indigo-600 hover:text-white px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 flex items-center shadow-sm border border-indigo-100">
+                        <i class="fas fa-file-upload mr-2"></i>Adding Files
+                    </a>
+                    <a href="/privacy-policy"
+                        class="text-gray-600 bg-white hover:bg-indigo-600 hover:text-white px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 flex items-center shadow-sm border border-indigo-100">
+                        <i class="fas fa-shield-alt mr-2"></i>Privacy Policy
+                    </a>
+                    <a href="/library"
+                        class="text-gray-600 bg-white hover:bg-indigo-600 hover:text-white px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 flex items-center shadow-sm border border-indigo-100">
+                        <i class="fas fa-book-medical mr-2"></i>Disease Library
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- Main Content -->
     <main class="flex-grow py-8">
@@ -310,18 +494,16 @@
     </div>
 
     <!-- Enhanced Footer -->
+    <!-- Footer -->
     <footer class="bg-white border-t border-gray-200 mt-12">
         <div class="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
             <!-- Main Footer Content -->
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
                 <!-- Company Info -->
                 <div class="flex flex-col">
-                    <h3 class="text-sm font-semibold text-gray-900 tracking-wider uppercase mb-3">
-                        Pestector
-                    </h3>
-                    <p class="text-sm text-gray-600 max-w-xs">
-                        Helping plant lovers keep their green friends healthy and thriving since 2023.
-                    </p>
+                    <h3 class="text-sm font-semibold text-gray-900 tracking-wider uppercase mb-3">Pestector</h3>
+                    <p class="text-sm text-gray-600 max-w-xs">Helping plant lovers keep their green friends healthy and
+                        thriving since 2024.</p>
                     <div class="mt-4">
                         <p class="text-sm text-gray-500">© 2025 Pestector. All rights reserved.</p>
                     </div>
@@ -329,80 +511,40 @@
 
                 <!-- Quick Links -->
                 <div class="flex flex-col md:items-center">
-                    <h3 class="text-sm font-semibold text-gray-900 tracking-wider uppercase mb-3">
-                        Quick Links
-                    </h3>
+                    <h3 class="text-sm font-semibold text-gray-900 tracking-wider uppercase mb-3">Quick Links</h3>
                     <ul class="space-y-2">
-                        <li><a href="#" class="text-sm text-gray-600 hover:text-green-600 transition-colors">Home</a>
+                        <li><a href="/" class="text-sm text-gray-600 hover:text-indigo-600 transition-colors">Home</a>
                         </li>
-                        <li><a href="#" class="text-sm text-gray-600 hover:text-green-600 transition-colors">My
-                                Plants</a>
-                        </li>
-                        <li><a href="#" class="text-sm text-gray-600 hover:text-green-600 transition-colors">Plant
+                        <li><a href="/plants" class="text-sm text-gray-600 hover:text-indigo-600 transition-colors">My
+                                Plants</a></li>
+                        <li><a href="/library"
+                                class="text-sm text-gray-600 hover:text-indigo-600 transition-colors">Plant
                                 Database</a></li>
-                        <li><a href="#" class="text-sm text-gray-600 hover:text-green-600 transition-colors">Help &
+                        <li><a href="/help" class="text-sm text-gray-600 hover:text-indigo-600 transition-colors">Help &
                                 Support</a></li>
                     </ul>
                 </div>
 
                 <!-- Connect Section -->
                 <div class="flex flex-col md:items-end">
-                    <h3 class="text-sm font-semibold text-gray-900 tracking-wider uppercase mb-3">
-                        Connect With Us
-                    </h3>
-                    <!-- Social Icons -->
+                    <h3 class="text-sm font-semibold text-gray-900 tracking-wider uppercase mb-3">Connect With Us</h3>
                     <div class="flex space-x-4">
-                        <!-- Twitter -->
-                        <a href="#" class="text-gray-400 hover:text-blue-400 transition-colors">
-                            <span class="sr-only">Twitter</span>
-                            <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                                <path
-                                    d="M8.29 20.251c7.547 0 11.675-6.253 11.675-11.675 0-.178 0-.355-.012-.53A8.348 8.348 0 0022 5.92a8.19 8.19 0 01-2.357.646 4.118 4.118 0 001.804-2.27 8.224 8.224 0 01-2.605.996 4.107 4.107 0 00-6.993 3.743 11.65 11.65 0 01-8.457-4.287 4.106 4.106 0 001.27 5.477A4.072 4.072 0 012.8 9.713v.052a4.105 4.105 0 003.292 4.022 4.095 4.095 0 01-1.853.07 4.108 4.108 0 003.834 2.85A8.233 8.233 0 012 18.407a11.616 11.616 0 006.29 1.84">
-                                </path>
-                            </svg>
-                        </a>
-
-                        <!-- Facebook -->
-                        <a href="#" class="text-gray-400 hover:text-blue-600 transition-colors">
-                            <span class="sr-only">Facebook</span>
-                            <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                                <path fill-rule="evenodd"
-                                    d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z"
-                                    clip-rule="evenodd"></path>
-                            </svg>
-                        </a>
-
-                        <!-- Instagram -->
-                        <a href="#" class="text-gray-400 hover:text-pink-600 transition-colors">
-                            <span class="sr-only">Instagram</span>
-                            <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                                <path fill-rule="evenodd"
-                                    d="M12.315 2c2.43 0 2.784.013 3.808.06 1.064.049 1.791.218 2.427.465a4.902 4.902 0 011.772 1.153 4.902 4.902 0 011.153 1.772c.247.636.416 1.363.465 2.427.048 1.067.06 1.407.06 4.123v.08c0 2.643-.012 2.987-.06 4.043-.049 1.064-.218 1.791-.465 2.427a4.902 4.902 0 01-1.153 1.772 4.902 4.902 0 01-1.772 1.153c-.636.247-1.363.416-2.427.465-1.067.048-1.407.06-4.123.06h-.08c-2.643 0-2.987-.012-4.043-.06-1.064-.049-1.791-.218-2.427-.465a4.902 4.902 0 01-1.772-1.153 4.902 4.902 0 01-1.153-1.772c-.247-.636-.416-1.363-.465-2.427-.047-1.024-.06-1.379-.06-3.808v-.63c0-2.43.013-2.784.06-3.808.049-1.064.218-1.791.465-2.427a4.902 4.902 0 011.153-1.772A4.902 4.902 0 015.45 2.525c.636-.247 1.363-.416 2.427-.465C8.901 2.013 9.256 2 11.685 2h.63zm-.081 1.802h-.468c-2.456 0-2.784.011-3.807.058-.975.045-1.504.207-1.857.344-.467.182-.8.398-1.15.748-.35.35-.566.683-.748 1.15-.137.353-.3.882-.344 1.857-.047 1.023-.058 1.351-.058 3.807v.468c0 2.456.011 2.784.058 3.807.045.975.207 1.504.344 1.857.182.466.399.8.748 1.15.35.35.683.566 1.15.748.353.137.882.3 1.857.344 1.054.048 1.37.058 4.041.058h.08c2.597 0 2.917-.01 3.96-.058.976-.045 1.505-.207 1.858-.344.466-.182.8-.398 1.15-.748.35-.35.566-.683.748-1.15.137-.353.3-.882.344-1.857.048-1.055.058-1.37.058-4.041v-.08c0-2.597-.01-2.917-.058-3.96-.045-.976-.207-1.505-.344-1.858a3.097 3.097 0 00-.748-1.15 3.098 3.098 0 00-1.15-.748c-.353-.137-.882-.3-1.857-.344-1.023-.047-1.351-.058-3.807-.058zM12 6.865a5.135 5.135 0 110 10.27 5.135 5.135 0 010-10.27zm0 1.802a3.333 3.333 0 100 6.666 3.333 3.333 0 000-6.666zm5.338-3.205a1.2 1.2 0 110 2.4 1.2 1.2 0 010-2.4z"
-                                    clip-rule="evenodd"></path>
-                            </svg>
-                        </a>
-
-                        <!-- Pinterest (added) -->
-                        <a href="#" class="text-gray-400 hover:text-red-600 transition-colors">
-                            <span class="sr-only">Pinterest</span>
-                            <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                                <path
-                                    d="M12 0a12 12 0 00-4.373 23.212c-.006-.546-.01-1.38.004-1.974.125-.545.813-3.472.813-3.472s-.207-.418-.207-1.036c0-.97.563-1.693 1.264-1.693.596 0 .885.447.885.982 0 .6-.38 1.494-.58 2.323-.166.699.351 1.268 1.04 1.268 1.25 0 2.215-1.316 2.215-3.222 0-1.685-1.211-2.868-2.945-2.868-2.01 0-3.195 1.506-3.195 3.066 0 .608.186 1.262.466 1.61.052.063.059.12.043.186-.047.196-.152.623-.173.71-.027.114-.09.14-.207.084-.778-.36-1.265-1.496-1.265-2.413 0-1.968 1.424-3.77 4.098-3.77 2.155 0 3.826 1.536 3.826 3.589 0 2.143-1.351 3.866-3.229 3.866-.63 0-1.224-.327-1.427-.709l-.39 1.48c-.14.53-.527 1.195-.784 1.6.588.175 1.21.272 1.854.272a6 6 0 100-12z">
-                                </path>
-                            </svg>
-                        </a>
+                        <a href="#soon-twitter" class="text-gray-400 hover:text-blue-400 transition-colors"><i
+                                class="fab fa-twitter h-6 w-6"></i></a>
+                        <a href="#soon-facebook" class="text-gray-400 hover:text-blue-600 transition-colors"><i
+                                class="fab fa-facebook h-6 w-6"></i></a>
+                        <a href="#soon-instagram" class="text-gray-400 hover:text-pink-600 transition-colors"><i
+                                class="fab fa-instagram h-6 w-6"></i></a>
+                        <a href="#soon-pinterest" class="text-gray-400 hover:text-red-600 transition-colors"><i
+                                class="fab fa-pinterest h-6 w-6"></i></a>
                     </div>
-
-                    <!-- Newsletter Signup -->
                     <div class="mt-6">
                         <h4 class="text-xs font-semibold text-gray-900 uppercase mb-2">Subscribe for updates</h4>
                         <div class="flex mt-1">
                             <input type="email" placeholder="Your email"
                                 class="min-w-0 px-3 py-2 text-gray-900 placeholder-gray-500 border border-gray-300 rounded-l-md focus:outline-none focus:ring-1 focus:ring-green-500 focus:border-green-500 text-sm" />
                             <button
-                                class="inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-r-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
-                                Subscribe
-                            </button>
+                                class="inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-r-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Subscribe</button>
                         </div>
                     </div>
                 </div>
@@ -412,387 +554,18 @@
             <div
                 class="pt-8 mt-8 border-t border-gray-200 flex flex-col md:flex-row justify-between items-center text-xs text-gray-500">
                 <div class="flex space-x-6 mb-4 md:mb-0">
-                    <a href="#" class="hover:text-gray-900 transition-colors">Privacy Policy</a>
-                    <a href="#" class="hover:text-gray-900 transition-colors">Terms of Service</a>
-                    <a href="#" class="hover:text-gray-900 transition-colors">Contact Us</a>
+                    <a href="/privacy-policy" class="hover:text-gray-900 transition-colors">Privacy Policy</a>
+                    <a href="/terms" class="hover:text-gray-900 transition-colors">Terms of Service</a>
+                    <a href="/contact" class="hover:text-gray-900 transition-colors">Contact Us</a>
                 </div>
                 <p>Designed with ♥ for plant enthusiasts everywhere</p>
             </div>
         </div>
     </footer>
 
-    <script>
-        const apiBaseUrl = '/api';
-        let currentPage = 1;
-        const limit = 12;
 
-        // DOM Elements
-        const plantsContainer = document.getElementById('plantsContainer');
-        const paginationContainer = document.getElementById('paginationContainer');
-        const prevPageBtn = document.getElementById('prevPageBtn');
-        const nextPageBtn = document.getElementById('nextPageBtn');
-        const pageInfo = document.getElementById('pageInfo');
-        const noPlantsMessage = document.getElementById('noPlantsMessage');
-        const logoutBtn = document.getElementById('logoutBtn');
-        const searchInput = document.getElementById('searchInput');
-        const dateFilter = document.getElementById('dateFilter');
-        const healthFilter = document.getElementById('healthFilter');
-        const profileDropdownBtn = document.getElementById('profileDropdownBtn');
-        const profileDropdown = document.getElementById('profileDropdown');
-        const saveAsPdfBtn = document.getElementById('saveAsPdfBtn');
-        const plantModal = document.getElementById('plantModal');
-        const plantForm = document.getElementById('plantForm');
-        const plantId = document.getElementById('plantId');
-        const nameInput = document.getElementById('name');
-        const speciesInput = document.getElementById('species');
-        const locationInput = document.getElementById('location');
-        const acquisitionDateInput = document.getElementById('acquisitionDate');
-        const imageInput = document.getElementById('image');
-        const closePlantModal = document.getElementById('closePlantModal');
-        const cancelPlantBtn = document.getElementById('cancelPlantBtn');
-        const submitPlantBtn = document.getElementById('submitPlantBtn');
-        const plantModalTitle = document.getElementById('plantModalTitle');
-        const addPlantBtn = document.getElementById('addPlantBtn');
+    <script src="/scripts/plant.js"></script>
 
-        // Show status message
-        function showMessage(message, isError = false) {
-            const statusMessageContainer = document.getElementById('statusMessageContainer');
-            const statusMessage = document.getElementById('statusMessage');
-            statusMessageContainer.classList.remove('slide-in-down', 'fade-out-up');
-            statusMessage.innerHTML = isError ? `<i class="fas fa-exclamation-circle mr-2"></i>${message}` : `<i class="fas fa-check-circle mr-2"></i>${message}`;
-            statusMessage.className = `py-3 px-4 rounded-md text-sm font-medium ${isError ? 'bg-red-100 text-red-700 border border-red-200' : 'bg-green-100 text-green-700 border border-green-200'}`;
-            statusMessageContainer.classList.remove('hidden');
-            statusMessageContainer.classList.add('slide-in-down');
-            setTimeout(() => {
-                statusMessageContainer.classList.remove('slide-in-down');
-                statusMessageContainer.classList.add('fade-out-up');
-                setTimeout(() => statusMessageContainer.classList.add('hidden'), 500);
-            }, 5000);
-        }
-
-        // Fetch and display plants
-        async function fetchPlants(page, filters = {}) {
-            try {
-                const token = localStorage.getItem('token') || getTokenFromCookies();
-                if (!token) { window.location.href = '/login.html'; return; }
-
-                let url = `${apiBaseUrl}/plants?page=${page}&limit=${limit}`;
-                if (filters.search) url += `&search=${encodeURIComponent(filters.search)}`;
-                if (filters.date && filters.date !== 'all') url += `&date=${filters.date}`;
-                if (filters.health && filters.health !== 'all') url += `&health=${filters.health}`;
-
-                const response = await fetch(url, { headers: { 'Authorization': `Bearer ${token}` } });
-                const data = await response.json();
-
-                if (!response.ok) throw new Error(data.message || 'Failed to fetch plants');
-
-                if (data.status === 'success' && data.plants.length > 0) {
-                    renderPlants(data.plants);
-                    updatePagination(data.pagination);
-                } else {
-                    plantsContainer.innerHTML = '';
-                    paginationContainer.classList.add('hidden');
-                    noPlantsMessage.classList.remove('hidden');
-                }
-            } catch (error) {
-                showMessage(error.message || 'Error fetching plants', true);
-                plantsContainer.innerHTML = '';
-                paginationContainer.classList.add('hidden');
-                noPlantsMessage.classList.remove('hidden');
-            }
-        }
-
-        // Get health status class
-        function getHealthClass(status) {
-            switch (status?.toLowerCase()) {
-                case 'healthy': return 'status-healthy';
-                case 'concerning': return 'status-concerning';
-                case 'diseased': return 'status-diseased';
-                case 'recovering': return 'status-recovering';
-                default: return 'bg-gray-100 text-gray-800';
-            }
-        }
-
-        // Format date
-        function formatDate(dateString) {
-            const date = new Date(dateString);
-            const now = new Date();
-            const yesterday = new Date(now);
-            yesterday.setDate(yesterday.getDate() - 1);
-
-            if (date.toDateString() === now.toDateString()) {
-                return `Today at ${date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}`;
-            } else if (date.toDateString() === yesterday.toDateString()) {
-                return `Yesterday at ${date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}`;
-            } else {
-                return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-            }
-        }
-
-        // Render plants
-        function renderPlants(plants) {
-            plantsContainer.innerHTML = '';
-            noPlantsMessage.classList.add('hidden');
-            paginationContainer.classList.remove('hidden');
-
-            plants.forEach((plant, index) => {
-                const healthStatus = plant.healthHistory[plant.healthHistory.length - 1]?.status || 'healthy';
-                const healthClass = getHealthClass(healthStatus);
-                const formattedDate = plant.acquisitionDate ? formatDate(plant.acquisitionDate) : 'Unknown';
-
-                const card = document.createElement('div');
-                card.className = `bg-white rounded-lg shadow overflow-hidden card-hover fade-in animate-delay-${index % 3 + 1}`;
-                card.innerHTML = `
-                    <div class="h-40 bg-gray-200 relative overflow-hidden">
-                        <img src="${plant.imageUrl || '/img/plant-background.jpg'}" alt="${plant.name}" class="w-full h-full object-cover">
-                        <div class="absolute top-3 right-3">
-                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${healthClass}">
-                                ${healthStatus}
-                            </span>
-                        </div>
-                    </div>
-                    <div class="p-5">
-                        <h3 class="text-lg font-semibold text-gray-900 truncate">${plant.name}</h3>
-                        <p class="text-sm font-medium text-gray-700 mb-1">${plant.species}</p>
-                        <p class="text-xs text-gray-500 mb-1">Location: ${plant.location}</p>
-                        <p class="text-xs text-gray-500 mb-3">Added: ${formattedDate}</p>
-                        <div class="mb-3">
-                            <label for="status-${plant._id}" class="block text-sm font-medium text-gray-700 mb-1">Change Status</label>
-                            <select id="status-${plant._id}" class="block w-full pl-3 pr-10 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" onchange="updatePlantStatus('${plant._id}', this.value)">
-                                <option value="healthy" ${healthStatus === 'healthy' ? 'selected' : ''}>Healthy</option>
-                                <option value="concerning" ${healthStatus === 'concerning' ? 'selected' : ''}>Concerning</option>
-                                <option value="diseased" ${healthStatus === 'diseased' ? 'selected' : ''}>Diseased</option>
-                                <option value="recovering" ${healthStatus === 'recovering' ? 'selected' : ''}>Recovering</option>
-                            </select>
-                        </div>
-                        <div class="mt-3 flex space-x-2">
-                            <button onclick="openEditPlantModal('${plant._id}', '${plant.name}', '${plant.species}', '${plant.location}', '${plant.acquisitionDate ? plant.acquisitionDate.split('T')[0] : ''}')" class="flex-1 flex items-center justify-center px-4 py-2 bg-yellow-500 text-white rounded-md hover:bg-yellow-600">
-                                <i class="fas fa-edit mr-2"></i>Edit
-                            </button>
-                            <button onclick="removePlant('${plant._id}')" class="flex-1 flex items-center justify-center px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600">
-                                <i class="fas fa-trash mr-2"></i>Remove
-                            </button>
-                        </div>
-                    </div>
-                `;
-                plantsContainer.appendChild(card);
-            });
-        }
-
-        // Update plant status
-        async function updatePlantStatus(plantId, newStatus) {
-            try {
-                const token = localStorage.getItem('token') || getTokenFromCookies();
-                if (!token) { window.location.href = '/login.html'; return; }
-
-                const response = await fetch(`${apiBaseUrl}/plants/${plantId}/status`, {
-                    method: 'PATCH',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${token}`
-                    },
-                    body: JSON.stringify({ status: newStatus })
-                });
-                const data = await response.json();
-
-                if (!response.ok) throw new Error(data.message || 'Failed to update plant status');
-
-                showMessage('Plant status updated successfully');
-                fetchPlants(currentPage, getCurrentFilters());
-            } catch (error) {
-                showMessage(error.message || 'Error updating plant status', true);
-            }
-        }
-
-        // Remove plant
-        async function removePlant(id) {
-            try {
-                const token = localStorage.getItem('token') || getTokenFromCookies();
-                if (!token) { window.location.href = '/login.html'; return; }
-
-                const response = await fetch(`${apiBaseUrl}/plants/${id}`, { method: 'DELETE', headers: { 'Authorization': `Bearer ${token}` } });
-                const data = await response.json();
-
-                if (!response.ok) throw new Error(data.message || 'Failed to remove plant');
-
-                showMessage('Plant removed successfully');
-                fetchPlants(currentPage, getCurrentFilters());
-            } catch (error) {
-                showMessage(error.message || 'Error removing plant', true);
-            }
-        }
-
-        // Open plant modal for adding
-        function openAddPlantModal() {
-            plantModalTitle.textContent = 'Add New Plant';
-            plantId.value = '';
-            nameInput.value = '';
-            speciesInput.value = '';
-            locationInput.value = '';
-            acquisitionDateInput.value = '';
-            imageInput.value = '';
-            submitPlantBtn.textContent = 'Submit';
-            plantModal.classList.remove('hidden');
-        }
-
-        // Open plant modal for editing
-        function openEditPlantModal(id, name, species, location, acquisitionDate) {
-            plantModalTitle.textContent = 'Edit Plant';
-            plantId.value = id;
-            nameInput.value = name;
-            speciesInput.value = species;
-            locationInput.value = location;
-            acquisitionDateInput.value = acquisitionDate;
-            imageInput.value = ''; // Reset file input (cannot prefill due to security)
-            submitPlantBtn.textContent = 'Update';
-            plantModal.classList.remove('hidden');
-        }
-
-        // Close plant modal
-        function closePlantModalFunc() {
-            plantModal.classList.add('hidden');
-        }
-
-        // Submit or update plant
-        async function submitPlant(event) {
-            event.preventDefault();
-
-            const token = localStorage.getItem('token') || getTokenFromCookies();
-            if (!token) { window.location.href = '/login.html'; return; }
-
-            const formData = new FormData();
-            formData.append('name', nameInput.value);
-            formData.append('species', speciesInput.value);
-            formData.append('location', locationInput.value);
-            if (acquisitionDateInput.value) formData.append('acquisitionDate', acquisitionDateInput.value);
-            if (imageInput.files[0]) formData.append('image', imageInput.files[0]);
-
-            try {
-                const isEdit = plantId.value;
-                const url = isEdit ? `${apiBaseUrl}/plants/${plantId.value}` : `${apiBaseUrl}/plants`;
-                const method = isEdit ? 'PUT' : 'POST';
-
-                const response = await fetch(url, {
-                    method,
-                    headers: { 'Authorization': `Bearer ${token}` },
-                    body: formData
-                });
-                const data = await response.json();
-
-                if (!response.ok) throw new Error(data.message || `Failed to ${isEdit ? 'update' : 'add'} plant`);
-
-                showMessage(`Plant ${isEdit ? 'updated' : 'added'} successfully`);
-                closePlantModalFunc();
-                fetchPlants(currentPage, getCurrentFilters());
-            } catch (error) {
-                showMessage(error.message || `Error ${plantId.value ? 'updating' : 'adding'} plant`, true);
-            }
-        }
-
-        // Save plants as PDF
-        saveAsPdfBtn.addEventListener('click', async () => {
-            try {
-                const { jsPDF } = window.jspdf;
-                const doc = new jsPDF();
-                doc.setFontSize(18);
-                doc.text('My Plants Collection', 10, 10);
-
-                let y = 20;
-                const plantItems = document.querySelectorAll('#plantsContainer > div');
-                plantItems.forEach((item, index) => {
-                    const name = item.querySelector('h3').textContent;
-                    const species = item.querySelector('p.text-sm').textContent;
-                    const location = item.querySelector('p.text-xs:nth-child(3)').textContent.replace('Location: ', '');
-                    const date = item.querySelector('p.text-xs:nth-child(4)').textContent.replace('Added: ', '');
-                    const status = item.querySelector('.status-badge').textContent;
-
-                    doc.setFontSize(12);
-                    doc.text(`${index + 1}. ${name} - ${species}`, 10, y);
-                    doc.text(`Location: ${location}`, 10, y + 5);
-                    doc.text(`Added: ${date}`, 10, y + 10);
-                    doc.text(`Status: ${status}`, 10, y + 15);
-                    y += 25;
-
-                    if (y > 280) { doc.addPage(); y = 10; }
-                });
-
-                doc.save('plants_collection.pdf');
-                showMessage('Plants collection saved as PDF successfully');
-            } catch (error) {
-                showMessage('Error generating PDF', true);
-            }
-        });
-
-        // Update pagination
-        function updatePagination(pagination) {
-            currentPage = pagination.page;
-            document.getElementById('startPage').textContent = pagination.start;
-            document.getElementById('endPage').textContent = pagination.end;
-            document.getElementById('totalResults').textContent = pagination.total;
-            prevPageBtn.disabled = pagination.page === 1;
-            nextPageBtn.disabled = pagination.page === pagination.pages;
-        }
-
-        // Get current filters
-        function getCurrentFilters() {
-            return {
-                search: searchInput.value.trim(),
-                date: dateFilter.value,
-                health: healthFilter.value
-            };
-        }
-
-        // Event listeners
-        prevPageBtn.addEventListener('click', () => { if (currentPage > 1) fetchPlants(currentPage - 1, getCurrentFilters()); });
-        nextPageBtn.addEventListener('click', () => { fetchPlants(currentPage + 1, getCurrentFilters()); });
-        searchInput.addEventListener('input', debounce(() => fetchPlants(1, getCurrentFilters()), 500));
-        dateFilter.addEventListener('change', () => fetchPlants(1, getCurrentFilters()));
-        healthFilter.addEventListener('change', () => fetchPlants(1, getCurrentFilters()));
-        closePlantModal.addEventListener('click', closePlantModalFunc);
-        cancelPlantBtn.addEventListener('click', closePlantModalFunc);
-        plantForm.addEventListener('submit', submitPlant);
-        addPlantBtn.addEventListener('click', openAddPlantModal);
-        profileDropdownBtn.addEventListener('click', () => profileDropdown.classList.toggle('hidden'));
-        document.addEventListener('click', (event) => {
-            if (!profileDropdownBtn.contains(event.target) && !profileDropdown.contains(event.target)) {
-                profileDropdown.classList.add('hidden');
-            }
-        });
-        logoutBtn.addEventListener('click', () => {
-            localStorage.removeItem('token');
-            document.cookie = 'token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
-            window.location.href = '/login.html';
-        });
-
-        // Debounce function
-        function debounce(func, wait) {
-            let timeout;
-            return function executedFunction(...args) {
-                const later = () => { clearTimeout(timeout); func(...args); };
-                clearTimeout(timeout);
-                timeout = setTimeout(later, wait);
-            };
-        }
-
-        // Get token from cookies
-        function getTokenFromCookies() {
-            const cookie = document.cookie.split('; ').find(row => row.startsWith('token='));
-            return cookie ? cookie.split('=')[1] : null;
-        }
-
-        // Check authentication and load plants
-        async function checkAuth() {
-            const token = localStorage.getItem('token') || getTokenFromCookies();
-            if (!token) {
-                window.location.href = '/login.html';
-            } else {
-                fetchPlants(currentPage);
-            }
-        }
-
-        // Initial check
-        checkAuth();
-    </script>
 </body>
 
 </html>

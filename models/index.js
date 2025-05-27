@@ -15,4 +15,5 @@ module.exports = {
   Notification: require("./Notification"),
   Contact: require("./Contact"),
   AuditLog: require("./AuditLog"),
+  Analytics: require("./Analytics"),
 };

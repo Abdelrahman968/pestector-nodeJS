@@ -55,6 +55,7 @@ router.post("/", authenticateToken, async (req, res) => {
 });
 
 // Route to fetch user's history with pagination and search
+// Route to fetch user's history with pagination and search
 router.get("/", authenticateToken, async (req, res) => {
   const { page = 1, limit = 10, search } = req.query;
 
@@ -89,10 +90,13 @@ router.get("/", authenticateToken, async (req, res) => {
     if (search) {
       query.$or = [
         {
-          "classification.prediction.plant": { $regex: search, $options: "i" },
+          "classification.overall_best_prediction.plant": {
+            $regex: search,
+            $options: "i",
+          },
         },
         {
-          "classification.prediction.condition": {
+          "classification.overall_best_prediction.condition": {
             $regex: search,
             $options: "i",
           },
@@ -179,6 +183,50 @@ router.delete("/:id", authenticateToken, async (req, res) => {
       status: "error",
       message: "Failed to delete history entry",
     });
+  }
+});
+
+router.put("/:id/link", authenticateToken, async (req, res) => {
+  if (req.isGuest)
+    return res
+      .status(401)
+      .json({ status: "error", message: "Authentication required" });
+
+  const { id } = req.params;
+  const { plantId } = req.body; // Pass null to unlink
+
+  try {
+    const history = await History.findOne({ _id: id, userId: req.user.id });
+    if (!history)
+      return res
+        .status(404)
+        .json({ status: "error", message: "History item not found" });
+
+    if (plantId) {
+      // Optional: Verify the plant belongs to the user
+      const plant = await Plant.findOne({ _id: plantId, userId: req.user.id });
+      if (!plant)
+        return res
+          .status(404)
+          .json({
+            status: "error",
+            message: "Plant not found or doesn't belong to user",
+          });
+    }
+
+    history.plantId = plantId || null;
+    await history.save();
+
+    res.json({
+      status: "success",
+      message: `History item ${plantId ? "linked to" : "unlinked from"} plant`,
+      history,
+    });
+  } catch (error) {
+    console.error("Error linking history:", error);
+    res
+      .status(500)
+      .json({ status: "error", message: "Failed to link history item" });
   }
 });
 

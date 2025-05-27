@@ -93,50 +93,230 @@
 
 <body class="bg-gray-50 min-h-screen flex flex-col">
     <!-- Header -->
-    <header class="bg-white shadow-sm sticky top-0 z-10">
+    <header class="bg-white shadow-md sticky top-0 z-20 transition-all duration-300">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
             <div class="flex justify-between items-center">
-                <div class="flex items-center space-x-3">
-                    <div class="bg-indigo-600 text-white p-2 rounded-lg">
+                <!-- Logo and Brand -->
+                <a href="/" class="flex items-center space-x-3 flex-shrink-0">
+                    <div
+                        class="bg-gradient-to-r from-indigo-600 to-indigo-800 text-white p-2.5 rounded-lg shadow-sm hover:shadow transition-all duration-300">
                         <i class="fas fa-leaf text-xl"></i>
                     </div>
-                    <h1 class="text-2xl font-bold text-gray-900">Pestector</h1>
-                </div>
-                <nav class="hidden md:flex space-x-6">
-                    <a href="index.html"
-                        class="text-gray-500 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">
+                    <div>
+                        <h1 class="text-2xl font-bold text-gray-900">Pestector </h1>
+                    </div>
+                </a>
+
+                <!-- Main Navigation - Desktop -->
+                <nav class="hidden lg:flex space-x-2">
+                    <a href="/"
+                        class="text-gray-600 hover:text-indigo-600 hover:bg-indigo-50 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">
                         <i class="fas fa-home mr-2"></i>Home
                     </a>
-                    <a href="history.html"
-                        class="text-gray-500 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">
-                        <i class="fas fa-history mr-2"></i>History
+
+                    <a href="/library"
+                        class="text-gray-600 hover:text-indigo-600 hover:bg-indigo-50 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">
+                        <i class="fas fa-book-medical mr-2"></i>Library
                     </a>
-                    <a href="settings.html"
-                        class="text-gray-500 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">
-                        <i class="fas fa-cog mr-2"></i>Settings
+                    <a href="/about-us"
+                        class="text-gray-600 hover:text-indigo-600 hover:bg-indigo-50 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">
+                        <i class="fas fa-users mr-2"></i>About Us
                     </a>
                 </nav>
-                <div class="relative">
-                    <button id="profileDropdownBtn"
-                        class="flex items-center text-sm font-medium text-indigo-600 transition-colors duration-200">
-                        <i class="fas fa-user-circle mr-2"></i>Profile
-                        <i class="fas fa-chevron-down ml-1 text-xs"></i>
-                    </button>
-                    <div id="profileDropdown"
-                        class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-2 hidden">
-                        <a href="profile.html" class="block px-4 py-2 text-sm text-indigo-600 bg-gray-100">Edit
-                            Profile</a>
-                        <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Change Password</a>
-                        <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Notifications</a>
-                        <button id="logoutBtn"
-                            class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                            <i class="fas fa-sign-out-alt mr-2"></i>Logout
+
+                <!-- Mobile Navigation Button -->
+                <button id="mobileMenuBtn" class="lg:hidden flex items-center text-gray-600 hover:text-indigo-600">
+                    <i class="fas fa-bars text-xl"></i>
+                </button>
+
+                <!-- User Profile / Login-register -->
+                <div class="relative ml-4">
+                    <!-- Logged-in user -->
+                    <div id="userLoggedIn" class="hidden">
+                        <button id="profileDropdownBtn"
+                            class="flex items-center text-sm font-medium text-gray-700 hover:text-indigo-600 transition-colors duration-200 bg-gray-50 hover:bg-indigo-50 rounded-full px-4 py-2">
+                            <i class="fas fa-user-circle mr-2 text-lg"></i>
+                            <span id="welcomeMessage">Welcome, User</span>
+                            <i class="fas fa-chevron-down ml-2 text-xs"></i>
                         </button>
+                        <div id="profileDropdown"
+                            class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-2 hidden">
+                            <a href="/dashboard"
+                                class="block px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 bg-indigo-50 text-indigo-600 font-semibold">
+                                <i class="fas fa-tachometer-alt mr-2 opacity-75"></i>Dashboard
+                            </a>
+                            <a href="/scan"
+                                class="block px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-600">
+                                <i class="fas fa-camera mr-2 opacity-75"></i>Scan
+                            </a>
+                            <a href="/history"
+                                class="block px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-600">
+                                <i class="fas fa-history mr-2 opacity-75"></i>History
+                            </a>
+                            <a href="/weather"
+                                class="block px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-600">
+                                <i class="fas fa-cloud-sun mr-2"></i>Weather
+                            </a>
+                            <a href="/plants"
+                                class="block px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-600">
+                                <i class="fas fa-seedling mr-2 opacity-75"></i>My Plants
+                            </a>
+                            <a href="/reminders"
+                                class="block px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-600">
+                                <i class="fas fa-bell mr-2 opacity-75"></i>Reminders
+                            </a>
+                            <a href="/treatment"
+                                class="block px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-600">
+                                <i class="fas fa-medkit mr-2 opacity-75"></i>Treatment
+                            </a>
+                            <a href="/subscribe"
+                                class="block px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-600">
+                                <i class="fas fa-star mr-2 opacity-75"></i>Subscription
+                            </a>
+                            <a href="/profile"
+                                class="block px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-600">
+                                <i class="fas fa-user-edit mr-2"></i>Edit Profile
+                            </a>
+                            <div class="border-t border-gray-100 my-1"></div>
+                            <button id="logoutBtn"
+                                class="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50">
+                                <i class="fas fa-sign-out-alt mr-2"></i>Logout
+                            </button>
+                        </div>
                     </div>
+
+                    <!-- Not logged-in -->
+                    <div id="userNotLoggedIn" class="flex space-x-2">
+                        <a href="/login"
+                            class="text-gray-700 hover:text-indigo-600 bg-gray-50 hover:bg-indigo-50 px-4 py-2 rounded-full text-sm font-medium transition-colors duration-200">
+                            <i class="fas fa-sign-in-alt mr-2"></i>Login
+                        </a>
+                        <a href="/register"
+                            class="text-white bg-indigo-600 hover:bg-indigo-700 px-4 py-2 rounded-full text-sm font-medium transition-colors duration-200">
+                            <i class="fas fa-user-plus mr-2"></i>Sign Up
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Mobile Navigation Menu (Hidden by default) -->
+            <div id="mobileMenu" class="lg:hidden hidden pt-4 pb-3 border-t border-gray-200 mt-4">
+                <div class="space-y-1">
+                    <a href="/"
+                        class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-indigo-600 hover:bg-indigo-50">
+                        <i class="fas fa-home mr-2"></i>Home
+                    </a>
+                    <a href="/Library"
+                        class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-indigo-600 hover:bg-indigo-50">
+                        <i class="fas fa-book-medical mr-2"></i>Library
+                    </a>
+                    <a href="/about-us"
+                        class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-indigo-600 hover:bg-indigo-50">
+                        <i class="fas fa-users mr-2"></i>About Us
+                    </a>
                 </div>
             </div>
         </div>
     </header>
+    <div class="bg-gradient-to-r from-indigo-50 to-purple-50 border-t border-b border-indigo-100">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2">
+            <!-- Desktop View -->
+            <div class="hidden md:flex items-center">
+                <div class="flex items-center px-3 py-1.5 bg-white rounded-full shadow-sm border border-indigo-100">
+                    <span class="text-lg font-medium text-indigo-700"><i class="fas fa-compass mr-2"></i>More</span>
+                    <div class="h-4 mx-3 border-r border-indigo-200"></div>
+                    <span class="text-xs text-indigo-500">Quick Links</span>
+                </div>
+
+                <div class="ml-auto flex items-center">
+                    <div class="flex space-x-1 overflow-x-auto pb-1 scrollbar-hide">
+                        <a href="/help"
+                            class="text-gray-600 hover:text-white hover:bg-indigo-600 px-3 py-1.5 rounded-full text-sm font-medium transition-all duration-200 flex items-center whitespace-nowrap">
+                            <i class="fas fa-question-circle mr-1.5"></i>Help
+                        </a>
+                        <a href="/terms"
+                            class="text-gray-600 hover:text-white hover:bg-indigo-600 px-3 py-1.5 rounded-full text-sm font-medium transition-all duration-200 flex items-center whitespace-nowrap">
+                            <i class="fas fa-file-contract mr-1.5"></i>Terms
+                        </a>
+                        <a href="/official-rules"
+                            class="text-gray-600 hover:text-white hover:bg-indigo-600 px-3 py-1.5 rounded-full text-sm font-medium transition-all duration-200 flex items-center whitespace-nowrap">
+                            <i class="fas fa-gavel mr-1.5"></i>Rules
+                        </a>
+                        <a href="/donate"
+                            class="text-gray-600 hover:text-white hover:bg-indigo-600 px-3 py-1.5 rounded-full text-sm font-medium transition-all duration-200 flex items-center whitespace-nowrap">
+                            <i class="fas fa-gift mr-1.5"></i>Donate
+                        </a>
+                        <a href="/advertisement"
+                            class="text-gray-600 hover:text-white hover:bg-indigo-600 px-3 py-1.5 rounded-full text-sm font-medium transition-all duration-200 flex items-center whitespace-nowrap">
+                            <i class="fas fa-ad mr-1.5"></i>Ads
+                        </a>
+                        <a href="/dmca"
+                            class="text-gray-600 hover:text-white hover:bg-indigo-600 px-3 py-1.5 rounded-full text-sm font-medium transition-all duration-200 flex items-center whitespace-nowrap">
+                            <i class="fas fa-lock mr-1.5"></i>DMCA
+                        </a>
+                        <a href="/adding-files"
+                            class="text-gray-600 hover:text-white hover:bg-indigo-600 px-3 py-1.5 rounded-full text-sm font-medium transition-all duration-200 flex items-center whitespace-nowrap">
+                            <i class="fas fa-file-upload mr-1.5"></i>Files
+                        </a>
+                        <a href="/privacy-policy"
+                            class="text-gray-600 hover:text-white hover:bg-indigo-600 px-3 py-1.5 rounded-full text-sm font-medium transition-all duration-200 flex items-center whitespace-nowrap">
+                            <i class="fas fa-shield-alt mr-1.5"></i>Privacy
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Mobile View -->
+            <div class="md:hidden">
+                <div class="flex items-center justify-between mb-2">
+                    <div class="flex items-center px-3 py-1.5 bg-white rounded-full shadow-sm border border-indigo-100">
+                        <span class="text-lg font-medium text-indigo-700"><i class="fas fa-compass mr-2"></i>More</span>
+                    </div>
+                    <button id="moreMenuToggle" class="px-2 py-1 text-indigo-600 hover:text-indigo-800">
+                        <i class="fas fa-chevron-down text-xs"></i>
+                    </button>
+                </div>
+                <div id="moreMenuMobile" class="grid grid-cols-2 gap-2 mt-2 hidden">
+                    <a href="/help"
+                        class="text-gray-600 bg-white hover:bg-indigo-600 hover:text-white px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 flex items-center shadow-sm border border-indigo-100">
+                        <i class="fas fa-question-circle mr-2"></i>Help
+                    </a>
+                    <a href="/terms"
+                        class="text-gray-600 bg-white hover:bg-indigo-600 hover:text-white px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 flex items-center shadow-sm border border-indigo-100">
+                        <i class="fas fa-file-contract mr-2"></i>Terms
+                    </a>
+                    <a href="/official-rules"
+                        class="text-gray-600 bg-white hover:bg-indigo-600 hover:text-white px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 flex items-center shadow-sm border border-indigo-100">
+                        <i class="fas fa-gavel mr-2"></i>Rules
+                    </a>
+                    <a href="/donate"
+                        class="text-gray-600 bg-white hover:bg-indigo-600 hover:text-white px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 flex items-center shadow-sm border border-indigo-100">
+                        <i class="fas fa-gift mr-2"></i>Donate
+                    </a>
+                    <a href="/advertisement"
+                        class="text-gray-600 bg-white hover:bg-indigo-600 hover:text-white px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 flex items-center shadow-sm border border-indigo-100">
+                        <i class="fas fa-ad mr-2"></i>Advertisements
+                    </a>
+                    <a href="/dmca"
+                        class="text-gray-600 bg-white hover:bg-indigo-600 hover:text-white px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 flex items-center shadow-sm border border-indigo-100">
+                        <i class="fas fa-lock mr-2"></i>DMCA
+                    </a>
+                    <a href="/adding-files"
+                        class="text-gray-600 bg-white hover:bg-indigo-600 hover:text-white px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 flex items-center shadow-sm border border-indigo-100">
+                        <i class="fas fa-file-upload mr-2"></i>Adding Files
+                    </a>
+                    <a href="/privacy-policy"
+                        class="text-gray-600 bg-white hover:bg-indigo-600 hover:text-white px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 flex items-center shadow-sm border border-indigo-100">
+                        <i class="fas fa-shield-alt mr-2"></i>Privacy Policy
+                    </a>
+                    <a href="/library"
+                        class="text-gray-600 bg-white hover:bg-indigo-600 hover:text-white px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 flex items-center shadow-sm border border-indigo-100">
+                        <i class="fas fa-book-medical mr-2"></i>Disease Library
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- Main Content -->
     <main class="flex-grow py-8">
@@ -146,13 +326,12 @@
                 <p class="mt-1 text-sm text-gray-500">Welcome to your Pestector dashboard. Here you can view your
                     analytics and manage reminders.</p>
             </div>
-
             <!-- User Information Section -->
             <div
                 class="bg-white shadow-lg rounded-xl p-6 gap-6 mb-8 mx-auto border border-gray-200 transition-all duration-300 hover:shadow-xl">
                 <div class="flex justify-between items-center mb-6 border-b border-gray-100 pb-4">
                     <h3 class="text-xl font-semibold text-gray-800">User Information</h3>
-                    <a href="profile.html"
+                    <a href="/profile"
                         class="px-4 py-2 text-sm bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors duration-300 flex items-center">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24"
                             stroke="currentColor">
@@ -225,6 +404,37 @@
                 </div>
             </div>
 
+
+            <div
+                class="bg-white shadow-lg rounded-xl p-6 mb-8 border border-gray-200 transition-all duration-300 hover:shadow-xl">
+                <h3 class="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-6">Your Recommendations</h3>
+
+                <!-- recommendation -->
+                <div class="min-w-full sm:min-w-[50%] lg:min-w-[33.333%] px-2">
+                    <a href="/recommendation"
+                        class="group block bg-white dark:bg-gray-900 shadow-md rounded-xl p-6 transition-transform duration-300 hover:-translate-y-1 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        aria-label="View Recommendation: Recommendation Title 2">
+                        <h4
+                            class="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-3 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors duration-200">
+                            <i class="fa-brands fa-wpexplorer"></i> Explore Your New Recommendations System
+                        </h4>
+                        <p class="text-gray-600 dark:text-gray-300 mb-4 leading-relaxed text-sm">
+                            There are 3 different ways to categorize your interests Learn more now.
+                        </p>
+                        <span
+                            class="inline-flex items-center text-blue-600 dark:text-blue-400 font-medium text-base group-hover:text-blue-800 dark:group-hover:text-blue-300 transition-colors duration-200">
+                            Explore Now
+                            <svg class="w-4 h-4 ml-2 transform group-hover:translate-x-1 transition-transform duration-200"
+                                fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7">
+                                </path>
+                            </svg>
+                        </span>
+                    </a>
+                </div>
+            </div>
+
             <!-- Subscription Information Section -->
             <div
                 class="bg-white shadow-lg rounded-xl p-6 mb-8 border border-gray-200 transition-all duration-300 hover:shadow-xl">
@@ -269,7 +479,7 @@
                 class="bg-white shadow-lg rounded-xl p-6 border border-gray-200 transition-all duration-300 hover:shadow-xl">
                 <div class="flex justify-between items-center mb-6 border-b border-gray-100 pb-4">
                     <h3 class="text-xl font-semibold text-gray-800">Your Reminders</h3>
-                    <a href="reminders.html"
+                    <a href="/reminders"
                         class="px-4 py-2 text-sm bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors duration-300 flex items-center">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24"
                             stroke="currentColor">
@@ -306,405 +516,79 @@
     </main>
 
     <!-- Footer -->
+    <!-- Footer -->
     <footer class="bg-white border-t border-gray-200 mt-12">
-        <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-            <div class="flex flex-col md:flex-row justify-between items-center">
-                <div class="mb-4 md:mb-0">
-                    <p class="text-sm text-gray-500">© 2025 Pestector. All rights reserved.</p>
+        <div class="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+            <!-- Main Footer Content -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Company Info -->
+                <div class="flex flex-col">
+                    <h3 class="text-sm font-semibold text-gray-900 tracking-wider uppercase mb-3">Pestector</h3>
+                    <p class="text-sm text-gray-600 max-w-xs">Helping plant lovers keep their green friends healthy and
+                        thriving since 2024.</p>
+                    <div class="mt-4">
+                        <p class="text-sm text-gray-500">© 2025 Pestector. All rights reserved.</p>
+                    </div>
                 </div>
-                <div class="flex space-x-6">
-                    <a href="#" class="text-gray-400 hover:text-gray-500"><i class="fab fa-twitter"></i></a>
-                    <a href="#" class="text-gray-400 hover:text-gray-500"><i class="fab fa-facebook"></i></a>
-                    <a href="#" class="text-gray-400 hover:text-gray-500"><i class="fab fa-instagram"></i></a>
+
+                <!-- Quick Links -->
+                <div class="flex flex-col md:items-center">
+                    <h3 class="text-sm font-semibold text-gray-900 tracking-wider uppercase mb-3">Quick Links</h3>
+                    <ul class="space-y-2">
+                        <li><a href="/" class="text-sm text-gray-600 hover:text-indigo-600 transition-colors">Home</a>
+                        </li>
+                        <li><a href="/plants" class="text-sm text-gray-600 hover:text-indigo-600 transition-colors">My
+                                Plants</a></li>
+                        <li><a href="/library"
+                                class="text-sm text-gray-600 hover:text-indigo-600 transition-colors">Plant
+                                Database</a></li>
+                        <li><a href="/help" class="text-sm text-gray-600 hover:text-indigo-600 transition-colors">Help &
+                                Support</a></li>
+                    </ul>
                 </div>
+
+                <!-- Connect Section -->
+                <div class="flex flex-col md:items-end">
+                    <h3 class="text-sm font-semibold text-gray-900 tracking-wider uppercase mb-3">Connect With Us</h3>
+                    <div class="flex space-x-4">
+                        <a href="#soon-twitter" class="text-gray-400 hover:text-blue-400 transition-colors"><i
+                                class="fab fa-twitter h-6 w-6"></i></a>
+                        <a href="#soon-facebook" class="text-gray-400 hover:text-blue-600 transition-colors"><i
+                                class="fab fa-facebook h-6 w-6"></i></a>
+                        <a href="#soon-instagram" class="text-gray-400 hover:text-pink-600 transition-colors"><i
+                                class="fab fa-instagram h-6 w-6"></i></a>
+                        <a href="#soon-pinterest" class="text-gray-400 hover:text-red-600 transition-colors"><i
+                                class="fab fa-pinterest h-6 w-6"></i></a>
+                    </div>
+                    <div class="mt-6">
+                        <h4 class="text-xs font-semibold text-gray-900 uppercase mb-2">Subscribe for updates</h4>
+                        <div class="flex mt-1">
+                            <input type="email" placeholder="Your email"
+                                class="min-w-0 px-3 py-2 text-gray-900 placeholder-gray-500 border border-gray-300 rounded-l-md focus:outline-none focus:ring-1 focus:ring-green-500 focus:border-green-500 text-sm" />
+                            <button
+                                class="inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-r-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Subscribe</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bottom Bar -->
+            <div
+                class="pt-8 mt-8 border-t border-gray-200 flex flex-col md:flex-row justify-between items-center text-xs text-gray-500">
+                <div class="flex space-x-6 mb-4 md:mb-0">
+                    <a href="/privacy-policy" class="hover:text-gray-900 transition-colors">Privacy Policy</a>
+                    <a href="/terms" class="hover:text-gray-900 transition-colors">Terms of Service</a>
+                    <a href="/contact" class="hover:text-gray-900 transition-colors">Contact Us</a>
+                </div>
+                <p>Designed with ♥ for plant enthusiasts everywhere</p>
             </div>
         </div>
     </footer>
 
+
+
     <!-- JavaScript -->
-    <script>
-        const apiBaseUrl = '/api';
-
-        // DOM Elements
-        const scansByMonthChart = document.getElementById('scansByMonthChart');
-        const commonDiseasesList = document.getElementById('commonDiseasesList');
-        const remindersList = document.getElementById('remindersList');
-        const logoutBtn = document.getElementById('logoutBtn');
-        const profileDropdownBtn = document.getElementById('profileDropdownBtn');
-        const profileDropdown = document.getElementById('profileDropdown');
-        const subscriptionInfo = document.getElementById('subscriptionInfo');
-        const userInfo = document.getElementById('userInfo');
-
-        // Icons for care types
-        const careTypeIcons = {
-            water: 'fas fa-tint',
-            fertilize: 'fas fa-seedling',
-            prune: 'fas fa-cut',
-            repot: 'fas fa-archive',
-            inspect: 'fas fa-search'
-        };
-
-        // Helper function to format month and year
-        function formatMonthYear(year, month) {
-            const date = new Date(year, month - 1);
-            return date.toLocaleString('en', { month: 'long', year: 'numeric' });
-        }
-
-        // Generic error handler
-        function handleFetchError(error, elementId, message) {
-            console.error(`Error: ${message}`, error);
-            const element = document.getElementById(elementId);
-            if (element) {
-                element.innerHTML = `<p class="text-sm text-red-600">${message}: ${error.message || 'Unknown error'}</p>`;
-            } else {
-                console.error(`Element with ID '${elementId}' not found`);
-            }
-        }
-
-        // Fetch and display analytics
-        async function fetchAnalytics() {
-            try {
-                const token = localStorage.getItem('token') || getTokenFromCookies();
-                if (!token) {
-                    console.warn('No token found, redirecting to login');
-                    window.location.href = '/login.html';
-                    return;
-                }
-
-                const response = await fetch(`${apiBaseUrl}/analytics/user`, {
-                    method: 'GET',
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
-
-                if (!response.ok) {
-                    const errorData = await response.json();
-                    throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
-                }
-
-                const data = await response.json();
-
-                const scansByMonth = data.analytics.scansByMonth;
-                const labels = scansByMonth.map(item => formatMonthYear(item._id.year, item._id.month));
-                const values = scansByMonth.map(item => item.count);
-
-                new Chart(scansByMonthChart, {
-                    type: 'bar',
-                    data: {
-                        labels: labels,
-                        datasets: [{
-                            label: 'Scans by Month',
-                            data: values,
-                            backgroundColor: 'rgba(79, 70, 229, 0.6)',
-                            borderColor: 'rgba(79, 70, 229, 1)',
-                            borderWidth: 1,
-                            hoverBackgroundColor: 'rgba(79, 70, 229, 0.8)'
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        scales: {
-                            y: { beginAtZero: true, title: { display: true, text: 'Number of Scans' } },
-                            x: { title: { display: true, text: 'Month' } }
-                        },
-                        plugins: {
-                            legend: { position: 'top' },
-                            tooltip: { backgroundColor: 'rgba(0, 0, 0, 0.8)' }
-                        }
-                    }
-                });
-
-                const commonDiseases = data.analytics.commonDiseases;
-                commonDiseasesList.innerHTML = commonDiseases.map(disease => `
-                    <li class="flex items-center justify-between py-2 px-3 bg-gray-50 rounded-lg">
-                        <span class="font-medium text-gray-800">${disease._id}</span>
-                        <span class="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full">${disease.count}</span>
-                    </li>
-                `).join('') || '<li class="text-sm text-gray-500">No diseases detected.</li>';
-            } catch (error) {
-                handleFetchError(error, 'commonDiseasesList', 'Failed to load analytics');
-            }
-        }
-
-        // Fetch and display reminders
-        async function fetchReminders() {
-            try {
-                const token = localStorage.getItem('token') || getTokenFromCookies();
-                if (!token) {
-                    console.warn('No token found, redirecting to login');
-                    window.location.href = '/login.html';
-                    return;
-                }
-
-                const response = await fetch(`${apiBaseUrl}/reminders`, {
-                    method: 'GET',
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
-
-                if (!response.ok) {
-                    const errorData = await response.json();
-                    throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
-                }
-
-                const data = await response.json();
-                remindersList.innerHTML = data.reminders.slice(0, 3).map(reminder => {
-                    const dueDate = new Date(reminder.nextDue);
-                    const now = new Date();
-                    const daysDiff = Math.ceil((dueDate - now) / (1000 * 60 * 60 * 24));
-                    let statusClass, statusText;
-
-                    if (daysDiff < 0) {
-                        statusClass = 'bg-red-50 border-l-4 border-red-400';
-                        statusText = `<span class="px-2 py-1 text-xs font-medium rounded bg-red-200 text-red-800">Overdue</span>`;
-                    } else if (daysDiff <= 5) {
-                        statusClass = 'bg-yellow-50 border-l-4 border-yellow-400';
-                        statusText = `<span class="px-2 py-1 text-xs font-medium rounded bg-yellow-200 text-yellow-800">Due in ${daysDiff} day${daysDiff === 1 ? '' : 's'}</span>`;
-                    } else {
-                        statusClass = 'bg-green-50 border-l-4 border-green-400';
-                        statusText = `<span class="px-2 py-1 text-xs font-medium rounded bg-green-200 text-green-800">Due in ${daysDiff} days</span>`;
-                    }
-
-                    return `
-                        <div class="flex items-center p-4 ${statusClass} rounded-lg">
-                            <div class="flex-shrink-0 mr-4">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 ${daysDiff < 0 ? 'text-red-500' : daysDiff <= 5 ? 'text-yellow-500' : 'text-green-500'}" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="${daysDiff < 0 ? 'M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z' : 'M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z'}" />
-                                </svg>
-                            </div>
-                            <div class="flex-1">
-                                <h4 class="text-md font-medium text-gray-900">${reminder.plantName}</h4>
-                                <p class="text-sm text-gray-600">Next Due: ${dueDate.toLocaleDateString("en")}</p>
-                            </div>
-                            <div class="flex-shrink-0 ml-4">
-                                ${statusText}
-                            </div>
-                        </div>
-                    `;
-                }).join('') || '<p class="text-sm text-gray-500">No reminders yet.</p>';
-            } catch (error) {
-                handleFetchError(error, 'remindersList', 'Failed to load reminders');
-            }
-        }
-
-        // Mark a reminder as completed
-        async function markAsCompleted(reminderId) {
-            try {
-                const token = localStorage.getItem('token') || getTokenFromCookies();
-                if (!token) {
-                    window.location.href = '/login.html';
-                    return;
-                }
-
-                const response = await fetch(`${apiBaseUrl}/reminders/${reminderId}/complete`, {
-                    method: 'PUT',
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
-
-                if (!response.ok) {
-                    const errorData = await response.json();
-                    throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
-                }
-
-                fetchReminders();
-            } catch (error) {
-                console.error('Error marking reminder as completed:', error);
-                alert('Failed to mark reminder as completed: ' + error.message);
-            }
-        }
-
-        // Fetch and display subscription information
-        // Fetch and display subscription information
-        async function fetchSubscriptionInfo() {
-            try {
-                const token = localStorage.getItem('token') || getTokenFromCookies();
-                if (!token) {
-                    console.warn('No token found, redirecting to login');
-                    window.location.href = '/login.html';
-                    return;
-                }
-
-                // Fetch subscription data
-                const response = await fetch(`${apiBaseUrl}/subscribe`, {
-                    method: 'GET',
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
-
-                if (!response.ok) {
-                    const errorData = await response.json();
-                    throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
-                }
-
-                const data = await response.json();
-                const subscription = data.subscription || {};
-
-                // Fetch profile data
-                const profileResponse = await fetch(`${apiBaseUrl}/auth/profile`, {
-                    method: 'GET',
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
-
-                if (!profileResponse.ok) {
-                    const errorData = await profileResponse.json();
-                    throw new Error(errorData.message || `HTTP error! status: ${profileResponse.status}`);
-                }
-
-                const profileData = await profileResponse.json();
-                const subscriptionStatus = profileData.user?.subscription?.status || 'Active'; // Fallback to 'Active'
-                const subscriptionInfoData = profileData.subscription_info || { scans_used: 0, scan_limit: 10 }; // Fallback values
-                const scanPercentage = (subscriptionInfoData.scans_used / subscriptionInfoData.scan_limit) * 100;
-
-                document.getElementById('subscriptionStatus').textContent = subscriptionStatus;
-                document.getElementById('currentPlan').textContent = subscription.currentPlan || 'Not set';
-
-                subscriptionInfo.innerHTML = `
-            <div class="bg-gray-50 p-4 rounded-lg">
-                <p class="text-sm font-medium text-gray-500 mb-1">Current Plan</p>
-                <p id="currentPlan" class="text-lg font-medium text-gray-900 capitalize flex items-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-indigo-600" viewBox="0 0 20 20" fill="currentColor">
-                        <path fill-rule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
-                    </svg>
-                    ${subscription.currentPlan || 'Not set'}
-                </p>
-
-                <p class="text-sm font-medium text-gray-500 mb-1">Scan Usage</p>
-                <div class="relative pt-1">
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <span class="text-lg font-medium text-gray-900 inline-block">${subscriptionInfoData.scans_used} / ${subscriptionInfoData.scan_limit}</span>
-                        </div>
-                        <div class="text-right">
-                            <span class="text-sm font-semibold text-indigo-700">${scanPercentage.toFixed(0)}%</span>
-                        </div>
-                    </div>
-                    <div class="overflow-hidden h-2 mt-2 text-xs flex rounded bg-indigo-200">
-                        <div style="width: ${scanPercentage}%" class="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-indigo-600"></div>
-                    </div>
-                </div>
-            </div>
-            <div class="bg-gray-50 p-4 rounded-lg">
-                <p class="text-sm font-medium text-gray-500 mb-2">Features</p>
-                <ul id="featureList" class="text-sm text-gray-700 space-y-2">
-                    <li class="flex items-center">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2 ${subscription.features?.scanLimit ? 'text-green-600' : 'text-gray-400'}" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                        </svg>
-                        Scan Limit: ${subscription.features?.scanLimit || 'Not set'}
-                    </li>
-                    <li class="flex items-center">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2 ${subscription.features?.prioritySupport ? 'text-green-600' : 'text-gray-400'}" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                        </svg>
-                        Priority Support: ${subscription.features?.prioritySupport ? 'Yes' : 'No'}
-                    </li>
-                    <li class="flex items-center">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2 ${subscription.features?.advancedAnalytics ? 'text-green-600' : 'text-gray-400'}" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                        </svg>
-                        Advanced Analytics: ${subscription.features?.advancedAnalytics ? 'Yes' : 'No'}
-                    </li>
-                    <li class="flex items-center">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2 ${subscription.features?.apiAccess ? 'text-green-600' : 'text-gray-400'}" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                        </svg>
-                        API Access: ${subscription.features?.apiAccess ? 'Yes' : 'No'}
-                    </li>
-                </ul>
-            </div>
-        `;
-            } catch (error) {
-                handleFetchError(error, 'subscriptionInfo', 'Failed to load subscription information');
-            }
-        }
-
-        // Fetch and display user information
-        async function fetchUserInfo() {
-            try {
-                const token = localStorage.getItem('token') || getTokenFromCookies();
-                if (!token) {
-                    console.warn('No token found, redirecting to login');
-                    window.location.href = '/login.html';
-                    return;
-                }
-
-                const response = await fetch(`${apiBaseUrl}/auth/profile`, {
-                    method: 'GET',
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
-
-                if (!response.ok) {
-                    const errorText = await response.text(); // Get the response as text
-                    try {
-                        const errorData = JSON.parse(errorText); // Try to parse it as JSON
-                        throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
-                    } catch (e) {
-                        // If parsing fails, it's not JSON, so throw the plain text error
-                        throw new Error(errorText || `HTTP error! status: ${response.status}`);
-                    }
-                }
-
-                const data = await response.json();
-                const user = data.user;
-
-                userInfo.innerHTML = `
-            <div class="bg-gray-50 p-4 rounded-lg">
-                <p class="text-sm font-medium text-gray-500 mb-1">Username</p>
-                <p id="username" class="text-lg font-medium text-gray-900">${user.username || 'Not set'}</p>
-            </div>
-            <div class="bg-gray-50 p-4 rounded-lg">
-                <p class="text-sm font-medium text-gray-500 mb-1">Email</p>
-                <p id="email" class="text-lg font-medium text-gray-900">${user.email || 'Not set'}</p>
-            </div>
-            <div class="bg-gray-50 p-4 rounded-lg">
-                <p class="text-sm font-medium text-gray-500 mb-1">Full Name</p>
-                <p id="fullName" class="text-lg font-medium text-gray-900">${user.fullName || 'Not set'}</p>
-            </div>
-            <div class="bg-gray-50 p-4 rounded-lg">
-                <p class="text-sm font-medium text-gray-500 mb-1">Phone Number</p>
-                <p id="phoneNumber" class="text-lg font-medium text-gray-900">${user.phoneNumber || 'Not set'}</p>
-            </div>
-            <div class="bg-gray-50 p-4 rounded-lg md:col-span-2">
-                <p class="text-sm font-medium text-gray-500 mb-1">Location</p>
-                <p id="location" class="text-lg font-medium text-gray-900">${user.location && user.location.latitude && user.location.longitude ? `${user.location.latitude}, ${user.location.longitude}` : 'Not set'}</p>
-            </div>
-        `;
-            } catch (error) {
-                handleFetchError(error, 'userInfo', 'Failed to load user information');
-            }
-        }
-
-        // Logout function
-        function logout() {
-            localStorage.removeItem('token');
-            document.cookie = 'token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
-            window.location.href = '/login.html';
-        }
-
-        // Get token from cookies
-        function getTokenFromCookies() {
-            return document.cookie.split('; ').find(row => row.startsWith('token='))?.split('=')[1];
-        }
-
-        // Event Listeners
-        logoutBtn.addEventListener('click', logout);
-        profileDropdownBtn.addEventListener('click', () => {
-            profileDropdown.classList.toggle('hidden');
-        });
-
-        document.addEventListener('click', (event) => {
-            if (!profileDropdownBtn.contains(event.target) && !profileDropdown.contains(event.target)) {
-                profileDropdown.classList.add('hidden');
-            }
-        });
-
-        // Initial fetch with error logging
-        Promise.all([
-            fetchAnalytics().catch(err => console.error('Analytics fetch failed:', err)),
-            fetchReminders().catch(err => console.error('Reminders fetch failed:', err)),
-            fetchSubscriptionInfo().catch(err => console.error('Subscription fetch failed:', err)),
-            fetchUserInfo().catch(err => console.error('User info fetch failed:', err))
-        ]).then(() => console.log('All fetch attempts completed'))
-            .catch(err => console.error('Unexpected error in fetch promises:', err));
-    </script>
+    <script src="scripts/dashboard.js"></script>
 </body>
 
 </html>

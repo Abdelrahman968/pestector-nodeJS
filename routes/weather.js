@@ -16,7 +16,7 @@ router.get("/weather-recommendations", authenticateToken, async (req, res) => {
       });
     }
 
-    console.log("Fetching weather for:", { lat, lng }); // Debug
+    // console.log("Fetching weather for:", { lat, lng }); // Debug
     const weatherResponse = await axios.get(
       "https://api.weatherapi.com/v1/forecast.json",
       {
@@ -31,7 +31,7 @@ router.get("/weather-recommendations", authenticateToken, async (req, res) => {
     );
 
     const weather = weatherResponse.data;
-    console.log("WeatherAPI Response:", weather); // Debug
+    // console.log("WeatherAPI Response:", weather); // Debug
 
     if (
       !weather.current ||

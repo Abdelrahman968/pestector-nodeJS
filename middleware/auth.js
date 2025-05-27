@@ -20,7 +20,7 @@ const authenticateToken = (req, res, next) => {
     const user = jwt.verify(token, JWT_SECRET);
     req.user = user; // Attach the decoded user to the request object
     req.isGuest = false;
-    console.log("Decoded token:", user); // Log the decoded token to check the role
+    // console.log("Decoded token:", user); // Log the decoded token to check the role
     next();
   } catch (err) {
     console.error("JWT verification failed:", err.message);

@@ -162,7 +162,7 @@ const getUserSubscriptionInfo = async (userId) => {
   } catch (error) {
     console.error(
       `[getUserSubscriptionInfo] Error during subscription fetch or processing:`,
-      error
+      error,
     );
     // console.log(
     //   `[getUserSubscriptionInfo] Falling back to 'free' plan due to error.`
@@ -284,7 +284,7 @@ const checkScanLimit = async (req, res, next) => {
     const user = await User.findById(req.user.id);
     if (!user) {
       console.error(
-        `[checkScanLimit] User not found in DB for id: ${req.user.id}`
+        `[checkScanLimit] User not found in DB for id: ${req.user.id}`,
       );
       return res
         .status(404)
@@ -387,14 +387,14 @@ router.post(
       const fileExtension = path.extname(req.file.originalname || ".jpg");
       const fileNameWithoutExt = path.basename(
         req.file.originalname || "upload",
-        fileExtension
+        fileExtension,
       );
       const uniqueId = uuidv4().split("-")[0];
       const newFileName = `${fileNameWithoutExt}-${timestamp}-${uniqueId}${fileExtension}`;
 
       const relativePath = `/Uploads/${userIdForPath}/${newFileName}`;
       const baseUrl =
-        process.env.BASE_URL || `${req.protocol}://${req.get("host")}`;
+        process.env.APP_URL || `${req.protocol}://${req.get("host")}`;
       const imageUrl = `${baseUrl}${relativePath}`;
 
       const cacheKey = crypto
@@ -440,7 +440,7 @@ router.post(
               "X-API-KEY": apiKey,
             },
             timeout: 30000, // 30 seconds
-          }
+          },
         );
         // console.log("[POST /classify] Python API response received.");
         cache.set(cacheKey, pythonResponse.data);
@@ -507,7 +507,7 @@ router.post(
         } catch (error) {
           console.error(
             "[POST /classify] Error creating treatment plan:",
-            error
+            error,
           );
           treatmentPlanWarning = {
             type: "treatment_plan_failed",
@@ -606,7 +606,7 @@ router.post(
               scans_used: totalScansForGuest, // This is total count for guest
               scans_remaining: Math.max(
                 0,
-                MAX_GUEST_SCANS - totalScansForGuest
+                MAX_GUEST_SCANS - totalScansForGuest,
               ),
             }
           : {
@@ -615,7 +615,7 @@ router.post(
               scans_used: scansMadeToday, // This is daily count for user
               scans_remaining: Math.max(
                 0,
-                req.subscriptionInfo.scan_limit - scansMadeToday
+                req.subscriptionInfo.scan_limit - scansMadeToday,
               ),
               has_advanced_analytics:
                 req.subscriptionInfo.has_advanced_analytics,
@@ -629,33 +629,33 @@ router.post(
       console.error(
         "[POST /classify] Error classifying image:",
         error.message,
-        error.stack
+        error.stack,
       );
       if (error.response) {
         // Axios error
         console.error(
           "[POST /classify] Python API Error Data:",
-          error.response.data
+          error.response.data,
         );
         console.error(
           "[POST /classify] Python API Error Status:",
-          error.response.status
+          error.response.status,
         );
       }
 
       if (historyEntry?._id) {
         await History.findByIdAndDelete(historyEntry._id).catch((err) =>
-          console.error("History cleanup error:", err)
+          console.error("History cleanup error:", err),
         );
       }
       if (treatmentPlan?._id) {
         await TreatmentPlan.findByIdAndDelete(treatmentPlan._id).catch((err) =>
-          console.error("Treatment plan cleanup error:", err)
+          console.error("Treatment plan cleanup error:", err),
         );
       }
       if (analyticsEntry?._id) {
         await Analytics.findByIdAndDelete(analyticsEntry._id).catch((err) =>
-          console.error("Analytics cleanup error:", err)
+          console.error("Analytics cleanup error:", err),
         );
       }
 
@@ -690,7 +690,7 @@ router.post(
         // error: process.env.NODE_ENV === 'development' ? error.message : undefined, // Only show full error in dev
       });
     }
-  }
+  },
 );
 
 // Stats Endpoint
@@ -816,7 +816,7 @@ router.get(
             userType,
             plan: planFilter,
             statsScope,
-          })
+          }),
         )
         .digest("hex");
 
@@ -1057,9 +1057,9 @@ router.get(
               (
                 analyticsData.reduce(
                   (sum, item) => sum + item.avgConfidence,
-                  0
+                  0,
                 ) / analyticsData.length
-              ).toFixed(3)
+              ).toFixed(3),
             )
           : 0,
         average_processing_time: analyticsData.length
@@ -1067,16 +1067,16 @@ router.get(
               (
                 analyticsData.reduce(
                   (sum, item) => sum + item.avgProcessingTime,
-                  0
+                  0,
                 ) / analyticsData.length
-              ).toFixed(3)
+              ).toFixed(3),
             )
           : 0,
         top_plants: Object.entries(
           analyticsData.reduce((acc, item) => {
             acc[item._id.plant] = (acc[item._id.plant] || 0) + item.count;
             return acc;
-          }, {})
+          }, {}),
         )
           .sort((a, b) => b[1] - a[1])
           .slice(0, 5)
@@ -1086,7 +1086,7 @@ router.get(
             acc[item._id.condition] =
               (acc[item._id.condition] || 0) + item.count;
             return acc;
-          }, {})
+          }, {}),
         )
           .sort((a, b) => b[1] - a[1])
           .slice(0, 5)
@@ -1106,7 +1106,7 @@ router.get(
         error: error.message,
       });
     }
-  }
+  },
 );
 
 module.exports = router;

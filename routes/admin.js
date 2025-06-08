@@ -44,7 +44,7 @@ const logAdminAction = async (
   action,
   targetType,
   targetId,
-  details = {}
+  details = {},
 ) => {
   try {
     const auditLog = new AuditLog({
@@ -150,7 +150,7 @@ router.get("/users/export", async (req, res) => {
         (u) =>
           `${u.username},${u.email},${u.fullName || ""},${u.role},${
             u.subscription?.currentPlan || "free"
-          },${u.subscription?.status || "N/A"},${u.createdAt.toISOString()}`
+          },${u.subscription?.status || "N/A"},${u.createdAt.toISOString()}`,
       ),
     ].join("\n");
 
@@ -346,7 +346,7 @@ router.put("/users/:userId", async (req, res) => {
       userId,
       "system",
       "Account Updated",
-      "Your account details have been updated by an administrator."
+      "Your account details have been updated by an administrator.",
     );
 
     res.json({
@@ -361,7 +361,7 @@ router.put("/users/:userId", async (req, res) => {
         res,
         error,
         "Update failed: Email or phone number may already be in use.",
-        409
+        409,
       );
     } else if (error.name === "ValidationError") {
       handleError(res, error, `Update failed: ${error.message}`, 400);
@@ -689,7 +689,7 @@ router.post("/notifications/send", async (req, res) => {
       // Send to all users
       const users = await User.find({}, "_id"); // Get only IDs for efficiency
       const notificationPromises = users.map((user) =>
-        createNotification(user._id, type, title, message)
+        createNotification(user._id, type, title, message),
       );
       await Promise.all(notificationPromises);
       res.json({

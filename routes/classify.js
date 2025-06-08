@@ -1,4 +1,5 @@
-require("dotenv").config();
+// classify.js
+require("dotenv").config(); // Ensure .env variables are loaded
 const express = require("express");
 const multer = require("multer");
 const path = require("path");

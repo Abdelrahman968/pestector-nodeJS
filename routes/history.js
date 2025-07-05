@@ -55,7 +55,6 @@ router.post("/", authenticateToken, async (req, res) => {
 });
 
 // Route to fetch user's history with pagination and search
-// Route to fetch user's history with pagination and search
 router.get("/", authenticateToken, async (req, res) => {
   const { page = 1, limit = 10, search } = req.query;
 
@@ -206,12 +205,10 @@ router.put("/:id/link", authenticateToken, async (req, res) => {
       // Optional: Verify the plant belongs to the user
       const plant = await Plant.findOne({ _id: plantId, userId: req.user.id });
       if (!plant)
-        return res
-          .status(404)
-          .json({
-            status: "error",
-            message: "Plant not found or doesn't belong to user",
-          });
+        return res.status(404).json({
+          status: "error",
+          message: "Plant not found or doesn't belong to user",
+        });
     }
 
     history.plantId = plantId || null;

@@ -1,3 +1,6 @@
+require("dotenv").config();
+const Subscription = require("../models/Subscription");
+
 const express = require("express");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
@@ -521,44 +524,84 @@ router.post("/location", authenticateToken, async (req, res) => {
 
 // Get user profile
 router.get("/profile", authenticateToken, async (req, res) => {
-  if (req.isGuest)
-    return res.status(401).json({ message: "Authentication required" });
+  if (req.isGuest) {
+    return res
+      .status(401)
+      .json({ status: "error", message: "Authentication required" });
+  }
 
   try {
     const user = await User.findById(req.user.id).select("-password"); // Exclude password
-    if (!user) return res.status(404).json({ message: "User not found" });
-
-    const currentPlan = user.subscription?.currentPlan || "free";
-    const planDetails =
-      SUBSCRIPTION_PLANS[currentPlan] || SUBSCRIPTION_PLANS.free;
-
-    if (
-      !user.subscription ||
-      JSON.stringify(user.subscription.features) !== JSON.stringify(planDetails)
-    ) {
-      user.subscription = {
-        currentPlan,
-        status: user.subscription?.status || "active",
-        features: { ...planDetails },
-      };
-      await user.save();
+    if (!user) {
+      return res
+        .status(404)
+        .json({ status: "error", message: "User not found" });
     }
 
-    const scansMadeToday = user.scanCount || 0;
-    const scanLimit = user.subscription.features.scanLimit;
-    const scansRemaining = Math.max(0, scanLimit - scansMadeToday);
+    // Fetch subscription from Subscription model
+    let subscription = await Subscription.findOne({
+      userId: req.user.id,
+      status: "active",
+    });
+
+    let planDetails;
+    let currentPlan = "free";
+    let scanLimit = SUBSCRIPTION_PLANS.free?.features.scanLimit || 10;
+    let scansUsed = 0;
+    let hasAdvancedAnalytics =
+      SUBSCRIPTION_PLANS.free?.features.advancedAnalytics || false;
+    let prioritySupport =
+      SUBSCRIPTION_PLANS.free?.features.prioritySupport || false;
+    let apiAccess = SUBSCRIPTION_PLANS.free?.features.apiAccess || false;
+
+    if (subscription) {
+      currentPlan = subscription.plan;
+      planDetails = SUBSCRIPTION_PLANS[currentPlan] || SUBSCRIPTION_PLANS.free;
+      scanLimit =
+        subscription.features.scanLimit || planDetails.features.scanLimit;
+      scansUsed = subscription.getCurrentScanCount();
+      hasAdvancedAnalytics =
+        subscription.features.advancedAnalytics ??
+        planDetails.features.advancedAnalytics;
+      prioritySupport =
+        subscription.features.prioritySupport ??
+        planDetails.features.prioritySupport;
+      apiAccess =
+        subscription.features.apiAccess ?? planDetails.features.apiAccess;
+    } else {
+      // Create a free plan subscription if none exists
+      subscription = await Subscription.findOneAndUpdate(
+        { userId: req.user.id, plan: "free", status: "active" },
+        {
+          userId: req.user.id,
+          plan: "free",
+          status: "active",
+          features: SUBSCRIPTION_PLANS.free?.features || {
+            scanLimit: 10,
+            advancedAnalytics: false,
+          },
+          cycle: "monthly",
+          startDate: new Date(),
+          endDate: null,
+          scanUsage: [],
+        },
+        { upsert: true, new: true }
+      );
+      planDetails = SUBSCRIPTION_PLANS.free;
+    }
 
     const subscriptionInfo = {
       plan: currentPlan,
       scan_limit: scanLimit,
-      scans_used: scansMadeToday,
-      scans_remaining: scansRemaining,
-      has_advanced_analytics: user.subscription.features.advancedAnalytics,
-      priority_support: user.subscription.features.prioritySupport,
-      api_access: user.subscription.features.apiAccess,
+      scans_used: scansUsed,
+      scans_remaining: Math.max(0, scanLimit - scansUsed),
+      has_advanced_analytics: hasAdvancedAnalytics,
+      priority_support: prioritySupport,
+      api_access: apiAccess,
     };
 
     const enhancedResponse = {
+      status: "success",
       user: {
         id: user._id,
         username: user.username,
@@ -568,7 +611,6 @@ router.get("/profile", authenticateToken, async (req, res) => {
         profileImage: user.profileImage,
         location: user.location,
         role: user.role,
-        subscription: user.subscription,
         twoFactorSecret: !!user.twoFactorSecret,
       },
       subscription_info: subscriptionInfo,
@@ -576,8 +618,167 @@ router.get("/profile", authenticateToken, async (req, res) => {
 
     res.json(enhancedResponse);
   } catch (error) {
-    console.error("Profile fetch error:", error);
-    res.status(500).json({ message: "Failed to fetch profile" });
+    console.error("[GET /profile] Error:", error);
+    res
+      .status(500)
+      .json({ status: "error", message: "Failed to fetch profile" });
+  }
+});
+
+// Add this route near the other GET routes in your auth.js file
+router.get("/search", authenticateToken, async (req, res) => {
+  if (req.isGuest) {
+    return res
+      .status(401)
+      .json({ status: "error", message: "Authentication required" });
+  }
+
+  try {
+    const { email } = req.query;
+    if (!email) {
+      return res.status(400).json({
+        status: "error",
+        message: "Email query parameter is required",
+      });
+    }
+
+    // Check if the requesting user is an admin
+    const requestingUser = await User.findById(req.user.id);
+    if (!requestingUser || requestingUser.role !== "admin") {
+      return res.status(403).json({
+        status: "error",
+        message: "Admin access required",
+      });
+    }
+
+    const user = await User.findOne({ email }).select(
+      "-password -twoFactorSecret"
+    );
+    if (!user) {
+      return res.status(404).json({
+        status: "error",
+        message: "User not found",
+      });
+    }
+
+    // Get subscription info
+    const subscription = await Subscription.findOne({
+      userId: user._id,
+      status: "active",
+    });
+
+    res.json({
+      status: "success",
+      user,
+      subscription: subscription || null,
+    });
+  } catch (error) {
+    console.error("[GET /search] Error:", error);
+    res.status(500).json({
+      status: "error",
+      message: "Failed to search for user",
+    });
+  }
+});
+
+router.get("/search", authenticateToken, async (req, res) => {
+  if (req.isGuest) {
+    return res
+      .status(401)
+      .json({ status: "error", message: "Authentication required" });
+  }
+
+  try {
+    const { email } = req.query;
+    if (!email) {
+      return res.status(400).json({
+        status: "error",
+        message: "Email query parameter is required",
+      });
+    }
+
+    // Check if the requesting user is an admin
+    const requestingUser = await User.findById(req.user.id);
+    if (!requestingUser || requestingUser.role !== "admin") {
+      return res.status(403).json({
+        status: "error",
+        message: "Admin access required",
+      });
+    }
+
+    const user = await User.findOne({ email }).select(
+      "-password -twoFactorSecret"
+    );
+    if (!user) {
+      return res.status(404).json({
+        status: "error",
+        message: "User not found",
+      });
+    }
+
+    // Get subscription info
+    const subscription = await Subscription.findOne({
+      userId: user._id,
+      status: "active",
+    });
+
+    res.json({
+      status: "success",
+      user,
+      subscription: subscription || null,
+    });
+  } catch (error) {
+    console.error("[GET /search] Error:", error);
+    res.status(500).json({
+      status: "error",
+      message: "Failed to search for user",
+    });
+  }
+});
+
+router.get("/find-user", authenticateToken, async (req, res) => {
+  if (req.isGuest) {
+    return res
+      .status(401)
+      .json({ status: "error", message: "Authentication required" });
+  }
+
+  try {
+    const { email } = req.query;
+    if (!email) {
+      return res.status(400).json({
+        status: "error",
+        message: "Email query parameter is required",
+      });
+    }
+
+    // Check if the requesting user is an admin
+    const requestingUser = await User.findById(req.user.id);
+    if (!requestingUser || requestingUser.role !== "admin") {
+      return res.status(403).json({
+        status: "error",
+        message: "Admin access required",
+      });
+    }
+
+    const user = await User.findOne({ email }).select("_id email username");
+    if (!user) {
+      return res.status(404).json({
+        status: "error",
+        message: "User not found",
+      });
+    }
+
+    res.json({
+      status: "success",
+      user,
+    });
+  } catch (error) {
+    console.error("[GET /find-user] Error:", error);
+    res.status(500).json({
+      status: "error",
+      message: "Failed to find user",
+    });
   }
 });
 

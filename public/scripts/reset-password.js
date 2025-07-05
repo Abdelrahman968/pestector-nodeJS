@@ -167,7 +167,7 @@ document
       // Redirect to login page after success
       setTimeout(() => {
         console.log("Redirecting to Login Page");
-        window.location.href = "/login.html";
+        window.location.href = "/login";
       }, 2000);
     } catch (error) {
       console.error("Error during password reset:", error);

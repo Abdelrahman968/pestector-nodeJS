@@ -213,8 +213,7 @@ async function logoutUser() {
   }
 }
 
-// --- Subscription Specific Functions (from subscribe.js) ---
-
+// Fetch and display current subscription with scan stats
 // Fetch and display current subscription with scan stats
 async function fetchSubscription() {
   try {
@@ -230,66 +229,93 @@ async function fetchSubscription() {
     });
     const subData = await subResponse.json();
 
-    if (!subResponse.ok)
+    if (!subResponse.ok) {
       throw new Error(subData.message || "Failed to fetch subscription");
+    }
 
     if (subData.status === "success" && subData.subscription) {
       const sub = subData.subscription;
-      if (currentPlan) currentPlan.textContent = sub.currentPlan;
-      if (currentStatus) currentStatus.textContent = sub.status;
-      if (expiresAt)
+
+      // Update status with appropriate icon color
+      const statusIcon = document.getElementById("statusIcon");
+      if (statusIcon) {
+        switch (sub.status?.toLowerCase()) {
+          case "active":
+            statusIcon.style.color = "#10B981"; // green
+            break;
+          case "pending":
+            statusIcon.style.color = "#F59E0B"; // yellow
+            break;
+          case "canceled":
+          case "expired":
+            statusIcon.style.color = "#EF4444"; // red
+            break;
+          default:
+            statusIcon.style.color = "#6B7280"; // gray
+        }
+      }
+
+      if (currentPlan) currentPlan.textContent = sub.currentPlan || "Free";
+      if (currentStatus) currentStatus.textContent = sub.status || "Active";
+      if (expiresAt) {
         expiresAt.textContent = sub.expiresAt
           ? new Date(sub.expiresAt).toLocaleDateString("en-GB")
-          : "Lifetime";
+          : "N/A";
+      }
       if (autoRenew) autoRenew.textContent = sub.autoRenew ? "Yes" : "No";
-      if (scanLimit)
-        scanLimit.textContent =
-          sub.features.scanLimit !== undefined ? sub.features.scanLimit : "N/A";
+      if (scanLimit) {
+        scanLimit.textContent = sub.features?.scanLimit || "N/A";
+      }
+      if (scansRemaining) {
+        const remaining = sub.features?.scanLimit - (sub.scanUsage || 0);
+        scansRemaining.textContent = remaining >= 0 ? remaining : "0";
+      }
 
-      if (prioritySupport)
-        prioritySupport.textContent = sub.features.prioritySupport
+      // Update feature indicators
+      const features = sub.features || {};
+      if (prioritySupport) {
+        prioritySupport.textContent = features.prioritySupport ? "Yes" : "No";
+        if (prioritySupportIcon) {
+          prioritySupportIcon.classList.toggle(
+            "hidden",
+            !features.prioritySupport
+          );
+        }
+        if (prioritySupportNoIcon) {
+          prioritySupportNoIcon.classList.toggle(
+            "hidden",
+            features.prioritySupport
+          );
+        }
+      }
+
+      if (advancedAnalytics) {
+        advancedAnalytics.textContent = features.advancedAnalytics
           ? "Yes"
           : "No";
-      if (prioritySupportIcon)
-        prioritySupportIcon.classList.toggle(
-          "hidden",
-          !sub.features.prioritySupport
-        );
-      if (prioritySupportNoIcon)
-        prioritySupportNoIcon.classList.toggle(
-          "hidden",
-          sub.features.prioritySupport
-        );
+        if (advancedAnalyticsIcon) {
+          advancedAnalyticsIcon.classList.toggle(
+            "hidden",
+            !features.advancedAnalytics
+          );
+        }
+        if (advancedAnalyticsNoIcon) {
+          advancedAnalyticsNoIcon.classList.toggle(
+            "hidden",
+            features.advancedAnalytics
+          );
+        }
+      }
 
-      if (advancedAnalytics)
-        advancedAnalytics.textContent = sub.features.advancedAnalytics
-          ? "Yes"
-          : "No";
-      if (advancedAnalyticsIcon)
-        advancedAnalyticsIcon.classList.toggle(
-          "hidden",
-          !sub.features.advancedAnalytics
-        );
-      if (advancedAnalyticsNoIcon)
-        advancedAnalyticsNoIcon.classList.toggle(
-          "hidden",
-          sub.features.advancedAnalytics
-        );
-
-      if (apiAccess)
-        apiAccess.textContent = sub.features.apiAccess ? "Yes" : "No";
-      if (apiAccessIcon)
-        apiAccessIcon.classList.toggle("hidden", !sub.features.apiAccess);
-      if (apiAccessNoIcon)
-        apiAccessNoIcon.classList.toggle("hidden", sub.features.apiAccess);
-
-      // Fetch scan stats
-      const scanStats = await fetchScanStats(token);
-      if (scansRemaining)
-        scansRemaining.textContent =
-          scanStats.scansRemainingToday !== undefined
-            ? scanStats.scansRemainingToday
-            : "N/A";
+      if (apiAccess) {
+        apiAccess.textContent = features.apiAccess ? "Yes" : "No";
+        if (apiAccessIcon) {
+          apiAccessIcon.classList.toggle("hidden", !features.apiAccess);
+        }
+        if (apiAccessNoIcon) {
+          apiAccessNoIcon.classList.toggle("hidden", features.apiAccess);
+        }
+      }
 
       // Update action buttons visibility
       if (renewSubscriptionBtn && toggleAutoRenewBtn && cancelSubscriptionBtn) {
@@ -308,10 +334,12 @@ async function fetchSubscription() {
       throw new Error(subData.message || "Subscription data not found.");
     }
   } catch (error) {
-    showMessage(error.message || "Error fetching subscription", true); // Use main showMessage for page-level errors
+    console.error("Error fetching subscription:", error);
+    showMessage(error.message || "Error fetching subscription", true);
   }
 }
 
+// Fetch scan stats
 // Fetch scan stats
 async function fetchScanStats(token) {
   try {
@@ -320,17 +348,16 @@ async function fetchScanStats(token) {
     });
     const data = await response.json();
 
-    if (!response.ok)
+    if (!response.ok) {
       throw new Error(data.message || "Failed to fetch scan stats");
+    }
 
     return {
-      scansUsedToday: data.subscription_info?.scans_used_today || 0, // Adjusted based on typical API responses
-      scansRemainingToday: data.subscription_info?.scans_remaining_today || 0, // Adjusted
+      scansUsedToday: data.scanUsage || 0,
+      scansRemainingToday: (data.scanLimit || 0) - (data.scanUsage || 0),
     };
   } catch (error) {
     console.error("Error fetching scan stats:", error.message);
-    // Do not show a user-facing message here, as it's part of a larger fetch.
-    // The main fetchSubscription will handle overall errors.
     return { scansUsedToday: "N/A", scansRemainingToday: "N/A" };
   }
 }
@@ -497,6 +524,7 @@ function renderPlans() {
 }
 
 // Request plan change (requires admin approval)
+// Request plan change (requires admin approval)
 async function requestPlanChange(plan) {
   try {
     const token = getToken();
@@ -505,28 +533,54 @@ async function requestPlanChange(plan) {
       return;
     }
 
+    // Show loading state
+    const button = event.target;
+    const originalText = button.innerHTML;
+    button.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Processing...`;
+    button.disabled = true;
+
     const response = await fetch(`${apiBaseUrl}/`, {
-      // Assuming POST to /api/subscribe/ changes/requests plan
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify({ plan }), // API might expect planId or plan name
+      body: JSON.stringify({ plan }),
     });
+
     const data = await response.json();
 
-    if (!response.ok)
+    // Restore button state
+    button.innerHTML = originalText;
+    button.disabled = false;
+
+    if (!response.ok) {
       throw new Error(data.message || "Failed to request plan change");
+    }
 
     showToastMessage(
-      data.message || `Request for ${plan} plan submitted.`,
+      data.message || `Request for ${plan} plan submitted for admin approval.`,
       false
     );
-    fetchSubscription(); // Refresh current subscription view
-    fetchLogs(); // Refresh logs
+
+    // Refresh data
+    await fetchSubscription();
+    await fetchLogs();
   } catch (error) {
-    showToastMessage(error.message || "Error requesting plan change", true);
+    console.error("Plan change error:", error);
+    showToastMessage(
+      error.message ||
+        "Failed to request subscription. Please try again later.",
+      true
+    );
+
+    // Restore button state in case of error
+    const button = event.target;
+    if (button) {
+      button.innerHTML =
+        button.getAttribute("data-original-text") || "Choose Plan";
+      button.disabled = false;
+    }
   }
 }
 
@@ -786,6 +840,16 @@ document.addEventListener("DOMContentLoaded", () => {
       moreMenuMobile.classList.add("hidden");
     }
   });
+
+  // Add this to the DOMContentLoaded event listener
+  if (upgradeSubscriptionBtn) {
+    upgradeSubscriptionBtn.addEventListener("click", () => {
+      // Scroll to plans section
+      document
+        .getElementById("plansContainer")
+        ?.scrollIntoView({ behavior: "smooth" });
+    });
+  }
 
   // Logout button listener
   if (logoutBtn) logoutBtn.addEventListener("click", logoutUser);

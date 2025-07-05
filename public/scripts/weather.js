@@ -609,7 +609,7 @@ async function checkAuth() {
     // For guests, if on main weather page, maybe prompt to detect location
     const isWeatherPage =
       window.location.pathname === "/" ||
-      window.location.pathname.endsWith("index.html") ||
+      window.location.pathname.endsWith("index") ||
       window.location.pathname.includes("weather"); // Adjust as needed
     if (isWeatherPage && !latInput.value && !lngInput.value) {
       // If no coordinates yet

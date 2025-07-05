@@ -5,7 +5,7 @@ const subscriptionSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
     required: true,
-    index: true, // Improve query performance
+    index: true,
   },
   plan: {
     type: String,
@@ -35,7 +35,7 @@ const subscriptionSchema = new mongoose.Schema({
   discount: {
     type: Number,
     default: 0,
-    min: 0, // Ensure non-negative discounts
+    min: 0,
   },
   startDate: {
     type: Date,
@@ -43,7 +43,7 @@ const subscriptionSchema = new mongoose.Schema({
   },
   endDate: {
     type: Date,
-    default: null, // Allow null for free plans
+    default: null,
   },
   autoRenew: {
     type: Boolean,
@@ -57,13 +57,18 @@ const subscriptionSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
+  scanUsage: [
+    {
+      timestamp: { type: Date, default: Date.now },
+    },
+  ],
 });
 
-// Update updatedAt before saving
+// Update updatedAt and set defaults for free plan
 subscriptionSchema.pre("save", function (next) {
   this.updatedAt = Date.now();
-  // Set defaults for free plan
-  if (this.plan === "free") {
+  if (this.isNew && this.plan === "free") {
+    // Only reset for new free plan subscriptions
     this.features = {
       scanLimit: 10,
       prioritySupport: false,
@@ -74,11 +79,35 @@ subscriptionSchema.pre("save", function (next) {
     this.discount = 0;
     this.cycle = "monthly";
     this.autoRenew = false;
+    this.scanUsage = this.scanUsage || []; // Preserve existing scanUsage
   }
   next();
 });
 
-// Ensure indexes for common queries
+// Method to reset scan usage at the start of a new billing cycle
+subscriptionSchema.methods.resetScanUsage = function () {
+  this.scanUsage = [];
+};
+
+// Method to count scans in the current billing cycle
+subscriptionSchema.methods.getCurrentScanCount = function () {
+  const now = new Date();
+  const cycleStart = new Date(this.startDate);
+  if (this.cycle === "monthly") {
+    cycleStart.setMonth(now.getMonth());
+    cycleStart.setFullYear(now.getFullYear());
+    if (cycleStart > now) {
+      cycleStart.setMonth(cycleStart.getMonth() - 1);
+    }
+  } else if (this.cycle === "yearly") {
+    cycleStart.setFullYear(now.getFullYear());
+    if (cycleStart > now) {
+      cycleStart.setFullYear(cycleStart.getFullYear() - 1);
+    }
+  }
+  return this.scanUsage.filter((scan) => scan.timestamp >= cycleStart).length;
+};
+
 subscriptionSchema.index({ userId: 1, status: 1 });
 
 module.exports = mongoose.model("Subscription", subscriptionSchema);

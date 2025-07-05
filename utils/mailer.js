@@ -22,7 +22,7 @@ const getAppUrl = (resetUrl) => {
   if (isLocalhost(resetUrl)) {
     return "http://localhost:3000"; // Adjust port as needed
   }
-  return process.env.APP_URL || "https://yourapp.com"; // Your production URL
+  return process.env.FRONTEND_URL || "##"; // Your production URL
 };
 
 const sendPasswordResetEmail = async (toEmail, username, resetUrl) => {
@@ -354,7 +354,7 @@ const sendPasswordChangeConfirmation = async (
   username,
   changeTime = new Date()
 ) => {
-  const appUrl = process.env.APP_URL || "http://localhost:3000";
+  const appUrl = process.env.FRONTEND_URL || "http://localhost:3000";
   const formattedTime = changeTime.toLocaleString("en-US", {
     weekday: "long",
     year: "numeric",
@@ -694,7 +694,7 @@ Security Settings: ${appUrl}/account/security
 
 // Additional helper function for sending welcome emails
 const sendWelcomeEmail = async (toEmail, username) => {
-  const appUrl = process.env.APP_URL || "http://localhost:3000";
+  const appUrl = process.env.FRONTEND_URL || "http://localhost:3000";
 
   const welcomeHtml = `
 <!DOCTYPE html>

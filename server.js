@@ -3,7 +3,7 @@ const { PORT, PYTHON_API_URL } = require("./config/config");
 const fetch = require("node-fetch");
 const Models = require("./models");
 
-const APP_URL = process.env.APP_URL || "http://localhost:3000";
+const FRONTEND_URL = process.env.FRONTEND_URL || "http://localhost:3000";
 
 const updateOldImageUrls = async () => {
   console.log("Starting update of old image URLs...");
@@ -16,8 +16,8 @@ const updateOldImageUrls = async () => {
         item.imageUrl.startsWith("http://127.0.0.1:3000"))
     ) {
       let newUrl = item.imageUrl
-        .replace("http://localhost:3000", APP_URL)
-        .replace("http://127.0.0.1:3000", APP_URL);
+        .replace("http://localhost:3000", FRONTEND_URL)
+        .replace("http://127.0.0.1:3000", FRONTEND_URL);
 
       item.imageUrl = newUrl;
       await item.save();
@@ -39,7 +39,7 @@ app.listen(PORT, async () => {
       console.log("Successfully connected to Python server!");
     } else {
       console.log(
-        `Python server responded with an error. Status: ${response.status}, Message: ${text}`,
+        `Python server responded with an error. Status: ${response.status}, Message: ${text}`
       );
     }
   } catch (error) {

@@ -4,15 +4,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard | Pestector</title>
+    <title>Admin Dashboard | Subscription Management</title>
     <!-- Tailwind CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@3.3.3/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <!-- Font Awesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-
     <style>
         body {
             font-family: 'Inter', sans-serif;
@@ -42,6 +40,14 @@
             transform: translateY(-5px);
             box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
         }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
     </style>
 </head>
 
@@ -51,16 +57,16 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
             <div class="flex justify-between items-center">
                 <div class="flex items-center space-x-3">
-                    <div class="bg-indigo-600 text-white p-2 rounded-lg"><i class="fas fa-leaf text-xl"></i></div>
-                    <h1 class="text-2xl font-bold text-gray-900">Pestector Admin</h1>
+                    <div class="bg-indigo-600 text-white p-2 rounded-lg"><i class="fas fa-star text-xl"></i></div>
+                    <h1 class="text-2xl font-bold text-gray-900">Subscription Admin</h1>
                 </div>
                 <nav class="hidden md:flex space-x-6">
-                    <a href="/index"
-                        class="text-gray-500 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium"><i
-                            class="fas fa-home mr-2"></i>Home</a>
-                    <a href="/admin"
-                        class="text-indigo-600 border-b-2 border-indigo-600 px-3 py-2 text-sm font-medium"><i
-                            class="fas fa-star mr-2"></i>Subscriptions</a>
+                    <a href="/index" class="text-gray-500 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">
+                        <i class="fas fa-home mr-2"></i>Home
+                    </a>
+                    <a href="/admin" class="text-indigo-600 border-b-2 border-indigo-600 px-3 py-2 text-sm font-medium">
+                        <i class="fas fa-star mr-2"></i>Subscriptions
+                    </a>
                 </nav>
                 <div class="relative">
                     <button id="profileDropdownBtn"
@@ -72,8 +78,9 @@
                         <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Edit Profile</a>
                         <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Change Password</a>
                         <button id="logoutBtn"
-                            class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"><i
-                                class="fas fa-sign-out-alt mr-2"></i>Logout</button>
+                            class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                            <i class="fas fa-sign-out-alt mr-2"></i>Logout
+                        </button>
                     </div>
                 </div>
             </div>
@@ -85,8 +92,8 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <!-- Admin Section -->
             <div class="mb-8">
-                <h2 class="text-2xl font-bold text-gray-900">Manage Subscriptions</h2>
-                <p class="mt-1 text-sm text-gray-500">View and manage all user subscriptions.</p>
+                <h2 class="text-2xl font-bold text-gray-900">Subscription Management</h2>
+                <p class="mt-1 text-sm text-gray-500">Manage all subscription-related operations.</p>
             </div>
 
             <!-- Status Message -->
@@ -94,15 +101,232 @@
                 <div id="statusMessage" class="py-3 px-4 rounded-md text-sm font-medium"></div>
             </div>
 
-            <!-- Subscriptions List -->
-            <div class="bg-white rounded-lg shadow-sm p-6">
-                <h3 class="text-lg font-semibold text-gray-900 mb-4">All Subscriptions</h3>
-                <div id="subscriptionsContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
-                <div id="noSubscriptionsMessage" class="hidden text-center py-16">
-                    <div class="inline-flex items-center justify-center w-16 h-16 bg-indigo-100 rounded-full mb-4"><i
-                            class="fas fa-star text-indigo-600 text-2xl"></i></div>
-                    <h3 class="text-lg font-medium text-gray-900">No subscriptions</h3>
-                    <p class="mt-2 text-sm text-gray-500">No subscription requests or active plans found.</p>
+            <!-- Tabs -->
+            <div class="mb-6 border-b border-gray-200">
+                <ul class="flex flex-wrap -mb-px" id="tabs">
+                    <li class="mr-2">
+                        <button class="inline-block p-4 border-b-2 rounded-t-lg active" id="allSubscriptionsTab">All
+                            Subscriptions</button>
+                    </li>
+                    <li class="mr-2">
+                        <button
+                            class="inline-block p-4 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300"
+                            id="pendingSubscriptionsTab">Pending Approvals</button>
+                    </li>
+                    <li class="mr-2">
+                        <button
+                            class="inline-block p-4 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300"
+                            id="activeSubscriptionsTab">Active Subscriptions</button>
+                    </li>
+                    <li class="mr-2">
+                        <button
+                            class="inline-block p-4 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300"
+                            id="scanUsageTab">Scan Usage</button>
+                    </li>
+                    <li class="mr-2">
+                        <button
+                            class="inline-block p-4 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300"
+                            id="userProfileTab">User Profiles</button>
+                    </li>
+                    <li class="mr-2">
+                        <button
+                            class="inline-block p-4 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300"
+                            id="adminToolsTab">Admin Tools</button>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Tab Contents -->
+            <div id="tabContents">
+                <!-- All Subscriptions Tab -->
+                <div class="tab-content active" id="allSubscriptionsContent">
+                    <div class="bg-white rounded-lg shadow-sm p-6">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-4">All Subscriptions</h3>
+                        <div id="subscriptionsContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        </div>
+                        <div id="noSubscriptionsMessage" class="hidden text-center py-16">
+                            <div
+                                class="inline-flex items-center justify-center w-16 h-16 bg-indigo-100 rounded-full mb-4">
+                                <i class="fas fa-star text-indigo-600 text-2xl"></i>
+                            </div>
+                            <h3 class="text-lg font-medium text-gray-900">No subscriptions</h3>
+                            <p class="mt-2 text-sm text-gray-500">No subscription records found.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pending Subscriptions Tab -->
+                <div class="tab-content" id="pendingSubscriptionsContent">
+                    <div class="bg-white rounded-lg shadow-sm p-6">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-4">Pending Subscription Approvals</h3>
+                        <div id="pendingSubscriptionsContainer"
+                            class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+                        <div id="noPendingSubscriptionsMessage" class="hidden text-center py-16">
+                            <div
+                                class="inline-flex items-center justify-center w-16 h-16 bg-yellow-100 rounded-full mb-4">
+                                <i class="fas fa-clock text-yellow-600 text-2xl"></i>
+                            </div>
+                            <h3 class="text-lg font-medium text-gray-900">No pending subscriptions</h3>
+                            <p class="mt-2 text-sm text-gray-500">No subscription requests awaiting approval.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Active Subscriptions Tab -->
+                <div class="tab-content" id="activeSubscriptionsContent">
+                    <div class="bg-white rounded-lg shadow-sm p-6">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-4">Active Subscriptions</h3>
+                        <div id="activeSubscriptionsContainer"
+                            class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+                        <div id="noActiveSubscriptionsMessage" class="hidden text-center py-16">
+                            <div
+                                class="inline-flex items-center justify-center w-16 h-16 bg-green-100 rounded-full mb-4">
+                                <i class="fas fa-check-circle text-green-600 text-2xl"></i>
+                            </div>
+                            <h3 class="text-lg font-medium text-gray-900">No active subscriptions</h3>
+                            <p class="mt-2 text-sm text-gray-500">No active subscriptions found.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Scan Usage Tab -->
+                <div class="tab-content" id="scanUsageContent">
+                    <div class="bg-white rounded-lg shadow-sm p-6">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="text-lg font-semibold text-gray-900">Scan Usage Management</h3>
+                            <button id="resetAllScansBtn"
+                                class="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition-colors">
+                                <i class="fas fa-sync-alt mr-2"></i>Reset All Scans
+                            </button>
+                        </div>
+
+                        <div class="mb-6">
+                            <div class="flex items-center">
+                                <input type="text" id="userSearchInput" placeholder="Search by user email"
+                                    class="flex-grow px-4 py-2 border border-gray-300 rounded-l-md focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                                <button id="searchUserBtn"
+                                    class="px-4 py-2 bg-indigo-600 text-white rounded-r-md hover:bg-indigo-700 transition-colors">
+                                    <i class="fas fa-search mr-2"></i>Search
+                                </button>
+                            </div>
+                        </div>
+
+                        <div id="userScanUsageContainer">
+                            <div class="text-center py-16" id="noScanUsageMessage">
+                                <div
+                                    class="inline-flex items-center justify-center w-16 h-16 bg-blue-100 rounded-full mb-4">
+                                    <i class="fas fa-chart-bar text-blue-600 text-2xl"></i>
+                                </div>
+                                <h3 class="text-lg font-medium text-gray-900">No scan usage data</h3>
+                                <p class="mt-2 text-sm text-gray-500">Search for a user to view their scan usage.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- User Profile Tab -->
+                <div class="tab-content" id="userProfileContent">
+                    <div class="bg-white rounded-lg shadow-sm p-6">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-4">User Profile Management</h3>
+
+                        <div class="mb-6">
+                            <div class="flex items-center">
+                                <input type="text" id="profileSearchInput" placeholder="Search by user email"
+                                    class="flex-grow px-4 py-2 border border-gray-300 rounded-l-md focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                                <button id="searchProfileBtn"
+                                    class="px-4 py-2 bg-indigo-600 text-white rounded-r-md hover:bg-indigo-700 transition-colors">
+                                    <i class="fas fa-search mr-2"></i>Search
+                                </button>
+                            </div>
+                        </div>
+
+                        <div id="userProfileContainer">
+                            <div class="text-center py-16" id="noProfileMessage">
+                                <div
+                                    class="inline-flex items-center justify-center w-16 h-16 bg-purple-100 rounded-full mb-4">
+                                    <i class="fas fa-user text-purple-600 text-2xl"></i>
+                                </div>
+                                <h3 class="text-lg font-medium text-gray-900">No user selected</h3>
+                                <p class="mt-2 text-sm text-gray-500">Search for a user to view their profile and
+                                    subscription details.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Admin Tools Tab -->
+                <div class="tab-content" id="adminToolsContent">
+                    <div class="bg-white rounded-lg shadow-sm p-6">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-4">Admin Tools</h3>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <!-- Manual Renewal -->
+                            <div class="border border-gray-200 rounded-lg p-4">
+                                <h4 class="font-medium text-gray-900 mb-3">Manual Subscription Renewal</h4>
+                                <div class="mb-3">
+                                    <label for="renewUserId" class="block text-sm font-medium text-gray-700 mb-1">User
+                                        ID</label>
+                                    <input type="text" id="renewUserId"
+                                        class="w-full px-3 py-2 border border-gray-300 rounded-md">
+                                </div>
+                                <button id="manualRenewBtn"
+                                    class="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors">
+                                    <i class="fas fa-calendar-plus mr-2"></i>Renew Subscription
+                                </button>
+                            </div>
+
+                            <!-- Force Cancel -->
+                            <div class="border border-gray-200 rounded-lg p-4">
+                                <h4 class="font-medium text-gray-900 mb-3">Force Cancel Subscription</h4>
+                                <div class="mb-3">
+                                    <label for="cancelUserId" class="block text-sm font-medium text-gray-700 mb-1">User
+                                        ID</label>
+                                    <input type="text" id="cancelUserId"
+                                        class="w-full px-3 py-2 border border-gray-300 rounded-md">
+                                </div>
+                                <button id="forceCancelBtn"
+                                    class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors">
+                                    <i class="fas fa-ban mr-2"></i>Cancel Subscription
+                                </button>
+                            </div>
+
+                            <!-- Reset User Scans -->
+                            <div class="border border-gray-200 rounded-lg p-4">
+                                <h4 class="font-medium text-gray-900 mb-3">Reset User Scan Usage</h4>
+                                <div class="mb-3">
+                                    <label for="resetUserId" class="block text-sm font-medium text-gray-700 mb-1">User
+                                        ID</label>
+                                    <input type="text" id="resetUserId"
+                                        class="w-full px-3 py-2 border border-gray-300 rounded-md">
+                                </div>
+                                <button id="resetUserScansBtn"
+                                    class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors">
+                                    <i class="fas fa-sync-alt mr-2"></i>Reset Scans
+                                </button>
+                            </div>
+
+                            <!-- Toggle Auto-Renew -->
+                            <div class="border border-gray-200 rounded-lg p-4">
+                                <h4 class="font-medium text-gray-900 mb-3">Toggle Auto-Renew</h4>
+                                <div class="mb-3">
+                                    <label for="autoRenewUserId"
+                                        class="block text-sm font-medium text-gray-700 mb-1">User ID</label>
+                                    <input type="text" id="autoRenewUserId"
+                                        class="w-full px-3 py-2 border border-gray-300 rounded-md mb-2">
+                                </div>
+                                <div class="flex space-x-2">
+                                    <button id="enableAutoRenewBtn"
+                                        class="flex-grow px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors">
+                                        <i class="fas fa-toggle-on mr-2"></i>Enable
+                                    </button>
+                                    <button id="disableAutoRenewBtn"
+                                        class="flex-grow px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors">
+                                        <i class="fas fa-toggle-off mr-2"></i>Disable
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -113,28 +337,27 @@
         <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
             <div class="flex flex-col md:flex-row justify-between items-center">
                 <div class="mb-4 md:mb-0">
-                    <p class="text-sm text-gray-500">© 2025 Pestector. All rights reserved.</p>
+                    <p class="text-sm text-gray-500">© 2025 Subscription Admin. All rights reserved.</p>
                 </div>
                 <div class="flex space-x-6">
                     <a href="#" class="text-gray-400 hover:text-gray-500"><i class="fab fa-twitter"></i></a>
                     <a href="#" class="text-gray-400 hover:text-gray-500"><i class="fab fa-facebook"></i></a>
-                    <a href="#" class="text-gray-400 hover:text-gray-500"><i class="fab fa-instagram"></i></a>
+                    <a href="#" class="text-gray-400 hover:text-gray-500"><i class="fab fa-github"></i></a>
                 </div>
             </div>
         </div>
     </footer>
 
     <script>
-        const apiBaseUrl = '/api/admin/subscribe';
+        // Corrected API base URLs to match your backend routes
+        const apiBaseUrl = '/api/subscribe';
+        const authBaseUrl = '/api/auth';
 
         // DOM Elements
-        const subscriptionsContainer = document.getElementById('subscriptionsContainer');
-        const noSubscriptionsMessage = document.getElementById('noSubscriptionsMessage');
-        const profileDropdownBtn = document.getElementById('profileDropdownBtn');
-        const profileDropdown = document.getElementById('profileDropdown');
-        const logoutBtn = document.getElementById('logoutBtn');
+        const tabs = document.querySelectorAll('#tabs button');
+        const tabContents = document.querySelectorAll('.tab-content');
 
-        // Show status message
+        // Status Message
         function showMessage(message, isError = false) {
             const statusMessageContainer = document.getElementById('statusMessageContainer');
             const statusMessage = document.getElementById('statusMessage');
@@ -146,72 +369,263 @@
             }, 5000);
         }
 
-        // Fetch and display all subscriptions
-        async function fetchSubscriptions() {
+        // Tab Switching
+        tabs.forEach((tab, index) => {
+            tab.addEventListener('click', () => {
+                // Remove active class from all tabs and contents
+                tabs.forEach(t => t.classList.remove('active', 'border-indigo-600', 'text-indigo-600'));
+                tabContents.forEach(c => c.classList.remove('active'));
+
+                // Add active class to clicked tab and corresponding content
+                tab.classList.add('active', 'border-indigo-600', 'text-indigo-600');
+                document.getElementById(tab.id.replace('Tab', 'Content')).classList.add('active');
+
+                // Load data for the selected tab
+                switch (tab.id) {
+                    case 'allSubscriptionsTab':
+                        fetchAllSubscriptions();
+                        break;
+                    case 'pendingSubscriptionsTab':
+                        fetchPendingSubscriptions();
+                        break;
+                    case 'activeSubscriptionsTab':
+                        fetchActiveSubscriptions();
+                        break;
+                    case 'scanUsageTab':
+                        // Don't load anything until user searches
+                        break;
+                    case 'userProfileTab':
+                        // Don't load anything until user searches
+                        break;
+                    case 'adminToolsTab':
+                        // No initial load needed
+                        break;
+                }
+            });
+        });
+
+        // Initialize first tab as active
+        tabs[0].classList.add('active', 'border-indigo-600', 'text-indigo-600');
+
+        // Fetch all subscriptions
+        async function fetchAllSubscriptions() {
             try {
                 const token = localStorage.getItem('token') || getTokenFromCookies();
                 if (!token) { window.location.href = '/login'; return; }
 
-                const response = await fetch(`${apiBaseUrl}/all`, { headers: { 'Authorization': `Bearer ${token}` } });
+                const response = await fetch(`${apiBaseUrl}/admin/all`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
                 const data = await response.json();
 
                 if (!response.ok) throw new Error(data.message || 'Failed to fetch subscriptions');
 
+                const container = document.getElementById('subscriptionsContainer');
+                const noDataMsg = document.getElementById('noSubscriptionsMessage');
+
                 if (data.status === 'success' && data.subscriptions.length > 0) {
-                    subscriptionsContainer.innerHTML = '';
-                    noSubscriptionsMessage.classList.add('hidden');
-                    data.subscriptions.forEach((sub, index) => {
-                        const card = document.createElement('div');
-                        card.className = `bg-white rounded-lg shadow overflow-hidden card-hover fade-in`;
-                        card.innerHTML = `
-                            <div class="p-6">
-                                <p class="text-sm font-medium text-gray-700">User: ${sub.userId?.email || 'Unknown'}</p>
-                                <p class="text-sm text-gray-600 mt-2">Plan: ${sub.plan}</p>
-                                <p class="text-sm text-gray-600">Previous Plan: ${sub.previousPlan || 'None'}</p>
-                                <p class="text-sm text-gray-600">Status: <span class="${sub.status === 'pending' ? 'text-yellow-600' : sub.status === 'active' ? 'text-green-600' : 'text-red-600'}">${sub.status}</span></p>
-                                <p class="text-sm text-gray-600">Start Date: ${new Date(sub.startDate).toLocaleDateString("en")}</p>
-                                <p class="text-sm text-gray-600">End Date: ${new Date(sub.endDate).toLocaleDateString("en")}</p>
-                                <p class="text-xs text-gray-500 mt-2">Updated: ${new Date(sub.updatedAt).toLocaleString("en")}</p>
-                                <div class="mt-4 flex space-x-2">
-                                    ${sub.status === 'pending' ? `
-                                        <button onclick="approveSubscription('${sub._id}', 'approve')" class="px-3 py-1 bg-green-500 text-white rounded-md hover:bg-green-600 transition-colors"><i class="fas fa-check mr-1"></i>Approve</button>
-                                        <button onclick="approveSubscription('${sub._id}', 'reject')" class="px-3 py-1 bg-red-500 text-white rounded-md hover:bg-red-600 transition-colors"><i class="fas fa-times mr-1"></i>Reject</button>
-                                    ` : sub.status === 'active' ? `
-                                        <button onclick="expireSubscription('${sub._id}')" class="px-3 py-1 bg-red-500 text-white rounded-md hover:bg-red-600 transition-colors"><i class="fas fa-ban mr-1"></i>Expire</button>
-                                    ` : ''}
-                                </div>
-                            </div>
-                        `;
-                        subscriptionsContainer.appendChild(card);
+                    container.innerHTML = '';
+                    noDataMsg.classList.add('hidden');
+
+                    data.subscriptions.forEach(sub => {
+                        const card = createSubscriptionCard(sub);
+                        container.appendChild(card);
                     });
                 } else {
-                    subscriptionsContainer.innerHTML = '';
-                    noSubscriptionsMessage.classList.remove('hidden');
+                    container.innerHTML = '';
+                    noDataMsg.classList.remove('hidden');
                 }
             } catch (error) {
                 showMessage(error.message || 'Error fetching subscriptions', true);
-                subscriptionsContainer.innerHTML = '';
-                noSubscriptionsMessage.classList.remove('hidden');
+                document.getElementById('subscriptionsContainer').innerHTML = '';
+                document.getElementById('noSubscriptionsMessage').classList.remove('hidden');
             }
         }
 
-        // Approve or reject subscription
-        async function approveSubscription(subscriptionId, action) {
+        // Fetch pending subscriptions
+        async function fetchPendingSubscriptions() {
+            try {
+                const token = localStorage.getItem('token') || getTokenFromCookies();
+                if (!token) { window.location.href = '/login'; return; }
+
+                const response = await fetch(`${apiBaseUrl}/logs`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const data = await response.json();
+
+                if (!response.ok) throw new Error(data.message || 'Failed to fetch subscriptions');
+
+                const container = document.getElementById('pendingSubscriptionsContainer');
+                const noDataMsg = document.getElementById('noPendingSubscriptionsMessage');
+
+                if (data.status === 'success' && data.logs.length > 0) {
+                    container.innerHTML = '';
+                    noDataMsg.classList.add('hidden');
+
+                    const pendingSubs = data.logs.filter(sub => sub.status === 'pending');
+
+                    if (pendingSubs.length > 0) {
+                        pendingSubs.forEach(sub => {
+                            const card = createSubscriptionCard(sub, true);
+                            container.appendChild(card);
+                        });
+                    } else {
+                        container.innerHTML = '';
+                        noDataMsg.classList.remove('hidden');
+                    }
+                } else {
+                    container.innerHTML = '';
+                    noDataMsg.classList.remove('hidden');
+                }
+            } catch (error) {
+                showMessage(error.message || 'Error fetching pending subscriptions', true);
+                document.getElementById('pendingSubscriptionsContainer').innerHTML = '';
+                document.getElementById('noPendingSubscriptionsMessage').classList.remove('hidden');
+            }
+        }
+
+        // Fetch active subscriptions
+        async function fetchActiveSubscriptions() {
+            try {
+                const token = localStorage.getItem('token') || getTokenFromCookies();
+                if (!token) { window.location.href = '/login'; return; }
+
+                const response = await fetch(`${apiBaseUrl}/logs`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const data = await response.json();
+
+                if (!response.ok) throw new Error(data.message || 'Failed to fetch subscriptions');
+
+                const container = document.getElementById('activeSubscriptionsContainer');
+                const noDataMsg = document.getElementById('noActiveSubscriptionsMessage');
+
+                if (data.status === 'success' && data.logs.length > 0) {
+                    container.innerHTML = '';
+                    noDataMsg.classList.add('hidden');
+
+                    const activeSubs = data.logs.filter(sub => sub.status === 'active');
+
+                    if (activeSubs.length > 0) {
+                        activeSubs.forEach(sub => {
+                            const card = createSubscriptionCard(sub);
+                            container.appendChild(card);
+                        });
+                    } else {
+                        container.innerHTML = '';
+                        noDataMsg.classList.remove('hidden');
+                    }
+                } else {
+                    container.innerHTML = '';
+                    noDataMsg.classList.remove('hidden');
+                }
+            } catch (error) {
+                showMessage(error.message || 'Error fetching active subscriptions', true);
+                document.getElementById('activeSubscriptionsContainer').innerHTML = '';
+                document.getElementById('noActiveSubscriptionsMessage').classList.remove('hidden');
+            }
+        }
+
+        // Create subscription card element
+        function createSubscriptionCard(sub, showApproveButtons = false) {
+            const card = document.createElement('div');
+            card.className = `bg-white rounded-lg shadow overflow-hidden card-hover fade-in border-l-4 ${sub.status === 'pending' ? 'border-yellow-500' : sub.status === 'active' ? 'border-green-500' : 'border-red-500'}`;
+
+            // Get user details - check multiple possible locations for the data
+            const userEmail = sub.user?.email || sub.email || 'Unknown';
+            const username = sub.user?.username || sub.username || 'Unknown';
+            const userId = sub.user?._id || sub.userId || 'N/A';
+
+            const startDate = sub.startDate ? new Date(sub.startDate).toLocaleDateString() : 'N/A';
+            const endDate = sub.endDate ? new Date(sub.endDate).toLocaleDateString() : 'N/A';
+            const updatedAt = sub.updatedAt ? new Date(sub.updatedAt).toLocaleString() : 'N/A';
+
+            let scanUsageInfo = '';
+            if (sub.scanUsage && Array.isArray(sub.scanUsage)) {
+                scanUsageInfo = `<p class="text-sm text-gray-600">Scans: ${sub.scanUsage.length}/${sub.features?.scanLimit || 'N/A'}</p>`;
+            } else if (sub.features?.scanLimit) {
+                scanUsageInfo = `<p class="text-sm text-gray-600">Scans: 0/${sub.features.scanLimit}</p>`;
+            }
+
+            card.innerHTML = `
+        <div class="p-6">
+            <div class="flex justify-between items-start">
+                <div>
+                    <p class="text-sm font-medium text-gray-700">${username} (${userEmail})</p>
+                    <p class="text-xs text-gray-500">User ID: ${userId}</p>
+                </div>
+                <span class="px-2 py-1 text-xs rounded-full ${sub.status === 'pending' ? 'bg-yellow-100 text-yellow-800' : sub.status === 'active' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}">
+                    ${sub.status}
+                </span>
+            </div>
+            
+            <div class="mt-3">
+                <p class="text-sm text-gray-600">Plan: <span class="font-medium">${sub.plan || 'N/A'}</span></p>
+                <p class="text-sm text-gray-600">Previous: ${sub.previousPlan || 'None'}</p>
+                ${scanUsageInfo}
+                <p class="text-sm text-gray-600">Start: ${startDate}</p>
+                <p class="text-sm text-gray-600">End: ${endDate}</p>
+                <p class="text-sm text-gray-600">Auto-renew: ${sub.autoRenew ? 'Yes' : 'No'}</p>
+            </div>
+            
+            <p class="text-xs text-gray-400 mt-3">Updated: ${updatedAt}</p>
+            
+            <div class="mt-4 flex flex-wrap gap-2">
+                ${showApproveButtons ? `
+                    <button onclick="handleSubscriptionAction('${sub._id}', 'approve')" class="px-3 py-1 bg-green-500 text-white rounded-md hover:bg-green-600 transition-colors text-sm">
+                        <i class="fas fa-check mr-1"></i>Approve
+                    </button>
+                    <button onclick="handleSubscriptionAction('${sub._id}', 'reject')" class="px-3 py-1 bg-red-500 text-white rounded-md hover:bg-red-600 transition-colors text-sm">
+                        <i class="fas fa-times mr-1"></i>Reject
+                    </button>
+                ` : ''}
+                
+                ${sub.status === 'active' ? `
+                    <button onclick="expireSubscription('${sub._id}')" class="px-3 py-1 bg-red-500 text-white rounded-md hover:bg-red-600 transition-colors text-sm">
+                        <i class="fas fa-ban mr-1"></i>Expire
+                    </button>
+                    <button onclick="showUserScanUsage('${userId}')" class="px-3 py-1 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors text-sm">
+                        <i class="fas fa-chart-bar mr-1"></i>Scan Usage
+                    </button>
+                    <button onclick="showUserProfile('${userId}')" class="px-3 py-1 bg-purple-500 text-white rounded-md hover:bg-purple-600 transition-colors text-sm">
+                        <i class="fas fa-user mr-1"></i>View Profile
+                    </button>
+                ` : ''}
+            </div>
+        </div>
+    `;
+
+            return card;
+        }
+
+        // Handle subscription approval/rejection
+        async function handleSubscriptionAction(subscriptionId, action) {
             try {
                 const token = localStorage.getItem('token') || getTokenFromCookies();
                 if (!token) { window.location.href = '/login'; return; }
 
                 const response = await fetch(`${apiBaseUrl}/approve/${subscriptionId}`, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
                     body: JSON.stringify({ action })
                 });
+
                 const data = await response.json();
 
                 if (!response.ok) throw new Error(data.message || `Failed to ${action} subscription`);
 
                 showMessage(data.message);
-                fetchSubscriptions();
+
+                // Refresh the appropriate tab
+                const activeTab = document.querySelector('#tabs button.active');
+                if (activeTab.id === 'pendingSubscriptionsTab') {
+                    fetchPendingSubscriptions();
+                } else if (activeTab.id === 'allSubscriptionsTab') {
+                    fetchAllSubscriptions();
+                }
             } catch (error) {
                 showMessage(error.message || `Error ${action}ing subscription`, true);
             }
@@ -227,25 +641,494 @@
                     method: 'POST',
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
+
                 const data = await response.json();
 
                 if (!response.ok) throw new Error(data.message || 'Failed to expire subscription');
 
                 showMessage(data.message);
-                fetchSubscriptions();
+
+                // Refresh the appropriate tab
+                const activeTab = document.querySelector('#tabs button.active');
+                if (activeTab.id === 'activeSubscriptionsTab') {
+                    fetchActiveSubscriptions();
+                } else if (activeTab.id === 'allSubscriptionsTab') {
+                    fetchAllSubscriptions();
+                }
             } catch (error) {
                 showMessage(error.message || 'Error expiring subscription', true);
             }
         }
 
-        // Event listeners
+        // Show user scan usage
+        async function showUserScanUsage(userId) {
+            try {
+                if (!userId) {
+                    showMessage('User ID is required', true);
+                    return;
+                }
+
+                const token = localStorage.getItem('token') || getTokenFromCookies();
+                if (!token) { window.location.href = '/login'; return; }
+
+                // Switch to scan usage tab
+                document.querySelector('#tabs button').classList.remove('active', 'border-indigo-600', 'text-indigo-600');
+                document.querySelector('.tab-content').classList.remove('active');
+
+                document.getElementById('scanUsageTab').classList.add('active', 'border-indigo-600', 'text-indigo-600');
+                document.getElementById('scanUsageContent').classList.add('active');
+
+                // Fetch user details
+                const userResponse = await fetch(`${authBaseUrl}/profile`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'X-User-Id': userId
+                    }
+                });
+                const userData = await userResponse.json();
+
+                if (!userResponse.ok) throw new Error(userData.message || 'Failed to fetch user details');
+
+                const userEmail = userData.user?.email || 'Unknown';
+
+                // Fetch subscription details
+                const subResponse = await fetch(`${apiBaseUrl}/scan-usage`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'X-User-Id': userId
+                    }
+                });
+                const subData = await subResponse.json();
+
+                if (!subResponse.ok) throw new Error(subData.message || 'Failed to fetch scan usage');
+
+                const container = document.getElementById('userScanUsageContainer');
+                container.innerHTML = `
+                        <div class="bg-white rounded-lg shadow-sm p-6">
+                            <h4 class="text-md font-semibold text-gray-900 mb-2">Scan Usage for ${userEmail}</h4>
+                            <p class="text-sm text-gray-600 mb-4">User ID: ${userId}</p>
+                            
+                            <div class="bg-gray-50 p-4 rounded-md mb-4">
+                                <div class="flex justify-between items-center mb-2">
+                                    <span class="text-sm font-medium text-gray-700">Scans Used</span>
+                                    <span class="text-sm font-semibold ${subData.scanUsage >= subData.scanLimit ? 'text-red-600' : 'text-green-600'}">
+                                        ${subData.scanUsage}/${subData.scanLimit}
+                                    </span>
+                                </div>
+                                <div class="w-full bg-gray-200 rounded-full h-2.5">
+                                    <div class="bg-${subData.scanUsage >= subData.scanLimit ? 'red' : 'green'}-600 h-2.5 rounded-full" 
+                                         style="width: ${Math.min(100, (subData.scanUsage / subData.scanLimit) * 100)}%"></div>
+                                </div>
+                            </div>
+                            
+                            <div class="flex justify-end">
+                                <button onclick="resetUserScans('${userId}')" class="px-3 py-1 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors text-sm">
+                                    <i class="fas fa-sync-alt mr-1"></i>Reset Scans
+                                </button>
+                            </div>
+                        </div>
+                    `;
+
+            } catch (error) {
+                showMessage(error.message || 'Error fetching scan usage', true);
+            }
+        }
+
+        // Show user profile
+        async function showUserProfile(userId) {
+            try {
+                if (!userId) {
+                    showMessage('User ID is required', true);
+                    return;
+                }
+
+                const token = localStorage.getItem('token') || getTokenFromCookies();
+                if (!token) { window.location.href = '/login'; return; }
+
+                // Switch to user profile tab
+                document.querySelector('#tabs button').classList.remove('active', 'border-indigo-600', 'text-indigo-600');
+                document.querySelector('.tab-content').classList.remove('active');
+
+                document.getElementById('userProfileTab').classList.add('active', 'border-indigo-600', 'text-indigo-600');
+                document.getElementById('userProfileContent').classList.add('active');
+
+                // Fetch user profile
+                const response = await fetch(`${authBaseUrl}/profile`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'X-User-Id': userId
+                    }
+                });
+                const data = await response.json();
+
+                if (!response.ok) throw new Error(data.message || 'Failed to fetch user profile');
+
+                const user = data.user;
+                const subscription = data.subscription_info;
+
+                const container = document.getElementById('userProfileContainer');
+                container.innerHTML = `
+                        <div class="bg-white rounded-lg shadow-sm p-6">
+                            <div class="flex flex-col md:flex-row gap-6">
+                                <div class="md:w-1/3">
+                                    <div class="flex items-center space-x-4 mb-6">
+                                        <div class="w-16 h-16 bg-indigo-100 rounded-full flex items-center justify-center">
+                                            <i class="fas fa-user text-indigo-600 text-2xl"></i>
+                                        </div>
+                                        <div>
+                                            <h4 class="text-lg font-semibold text-gray-900">${user.fullName || 'No name provided'}</h4>
+                                            <p class="text-sm text-gray-600">${user.email}</p>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="space-y-3">
+                                        <div>
+                                            <p class="text-xs font-medium text-gray-500 uppercase tracking-wider">Username</p>
+                                            <p class="text-sm text-gray-900">${user.username || 'Not set'}</p>
+                                        </div>
+                                        <div>
+                                            <p class="text-xs font-medium text-gray-500 uppercase tracking-wider">Phone</p>
+                                            <p class="text-sm text-gray-900">${user.phoneNumber || 'Not provided'}</p>
+                                        </div>
+                                        <div>
+                                            <p class="text-xs font-medium text-gray-500 uppercase tracking-wider">Location</p>
+                                            <p class="text-sm text-gray-900">${user.location ? 'Location available' : 'Not specified'}</p>
+                                        </div>
+                                        <div>
+                                            <p class="text-xs font-medium text-gray-500 uppercase tracking-wider">Role</p>
+                                            <p class="text-sm text-gray-900 capitalize">${user.role}</p>
+                                        </div>
+                                        <div>
+                                            <p class="text-xs font-medium text-gray-500 uppercase tracking-wider">2FA Enabled</p>
+                                            <p class="text-sm text-gray-900">${user.twoFactorSecret ? 'Yes' : 'No'}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="md:w-2/3">
+                                    <h4 class="text-lg font-semibold text-gray-900 mb-4">Subscription Information</h4>
+                                    
+                                    <div class="bg-gray-50 p-4 rounded-md mb-4">
+                                        <div class="flex justify-between items-center mb-2">
+                                            <span class="text-sm font-medium text-gray-700">Current Plan</span>
+                                            <span class="text-sm font-semibold ${subscription.plan === 'free' ? 'text-gray-600' : 'text-indigo-600'} capitalize">
+                                                ${subscription.plan}
+                                            </span>
+                                        </div>
+                                        
+                                        <div class="grid grid-cols-2 gap-4 mt-4">
+                                            <div>
+                                                <p class="text-xs font-medium text-gray-500 uppercase tracking-wider">Scan Usage</p>
+                                                <p class="text-sm text-gray-900">
+                                                    ${subscription.scans_used} / ${subscription.scan_limit}
+                                                    <span class="text-xs ${subscription.scans_used >= subscription.scan_limit ? 'text-red-600' : 'text-green-600'}">
+                                                        (${subscription.scans_remaining} remaining)
+                                                    </span>
+                                                </p>
+                                                <div class="w-full bg-gray-200 rounded-full h-2 mt-1">
+                                                    <div class="bg-${subscription.scans_used >= subscription.scan_limit ? 'red' : 'green'}-600 h-2 rounded-full" 
+                                                         style="width: ${Math.min(100, (subscription.scans_used / subscription.scan_limit) * 100)}%"></div>
+                                                </div>
+                                            </div>
+                                            
+                                            <div>
+                                                <p class="text-xs font-medium text-gray-500 uppercase tracking-wider">Features</p>
+                                                <ul class="text-sm text-gray-900 space-y-1">
+                                                    <li class="flex items-center">
+                                                        <i class="fas ${subscription.has_advanced_analytics ? 'fa-check text-green-500' : 'fa-times text-red-500'} mr-2"></i>
+                                                        Advanced Analytics
+                                                    </li>
+                                                    <li class="flex items-center">
+                                                        <i class="fas ${subscription.priority_support ? 'fa-check text-green-500' : 'fa-times text-red-500'} mr-2"></i>
+                                                        Priority Support
+                                                    </li>
+                                                    <li class="flex items-center">
+                                                        <i class="fas ${subscription.api_access ? 'fa-check text-green-500' : 'fa-times text-red-500'} mr-2"></i>
+                                                        API Access
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="flex space-x-3">
+                                        <button onclick="showUserScanUsage('${user.id}')" class="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors">
+                                            <i class="fas fa-chart-bar mr-2"></i>View Scan Usage
+                                        </button>
+                                        <button onclick="forceCancelSubscription('${user.id}')" class="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition-colors">
+                                            <i class="fas fa-ban mr-2"></i>Cancel Subscription
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+
+            } catch (error) {
+                showMessage(error.message || 'Error fetching user profile', true);
+                document.getElementById('userProfileContainer').innerHTML = `
+                        <div class="text-center py-16">
+                            <div class="inline-flex items-center justify-center w-16 h-16 bg-red-100 rounded-full mb-4">
+                                <i class="fas fa-exclamation-triangle text-red-600 text-2xl"></i>
+                            </div>
+                            <h3 class="text-lg font-medium text-gray-900">Error loading profile</h3>
+                            <p class="mt-2 text-sm text-gray-500">${error.message || 'Failed to load user profile'}</p>
+                        </div>
+                    `;
+            }
+        }
+
+        // Search for user profile
+        document.getElementById('searchProfileBtn').addEventListener('click', async () => {
+            const email = document.getElementById('profileSearchInput').value.trim();
+            if (!email) {
+                showMessage('Please enter a user email to search', true);
+                return;
+            }
+
+            try {
+                const token = localStorage.getItem('token') || getTokenFromCookies();
+                if (!token) { window.location.href = '/login'; return; }
+
+                // First find the user by email to get their ID
+                const findUserResponse = await fetch(`${authBaseUrl}/find-user?email=${encodeURIComponent(email)}`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const findUserData = await findUserResponse.json();
+
+                if (!findUserResponse.ok) throw new Error(findUserData.message || 'Failed to find user');
+                if (!findUserData.user) throw new Error('User not found');
+
+                // Show profile for this user
+                showUserProfile(findUserData.user._id);
+
+            } catch (error) {
+                showMessage(error.message || 'Error searching for user', true);
+            }
+        });
+
+        // Search for user scan usage
+        document.getElementById('searchUserBtn').addEventListener('click', async () => {
+            const email = document.getElementById('userSearchInput').value.trim();
+            if (!email) {
+                showMessage('Please enter a user email to search', true);
+                return;
+            }
+
+            try {
+                const token = localStorage.getItem('token') || getTokenFromCookies();
+                if (!token) { window.location.href = '/login'; return; }
+
+                // First find the user by email to get their ID
+                const findUserResponse = await fetch(`${authBaseUrl}/find-user?email=${encodeURIComponent(email)}`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const findUserData = await findUserResponse.json();
+
+                if (!findUserResponse.ok) throw new Error(findUserData.message || 'Failed to find user');
+                if (!findUserData.user) throw new Error('User not found');
+
+                // Show scan usage for this user
+                showUserScanUsage(findUserData.user._id);
+
+            } catch (error) {
+                showMessage(error.message || 'Error searching for user', true);
+            }
+        });
+
+        // Reset all scans (admin)
+        document.getElementById('resetAllScansBtn').addEventListener('click', async () => {
+            if (!confirm('Are you sure you want to reset scan usage for ALL users?')) return;
+
+            try {
+                const token = localStorage.getItem('token') || getTokenFromCookies();
+                if (!token) { window.location.href = '/login'; return; }
+
+                const response = await fetch(`${apiBaseUrl}/reset-scan-usage`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                const data = await response.json();
+
+                if (!response.ok) throw new Error(data.message || 'Failed to reset all scans');
+
+                showMessage(data.message);
+
+                // Refresh scan usage display if we're viewing someone's usage
+                const activeTab = document.querySelector('#tabs button.active');
+                if (activeTab.id === 'scanUsageTab') {
+                    const userId = document.querySelector('#userScanUsageContainer [onclick^="resetUserScans"]')?.onclick.toString().match(/'([^']+)'/)?.[1];
+                    if (userId) showUserScanUsage(userId);
+                }
+
+            } catch (error) {
+                showMessage(error.message || 'Error resetting all scans', true);
+            }
+        });
+
+        // Reset scans for a specific user
+        async function resetUserScans(userId) {
+            if (!confirm('Are you sure you want to reset scan usage for this user?')) return;
+
+            try {
+                const token = localStorage.getItem('token') || getTokenFromCookies();
+                if (!token) { window.location.href = '/login'; return; }
+
+                const response = await fetch(`${apiBaseUrl}/reset-scan-usage`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ userId })
+                });
+                const data = await response.json();
+
+                if (!response.ok) throw new Error(data.message || 'Failed to reset user scans');
+
+                showMessage(data.message);
+
+                // Refresh the display
+                showUserScanUsage(userId);
+
+            } catch (error) {
+                showMessage(error.message || 'Error resetting user scans', true);
+            }
+        }
+
+        // Manual subscription renewal
+        document.getElementById('manualRenewBtn').addEventListener('click', async () => {
+            const userId = document.getElementById('renewUserId').value.trim();
+            if (!userId) {
+                showMessage('Please enter a user ID', true);
+                return;
+            }
+
+            try {
+                const token = localStorage.getItem('token') || getTokenFromCookies();
+                if (!token) { window.location.href = '/login'; return; }
+
+                const response = await fetch(`${apiBaseUrl}/renew`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ userId })
+                });
+                const data = await response.json();
+
+                if (!response.ok) throw new Error(data.message || 'Failed to renew subscription');
+
+                showMessage(data.message);
+                document.getElementById('renewUserId').value = '';
+
+            } catch (error) {
+                showMessage(error.message || 'Error renewing subscription', true);
+            }
+        });
+
+        // Force cancel subscription
+        async function forceCancelSubscription(userId) {
+            if (!userId) {
+                showMessage('User ID is required', true);
+                return;
+            }
+
+            if (!confirm('Are you sure you want to cancel this user\'s subscription?')) return;
+
+            try {
+                const token = localStorage.getItem('token') || getTokenFromCookies();
+                if (!token) { window.location.href = '/login'; return; }
+
+                const response = await fetch(`${apiBaseUrl}/cancel`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ userId })
+                });
+                const data = await response.json();
+
+                if (!response.ok) throw new Error(data.message || 'Failed to cancel subscription');
+
+                showMessage(data.message);
+                document.getElementById('cancelUserId').value = '';
+
+                // Refresh subscription lists and profile view
+                fetchAllSubscriptions();
+                fetchActiveSubscriptions();
+                showUserProfile(userId);
+
+            } catch (error) {
+                showMessage(error.message || 'Error canceling subscription', true);
+            }
+        }
+
+        // Toggle auto-renew
+        document.getElementById('enableAutoRenewBtn').addEventListener('click', async () => {
+            toggleAutoRenew(true);
+        });
+
+        document.getElementById('disableAutoRenewBtn').addEventListener('click', async () => {
+            toggleAutoRenew(false);
+        });
+
+        async function toggleAutoRenew(enable) {
+            const userId = document.getElementById('autoRenewUserId').value.trim();
+            if (!userId) {
+                showMessage('Please enter a user ID', true);
+                return;
+            }
+
+            try {
+                const token = localStorage.getItem('token') || getTokenFromCookies();
+                if (!token) { window.location.href = '/login'; return; }
+
+                const response = await fetch(`${apiBaseUrl}/auto-renew`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({
+                        userId,
+                        enable
+                    })
+                });
+                const data = await response.json();
+
+                if (!response.ok) throw new Error(data.message || `Failed to ${enable ? 'enable' : 'disable'} auto-renew`);
+
+                showMessage(data.message);
+                document.getElementById('autoRenewUserId').value = '';
+
+                // Refresh subscription lists
+                fetchAllSubscriptions();
+                fetchActiveSubscriptions();
+
+            } catch (error) {
+                showMessage(error.message || `Error ${enable ? 'enabling' : 'disabling'} auto-renew`, true);
+            }
+        }
+
+        // Profile dropdown
+        const profileDropdownBtn = document.getElementById('profileDropdownBtn');
+        const profileDropdown = document.getElementById('profileDropdown');
+
         profileDropdownBtn.addEventListener('click', () => profileDropdown.classList.toggle('hidden'));
         document.addEventListener('click', (event) => {
             if (!profileDropdownBtn.contains(event.target) && !profileDropdown.contains(event.target)) {
                 profileDropdown.classList.add('hidden');
             }
         });
-        logoutBtn.addEventListener('click', () => {
+
+        // Logout
+        document.getElementById('logoutBtn').addEventListener('click', () => {
             localStorage.removeItem('token');
             document.cookie = 'token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
             window.location.href = '/login';
@@ -257,18 +1140,10 @@
             return cookie ? cookie.split('=')[1] : null;
         }
 
-        // Check authentication and load data
-        async function checkAuth() {
-            const token = localStorage.getItem('token') || getTokenFromCookies();
-            if (!token) {
-                window.location.href = '/login';
-            } else {
-                fetchSubscriptions();
-            }
-        }
-
-        // Initial check
-        checkAuth();
+        // Initial load
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchAllSubscriptions();
+        });
     </script>
 </body>
 

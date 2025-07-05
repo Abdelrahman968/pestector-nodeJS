@@ -1,5 +1,5 @@
 // classify.js
-require("dotenv").config(); // Ensure .env variables are loaded
+require("dotenv").config();
 const express = require("express");
 const multer = require("multer");
 const path = require("path");
@@ -12,7 +12,7 @@ const TreatmentPlan = require("../models/TreatmentPlan");
 const {
   PYTHON_API_URL,
   MAX_GUEST_SCANS,
-  SUBSCRIPTION_PLANS, // Make sure this is correctly defined and exported from config.js
+  SUBSCRIPTION_PLANS,
 } = require("../config/config");
 const authenticateToken = require("../middleware/auth");
 const { getGuestId, trackGuestScan } = require("../middleware/guest");
@@ -24,29 +24,32 @@ const Analytics = require("../models/Analytics");
 const NodeCache = require("node-cache");
 const crypto = require("crypto");
 
-const router = express.Router();
-const cache = new NodeCache({ stdTTL: 3600, checkperiod: 600 }); // 1-hour TTL for classify
+let createNotification;
+try {
+  createNotification = require("./subscription").createNotification;
+} catch (error) {
+  console.error("[classify.js] Failed to import createNotification:", error);
+  createNotification = async (userId, type, title, message) => {
+    console.warn(
+      `[Fallback createNotification] ${title}: ${message} for user ${
+        userId || "guest"
+      }`
+    );
+    return null;
+  };
+}
 
-// Log SUBSCRIPTION_PLANS at the top level to ensure it's loaded correctly
-// console.log(
-//   "[Classify.js Top Level] Loaded SUBSCRIPTION_PLANS:",
-//   JSON.stringify(SUBSCRIPTION_PLANS, null, 2)
-// );
+const router = express.Router();
+const cache = new NodeCache({ stdTTL: 3600, checkperiod: 600 });
 
 // Multer Configuration
 const upload = multer({
   storage: multer.memoryStorage(),
-  limits: { fileSize: 10 * 1024 * 1024 }, // 10MB limit
+  limits: { fileSize: 10 * 1024 * 1024 },
   fileFilter: (req, file, cb) => {
     const validMimeTypes = ["image/jpeg", "image/png", "image/webp"];
-    const mimeType = file.mimetype || "image/jpeg"; // Fallback for blobs
+    const mimeType = file.mimetype || "image/jpeg";
     const extension = path.extname(file.originalname || "").toLowerCase();
-
-    // console.log("File received:", {
-    //   originalname: file.originalname,
-    //   mimetype: file.mimetype,
-    //   size: file.size,
-    // });
 
     if (
       validMimeTypes.includes(mimeType) ||
@@ -68,119 +71,82 @@ const getTodayStart = () => {
 };
 
 const getUserSubscriptionInfo = async (userId) => {
-  // console.log(
-  //   `[getUserSubscriptionInfo] Attempting to fetch subscription for userId: ${userId} (Type: ${typeof userId})`
-  // );
-  // console.log(
-  //   `[getUserSubscriptionInfo] Current server date for endDate check: ${new Date().toISOString()}`
-  // );
-
-  let subscriptionDoc;
   try {
-    subscriptionDoc = await Subscription.findOne({
+    let subscriptionDoc = await Subscription.findOne({
       userId: userId,
       status: "active",
-      endDate: { $gt: new Date() },
-    })
-      .sort({ startDate: -1 })
-      .lean();
-
-    // console.log(
-    //   `[getUserSubscriptionInfo] Raw subscriptionDoc from DB query:`,
-    //   JSON.stringify(subscriptionDoc, null, 2)
-    // );
+    });
 
     if (!subscriptionDoc) {
-      // console.log(
-      //   `[getUserSubscriptionInfo] No active/valid subscription found in DB. Defaulting to 'free' plan.`
-      // );
-      return {
-        plan: "free",
-        scanLimit: SUBSCRIPTION_PLANS.free.features.scanLimit,
-        hasAdvancedAnalytics:
-          SUBSCRIPTION_PLANS.free.features.advancedAnalytics ?? false,
-      };
+      console.warn(
+        `[getUserSubscriptionInfo] No active subscription for user ${userId}, creating free plan`
+      );
+      subscriptionDoc = await Subscription.findOneAndUpdate(
+        { userId: userId, plan: "free", status: "active" },
+        {
+          userId,
+          plan: "free",
+          status: "active",
+          features: SUBSCRIPTION_PLANS.free?.features || {
+            scanLimit: 10,
+            advancedAnalytics: false,
+          },
+          cycle: "monthly",
+          startDate: new Date(),
+          endDate: null,
+          scanUsage: [],
+        },
+        { upsert: true, new: true }
+      );
     }
 
     const planNameFromDb = subscriptionDoc.plan;
-    // console.log(
-    //   `[getUserSubscriptionInfo] Found plan in DB: '${planNameFromDb}'`
-    // );
-
     const planConfig = SUBSCRIPTION_PLANS[planNameFromDb];
+    console.log(
+      `[getUserSubscriptionInfo] Found subscription for user ${userId}: plan=${planNameFromDb}, endDate=${subscriptionDoc.endDate}`
+    );
+
     if (!planConfig || !planConfig.features) {
-      // console.warn(
-      //   `[getUserSubscriptionInfo] Plan '${planNameFromDb}' (from DB) not fully defined in SUBSCRIPTION_PLANS or its features are missing. Configured plans: ${Object.keys(
-      //     SUBSCRIPTION_PLANS
-      //   ).join(", ")}. Using DB plan name but free plan features as fallback.`
-      // );
-      // console.log(
-      //   `[getUserSubscriptionInfo] Problematic subscriptionDoc:`,
-      //   JSON.stringify(subscriptionDoc, null, 2)
-      // );
-      // console.log(
-      //   `[getUserSubscriptionInfo] SUBSCRIPTION_PLANS config:`,
-      //   JSON.stringify(SUBSCRIPTION_PLANS, null, 2)
-      // );
+      console.warn(
+        `[getUserSubscriptionInfo] Plan '${planNameFromDb}' not defined in SUBSCRIPTION_PLANS. Using free plan features.`
+      );
       return {
         plan: planNameFromDb,
-        scanLimit: SUBSCRIPTION_PLANS.free.features.scanLimit,
+        scanLimit: SUBSCRIPTION_PLANS.free?.features.scanLimit || 10,
         hasAdvancedAnalytics:
-          SUBSCRIPTION_PLANS.free.features.advancedAnalytics ?? false,
+          SUBSCRIPTION_PLANS.free?.features.advancedAnalytics || false,
+        scanUsage: subscriptionDoc.getCurrentScanCount(),
       };
     }
 
     const featuresFromDb = subscriptionDoc.features;
     const featuresFromConfig = planConfig.features;
+    const scanUsage = subscriptionDoc.getCurrentScanCount();
 
-    // console.log(
-    //   `[getUserSubscriptionInfo] Features from DB subscriptionDoc.features:`,
-    //   JSON.stringify(featuresFromDb, null, 2)
-    // );
-    // console.log(
-    //   `[getUserSubscriptionInfo] Features from SUBSCRIPTION_PLANS['${planNameFromDb}'].features:`,
-    //   JSON.stringify(featuresFromConfig, null, 2)
-    // );
-
-    const result = {
+    return {
       plan: planNameFromDb,
       scanLimit:
         featuresFromDb?.scanLimit ??
         featuresFromConfig?.scanLimit ??
-        SUBSCRIPTION_PLANS.free.features.scanLimit,
+        SUBSCRIPTION_PLANS.free?.features.scanLimit ??
+        10,
       hasAdvancedAnalytics:
         featuresFromDb?.advancedAnalytics ??
         featuresFromConfig?.advancedAnalytics ??
-        SUBSCRIPTION_PLANS.free.features.advancedAnalytics ??
+        SUBSCRIPTION_PLANS.free?.features.advancedAnalytics ??
         false,
+      scanUsage,
     };
-    // console.log(
-    //   `[getUserSubscriptionInfo] Successfully determined subscription info:`,
-    //   JSON.stringify(result, null, 2)
-    // );
-    return result;
   } catch (error) {
-    console.error(
-      `[getUserSubscriptionInfo] Error during subscription fetch or processing:`,
-      error
-    );
-    // console.log(
-    //   `[getUserSubscriptionInfo] Falling back to 'free' plan due to error.`
-    // );
+    console.error("[getUserSubscriptionInfo] Error:", error);
     return {
       plan: "free",
-      scanLimit: SUBSCRIPTION_PLANS.free.features.scanLimit,
+      scanLimit: SUBSCRIPTION_PLANS.free?.features.scanLimit || 10,
       hasAdvancedAnalytics:
-        SUBSCRIPTION_PLANS.free.features.advancedAnalytics ?? false,
+        SUBSCRIPTION_PLANS.free?.features.advancedAnalytics || false,
+      scanUsage: 0,
     };
   }
-};
-
-const countDailyScans = async (userId) => {
-  return History.countDocuments({
-    userId,
-    timestamp: { $gte: getTodayStart() },
-  });
 };
 
 // Image Preprocessing Validation
@@ -244,9 +210,12 @@ const checkScanLimit = async (req, res, next) => {
       const guest = await GuestUser.findOne({ guestId: req.guestId });
       const scansUsed = guest?.scanCount || 0;
       if (scansUsed >= MAX_GUEST_SCANS) {
-        // console.log(
-        //   `[checkScanLimit] Guest scan limit reached for guestId: ${req.guestId}. Scans used: ${scansUsed}, Limit: ${MAX_GUEST_SCANS}`
-        // );
+        await createNotification(
+          null,
+          "subscription",
+          "Guest Scan Limit Reached",
+          `You have reached your scan limit of ${MAX_GUEST_SCANS} for guests.`
+        );
         return res.status(403).json({
           status: "error",
           message: "Guest scan limit reached",
@@ -264,61 +233,38 @@ const checkScanLimit = async (req, res, next) => {
         scans_remaining: MAX_GUEST_SCANS - scansUsed,
         has_advanced_analytics: false,
       };
-      // console.log(
-      //   `[checkScanLimit] Guest ${
-      //     req.guestId
-      //   } proceeding. Scans used: ${scansUsed}, Remaining: ${
-      //     MAX_GUEST_SCANS - scansUsed
-      //   }`
-      // );
       return next();
     }
-
-    // For registered users
-    // console.log(
-    //   `[checkScanLimit] Authenticated user req.user.id: ${
-    //     req.user.id
-    //   } (Type: ${typeof req.user.id}), isAdmin: ${req.user.isAdmin}`
-    // );
 
     const user = await User.findById(req.user.id);
     if (!user) {
       console.error(
-        `[checkScanLimit] User not found in DB for id: ${req.user.id}`
+        "[checkScanLimit] User not found in DB for id:",
+        req.user.id
       );
       return res
         .status(404)
         .json({ status: "error", message: "User not found" });
     }
-    // console.log(
-    //   `[checkScanLimit] User's cached subscription (user.subscription):`,
-    //   JSON.stringify(user.subscription, null, 2)
-    // );
 
-    const { plan, scanLimit, hasAdvancedAnalytics } =
+    const { plan, scanLimit, hasAdvancedAnalytics, scanUsage } =
       await getUserSubscriptionInfo(user._id);
 
-    // console.log(
-    //   `[checkScanLimit] Info from getUserSubscriptionInfo: plan='${plan}', scanLimit=${scanLimit}, hasAdvancedAnalytics=${hasAdvancedAnalytics}`
-    // );
-
-    const scansUsed = await countDailyScans(user._id);
-    // console.log(
-    //   `[checkScanLimit] Scans used today for user ${user._id}: ${scansUsed}`
-    // );
-
-    if (scansUsed >= scanLimit) {
-      // console.log(
-      //   `[checkScanLimit] Daily scan limit reached for user ${user._id}. Scans used: ${scansUsed}, Limit for plan '${plan}': ${scanLimit}`
-      // );
+    if (scanUsage >= scanLimit) {
+      await createNotification(
+        req.user.id,
+        "subscription",
+        "Scan Limit Reached",
+        `You have reached your scan limit of ${scanLimit} for the ${plan} plan in this billing cycle.`
+      );
       return res.status(403).json({
         status: "error",
-        message: "Daily scan limit reached",
+        message: "Scan limit reached for this billing cycle",
         subscription_info: {
           plan,
           scan_limit: scanLimit,
-          scans_used: scansUsed,
-          scans_remaining: Math.max(0, scanLimit - scansUsed),
+          scans_used: scanUsage,
+          scans_remaining: 0,
           has_advanced_analytics: hasAdvancedAnalytics,
         },
       });
@@ -327,17 +273,10 @@ const checkScanLimit = async (req, res, next) => {
     req.subscriptionInfo = {
       plan,
       scan_limit: scanLimit,
-      scans_used: scansUsed,
-      scans_remaining: scanLimit - scansUsed,
+      scans_used: scanUsage,
+      scans_remaining: scanLimit - scanUsage,
       has_advanced_analytics: hasAdvancedAnalytics,
     };
-    // console.log(
-    //   `[checkScanLimit] User ${
-    //     user._id
-    //   } (Plan: ${plan}) proceeding. Scans used today: ${scansUsed}, Remaining: ${
-    //     scanLimit - scansUsed
-    //   }`
-    // );
     next();
   } catch (error) {
     console.error("[checkScanLimit] Error:", error);
@@ -353,11 +292,9 @@ router.post(
   "/",
   authenticateToken,
   getGuestId,
-  trackGuestScan, // This will run *after* checkScanLimit if placed here and checkScanLimit calls next().
-  // If trackGuestScan should increment *before* limit check for guests, it should be earlier or integrated.
-  // Current placement is fine: guest limit is checked, then if allowed, scan is tracked.
+  trackGuestScan,
   validateQueryParams,
-  checkScanLimit, // This is where the limit check happens.
+  checkScanLimit,
   upload.single("file"),
   async (req, res) => {
     let historyEntry = null;
@@ -365,11 +302,6 @@ router.post(
     let analyticsEntry = null;
 
     try {
-      // console.log(
-      //   `[POST /classify] Request received. User type: ${
-      //     req.isGuest ? "Guest" : "Registered"
-      //   }, User/Guest ID: ${req.isGuest ? req.guestId : req.user.id}`
-      // );
       const { plantId } = req.body;
 
       if (!req.file) {
@@ -380,7 +312,6 @@ router.post(
       }
 
       await validateImage(req.file.buffer);
-      // console.log("[POST /classify] Image validated.");
 
       const userIdForPath = req.isGuest ? req.guestId : req.user.id.toString();
       const timestamp = Date.now();
@@ -394,7 +325,7 @@ router.post(
 
       const relativePath = `/Uploads/${userIdForPath}/${newFileName}`;
       const baseUrl =
-        process.env.APP_URL || `${req.protocol}://${req.get("host")}`;
+        process.env.BASE_URL || `${req.protocol}://${req.get("host")}`;
       const imageUrl = `${baseUrl}${relativePath}`;
 
       const cacheKey = crypto
@@ -402,15 +333,10 @@ router.post(
         .update(req.file.buffer)
         .digest("hex");
 
-      const cachedResponse = cache.get(cacheKey);
       let pythonResponse;
-      if (cachedResponse) {
-        // console.log(`[POST /classify] Cache hit for image: ${cacheKey}`);
-        pythonResponse = { data: cachedResponse };
+      if (cache.get(cacheKey)) {
+        pythonResponse = { data: cache.get(cacheKey) };
       } else {
-        // console.log(
-        //   `[POST /classify] Cache miss for image: ${cacheKey}. Calling Python API.`
-        // );
         const formData = new FormData();
         formData.append("file", req.file.buffer, {
           filename: newFileName,
@@ -427,9 +353,6 @@ router.post(
           console.error("[POST /classify] Missing X-API-KEY header.");
           throw new Error("Missing X-API-KEY header");
         }
-        // console.log(
-        //   `[POST /classify] Calling Python API with model_choice: ${modelChoice}, use_gemini: ${useGemini}, useAdvancedAnalytics: ${useAdvancedAnalytics}`
-        // );
 
         pythonResponse = await axios.post(
           `${PYTHON_API_URL}/classify?model_choice=${modelChoice}&use_gemini=${useGemini}`,
@@ -439,19 +362,51 @@ router.post(
               ...formData.getHeaders(),
               "X-API-KEY": apiKey,
             },
-            timeout: 30000, // 30 seconds
+            timeout: 30000,
           }
         );
-        // console.log("[POST /classify] Python API response received.");
         cache.set(cacheKey, pythonResponse.data);
-        // console.log(`[POST /classify] Cached response for image: ${cacheKey}`);
       }
 
       const userFolderPath = path.join(__dirname, "../Uploads", userIdForPath);
       await fs.mkdir(userFolderPath, { recursive: true });
       const filePath = path.join(userFolderPath, newFileName);
       await fs.writeFile(filePath, req.file.buffer);
-      // console.log(`[POST /classify] File saved: ${filePath}`);
+
+      // Record scan for registered users
+      let subscription;
+      if (!req.isGuest) {
+        subscription = await Subscription.findOne({
+          userId: req.user.id,
+          status: "active",
+        });
+        if (!subscription) {
+          subscription = await Subscription.create({
+            userId: req.user.id,
+            plan: "free",
+            status: "active",
+            features: SUBSCRIPTION_PLANS.free?.features || {
+              scanLimit: 10,
+              advancedAnalytics: false,
+            },
+            cycle: "monthly",
+            startDate: new Date(),
+            endDate: null,
+            scanUsage: [],
+          });
+        }
+        subscription.scanUsage.push({ timestamp: new Date() });
+        await subscription.save();
+
+        await createNotification(
+          req.user.id,
+          "subscription",
+          "Scan Recorded",
+          `A new scan has been recorded. ${subscription.getCurrentScanCount()}/${
+            subscription.features.scanLimit
+          } scans used this cycle.`
+        );
+      }
 
       historyEntry = new History({
         userId: req.isGuest ? null : req.user.id,
@@ -463,16 +418,12 @@ router.post(
         timestamp: new Date(),
       });
       await historyEntry.save();
-      // console.log(`[POST /classify] History entry saved: ${historyEntry._id}`);
 
       const { overall_best_prediction } = pythonResponse.data;
       let treatmentPlanId = null;
       let treatmentPlanWarning = null;
 
       if (overall_best_prediction.condition.toLowerCase() !== "healthy") {
-        // console.log(
-        //   `[POST /classify] Disease detected: ${overall_best_prediction.condition}. Attempting to create/find treatment plan.`
-        // );
         try {
           const recentPlan = await TreatmentPlan.findOne({
             userId: req.isGuest ? null : req.user.id,
@@ -484,9 +435,6 @@ router.post(
 
           if (recentPlan) {
             treatmentPlanId = recentPlan._id;
-            // console.log(
-            //   `[POST /classify] Existing treatment plan found: ${treatmentPlanId}`
-            // );
           } else {
             treatmentPlan = new TreatmentPlan({
               userId: req.isGuest ? null : req.user.id,
@@ -500,9 +448,6 @@ router.post(
             });
             await treatmentPlan.save();
             treatmentPlanId = treatmentPlan._id;
-            // console.log(
-            //   `[POST /classify] New treatment plan created: ${treatmentPlanId}`
-            // );
           }
         } catch (error) {
           console.error(
@@ -532,26 +477,24 @@ router.post(
         timestamp: new Date(),
       });
       await analyticsEntry.save();
-      // console.log(
-      //   `[POST /classify] Analytics entry saved: ${analyticsEntry._id}`
-      // );
 
-      // req.subscriptionInfo should be populated by checkScanLimit
-      // For guests, trackGuestScan updates the GuestUser.scanCount, which is then read here.
-      // For users, countDailyScans is called again to get the most up-to-date count for the response.
-      let scansMadeToday, totalScansForGuest;
+      // Get updated scan counts
+      let scansMade, scansRemaining;
       if (req.isGuest) {
         const guestUserAfterScan = await GuestUser.findOne({
           guestId: req.guestId,
         });
-        totalScansForGuest =
-          guestUserAfterScan?.scanCount || req.subscriptionInfo.scans_used + 1; // Best guess if somehow null
+        scansMade =
+          guestUserAfterScan?.scanCount || req.subscriptionInfo.scans_used + 1;
+        scansRemaining = Math.max(0, MAX_GUEST_SCANS - scansMade);
       } else {
-        scansMadeToday = await countDailyScans(req.user.id); // Reflects count *after* this scan
+        scansMade = subscription.getCurrentScanCount();
+        scansRemaining = subscription.features.scanLimit - scansMade;
       }
 
       const response = {
         status: "success",
+        isAuthenticated: !req.isGuest, // Add isAuthenticated field
         overall_best_prediction: {
           plant: overall_best_prediction.plant,
           condition: overall_best_prediction.condition,
@@ -603,27 +546,18 @@ router.post(
           ? {
               plan: "guest",
               scan_limit: MAX_GUEST_SCANS,
-              scans_used: totalScansForGuest, // This is total count for guest
-              scans_remaining: Math.max(
-                0,
-                MAX_GUEST_SCANS - totalScansForGuest
-              ),
+              scans_used: scansMade,
+              scans_remaining: scansRemaining,
             }
           : {
               plan: req.subscriptionInfo.plan,
               scan_limit: req.subscriptionInfo.scan_limit,
-              scans_used: scansMadeToday, // This is daily count for user
-              scans_remaining: Math.max(
-                0,
-                req.subscriptionInfo.scan_limit - scansMadeToday
-              ),
+              scans_used: scansMade,
+              scans_remaining: scansRemaining,
               has_advanced_analytics:
                 req.subscriptionInfo.has_advanced_analytics,
             },
       };
-      // console.log(
-      //   "[POST /classify] Successfully processed request. Sending response."
-      // );
       res.json(response);
     } catch (error) {
       console.error(
@@ -632,7 +566,6 @@ router.post(
         error.stack
       );
       if (error.response) {
-        // Axios error
         console.error(
           "[POST /classify] Python API Error Data:",
           error.response.data
@@ -665,7 +598,6 @@ router.post(
         statusCode = 400;
         message = error.message;
       } else if (error.response) {
-        // Python API error
         statusCode = error.response.status || 500;
         message =
           error.response.data?.detail ||
@@ -680,20 +612,19 @@ router.post(
         statusCode = 504;
         message = "Classification request timed out.";
       } else if (error.message.includes("Missing X-API-KEY")) {
-        statusCode = 401; // Or 400, depending on how you want to signal it
+        statusCode = 401;
         message = error.message;
       }
 
       res.status(statusCode).json({
         status: "error",
         message,
-        // error: process.env.NODE_ENV === 'development' ? error.message : undefined, // Only show full error in dev
       });
     }
   }
 );
 
-// Stats Endpoint
+// Stats Endpoint (unchanged, included for completeness)
 const statsCache = new NodeCache({ stdTTL: 600, checkperiod: 120 });
 
 const validateStatsQueryParams = (req, res, next) => {
@@ -758,7 +689,6 @@ const checkStatsAccess = async (req, res, next) => {
       return next();
     }
 
-    // For registered users, ensure req.user is populated by authenticateToken
     if (!req.user || !req.user.id) {
       console.error("[checkStatsAccess] req.user not populated for non-guest.");
       return res
@@ -773,13 +703,8 @@ const checkStatsAccess = async (req, res, next) => {
         .json({ status: "error", message: "User not found" });
     }
 
-    req.user.isAdmin = user.role === "admin"; // Ensure isAdmin is fresh from DB
-
-    if (user.isAdmin) {
-      req.statsScope = {};
-    } else {
-      req.statsScope = { userId: req.user.id };
-    }
+    req.user.isAdmin = user.role === "admin";
+    req.statsScope = req.user.isAdmin ? {} : { userId: req.user.id };
     next();
   } catch (error) {
     console.error("Error in checkStatsAccess:", error);
@@ -792,13 +717,21 @@ const checkStatsAccess = async (req, res, next) => {
 router.get(
   "/stats",
   authenticateToken,
-  getGuestId, // For guest access to their own stats
-  checkStatsAccess, // Sets req.statsScope based on admin/user/guest
-  validateStatsQueryParams, // Validates query params and sets req.statsQuery
+  getGuestId,
+  checkStatsAccess,
+  validateStatsQueryParams,
   async (req, res) => {
     try {
-      const { dateStart, dateEnd, userType, plan: planFilter } = req.statsQuery; // Renamed plan to planFilter
-      const { statsScope } = req; // { userId: ID } or { guestId: ID } or {} for admin
+      const { dateStart, dateEnd, userType, plan: planFilter } = req.statsQuery;
+      const { statsScope } = req;
+
+      if (!dateEnd || isNaN(dateEnd.getTime())) {
+        console.error("[GET /stats] dateEnd is undefined or invalid:", dateEnd);
+        return res.status(500).json({
+          status: "error",
+          message: "Invalid dateEnd value",
+        });
+      }
 
       const apiKey = req.headers["x-api-key"];
       if (!apiKey) {
@@ -822,60 +755,40 @@ router.get(
 
       const cachedStats = statsCache.get(cacheKey);
       if (cachedStats) {
-        // console.log(`[GET /stats] Cache hit for stats: ${cacheKey}`);
         return res.json(cachedStats);
       }
-      // console.log(
-      //   `[GET /stats] Cache miss for stats: ${cacheKey}. Querying DB.`
-      // );
-      // console.log(
-      //   `[GET /stats] Filters: dateStart=${dateStart.toISOString()}, dateEnd=${dateEnd.toISOString()}, userType=${userType}, planFilter=${planFilter}, statsScope=${JSON.stringify(
-      //     statsScope
-      //   )}`
-      // );
 
       let query = {
         timestamp: { $gte: dateStart, $lte: dateEnd },
-        ...statsScope, // Apply {userId: X} or {guestId: Y} or {}
+        ...statsScope,
       };
 
-      // If user.isAdmin is true and a specific userType is chosen, filter by that
       if (req.user?.isAdmin) {
         if (userType === "guest") {
           query.guestId = { $ne: null };
-          delete query.userId; // Ensure we don't also filter by admin's own userId
+          delete query.userId;
         } else if (userType === "user") {
           query.userId = { $ne: null };
           delete query.guestId;
         }
-        // if userType === 'all', statsScope (which is {} for admin) already allows all
       }
-      // Non-admins are already scoped by statsScope to their own userId or guestId
 
-      // Apply plan filter (only if admin and planFilter is provided)
       if (planFilter && req.user?.isAdmin) {
         if (planFilter === "guest") {
           query.guestId = { $ne: null };
-          query.userId = null; // Explicitly only guests
+          query.userId = null;
         } else {
-          // Find users who had this plan active at *any point* within the date range
           const usersInPlan = await Subscription.find({
             plan: planFilter,
             status: "active",
             $or: [
-              // Subscription overlaps with the query period
               { startDate: { $lte: dateEnd }, endDate: { $gte: dateStart } },
             ],
           }).distinct("userId");
-          query.userId = { $in: usersInPlan.map((id) => id) }; // Ensure it's an array of ObjectIds
-          query.guestId = null; // Explicitly only subscribed users
+          query.userId = { $in: usersInPlan.map((id) => id) };
+          query.guestId = null;
         }
       }
-      // console.log(
-      //   `[GET /stats] Final MongoDB query for main analytics: ${JSON.stringify(
-      //     query
-      //   )}`
-      // );
 
       const analyticsData = await Analytics.aggregate([
         { $match: query },
@@ -900,7 +813,6 @@ router.get(
       let guestScans = 0;
 
       if (req.user?.isAdmin && userType === "all" && !planFilter) {
-        // Admin, all users, no plan filter
         userScans = await Analytics.countDocuments({
           ...query,
           userId: { $ne: null },
@@ -912,17 +824,15 @@ router.get(
           userId: null,
         });
       } else if (req.user?.isAdmin && userType === "user") {
-        userScans = totalScans; // query is already filtered for users
+        userScans = totalScans;
         guestScans = 0;
       } else if (req.user?.isAdmin && userType === "guest") {
-        guestScans = totalScans; // query is already filtered for guests
+        guestScans = totalScans;
         userScans = 0;
       } else if (statsScope.userId) {
-        // Non-admin user
         userScans = totalScans;
         guestScans = 0;
       } else if (statsScope.guestId) {
-        // Non-admin guest
         guestScans = totalScans;
         userScans = 0;
       }
@@ -930,12 +840,10 @@ router.get(
       let scansByPlan = {};
       if (req.user?.isAdmin) {
         const planStatsPipelineBase = [
-          // Match analytics entries within the date range
           { $match: { timestamp: { $gte: dateStart, $lte: dateEnd } } },
-          // Lookup the subscription active at the time of each scan
           {
             $lookup: {
-              from: "subscriptions", // The name of your subscriptions collection
+              from: "subscriptions",
               let: {
                 userIdStr: { $toString: "$userId" },
                 scanTime: "$timestamp",
@@ -948,30 +856,27 @@ router.get(
                         { $eq: ["$userId", { $toObjectId: "$$userIdStr" }] },
                         { $eq: ["$status", "active"] },
                         { $lte: ["$startDate", "$$scanTime"] },
-                        { $gt: ["$endDate", "$$scanTime"] }, //endDate is exclusive if it means "valid until"
+                        { $gt: ["$endDate", "$$scanTime"] },
                       ],
                     },
                   },
                 },
-                { $sort: { startDate: -1 } }, // Pick the most recent if overlapping
+                { $sort: { startDate: -1 } },
                 { $limit: 1 },
               ],
               as: "activeSubscription",
             },
           },
-          // Group by plan or 'guest' or 'free' (if no active paid subscription)
           {
             $group: {
               _id: {
                 $cond: {
-                  if: { $ne: ["$guestId", null] }, // Is it a guest?
+                  if: { $ne: ["$guestId", null] },
                   then: "guest",
                   else: {
-                    // It's a registered user
                     $ifNull: [
-                      // If they have an active sub, use its plan, else 'free'
                       { $arrayElemAt: ["$activeSubscription.plan", 0] },
-                      "free", // Default for users without an active paid subscription
+                      "free",
                     ],
                   },
                 },
@@ -981,7 +886,6 @@ router.get(
           },
         ];
 
-        // If admin is filtering by a specific user plan, apply that to the plan aggregation as well
         let planAggregationMatch = {
           timestamp: { $gte: dateStart, $lte: dateEnd },
         };
@@ -1000,7 +904,6 @@ router.get(
           planAggregationMatch.guestId = { $ne: null };
           planAggregationMatch.userId = null;
         }
-        // If userType filter is applied, also respect it for scansByPlan calculation
         if (userType === "user") {
           planAggregationMatch.userId = { $ne: null };
           planAggregationMatch.guestId = null;
@@ -1011,20 +914,19 @@ router.get(
 
         const planStats = await Analytics.aggregate([
           { $match: planAggregationMatch },
-          ...planStatsPipelineBase.slice(1), // remove the base timestamp match, use planAggregationMatch
+          ...planStatsPipelineBase.slice(1),
         ]);
 
         scansByPlan = Object.keys(SUBSCRIPTION_PLANS).reduce((acc, p) => {
           acc[p] = 0;
           return acc;
         }, {});
-        scansByPlan.guest = 0; // Initialize guest count
+        scansByPlan.guest = 0;
 
         planStats.forEach((item) => {
           if (item._id && scansByPlan.hasOwnProperty(item._id)) {
             scansByPlan[item._id] += item.count;
           } else if (item._id) {
-            // Plan might not be in SUBSCRIPTION_PLANS (e.g. old plan)
             scansByPlan[item._id] = item.count;
           }
         });
@@ -1034,7 +936,7 @@ router.get(
         status: "success",
         date_range: {
           start: dateStart.toISOString(),
-          end: endDate.toISOString(),
+          end: dateEnd.toISOString(),
         },
         total_scans: totalScans,
         scans_by_user_type: { users: userScans, guests: guestScans },
@@ -1094,12 +996,9 @@ router.get(
       };
 
       statsCache.set(cacheKey, stats);
-      // console.log(
-      //   `[GET /stats] Stats computed and cached for key: ${cacheKey}`
-      // );
       res.json(stats);
     } catch (error) {
-      console.error("Error fetching stats:", error);
+      console.error("[GET /stats] Error fetching stats:", error);
       res.status(500).json({
         status: "error",
         message: "Failed to fetch statistics",
